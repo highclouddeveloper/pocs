@@ -1,0 +1,936 @@
+{
+  "pdf": "input.pdf",
+  "fields": [
+    {
+      "page": 16,
+      "label": "Account statements\nAnnual (audited)/quarterly (unaudited) financial statements",
+      "label_short": "Account statements\nAnnual (audited)/quarterly (unaudited) financial statements",
+      "label_full": "Account statements\nAnnual (audited)/quarterly (unaudited) financial statements",
+      "label_norm": "account statements annual quarterly financial statements",
+      "anchor_x": 61.439998626708984,
+      "anchor_y": 187.50025939941406,
+      "line_box": [
+        61.439998626708984,
+        178.3562774658203,
+        542.4512939453125,
+        196.6442413330078
+      ],
+      "placement": "start",
+      "section": "RECIPIENT 1",
+      "section_norm": "recipient 1",
+      "index": 1
+    },
+    {
+      "page": 16,
+      "label": "____________________________________\n______________________________________\nName\nAddress for Notices Provided for Under Organizational Document",
+      "label_short": "____________________________________\n______________________________________\nName\nAddress for Notices Provided for Under Organizational Document",
+      "label_full": "____________________________________\n______________________________________\nName\nAddress for Notices Provided for Under Organizational Document",
+      "label_norm": "  name address for notices provided for under organizational document",
+      "anchor_x": 61.439998626708984,
+      "anchor_y": 214.6801300048828,
+      "line_box": [
+        61.439998626708984,
+        205.5960235595703,
+        541.5396118164062,
+        223.7642364501953
+      ],
+      "placement": "start",
+      "section": "RECIPIENT 1",
+      "section_norm": "recipient 1",
+      "index": 1
+    },
+    {
+      "page": 16,
+      "label": "________________________________________\n__________________________________________\nE-Mail",
+      "label_short": "________________________________________\n__________________________________________\nE-Mail",
+      "label_full": "________________________________________\n__________________________________________\nE-Mail",
+      "label_norm": "  email",
+      "anchor_x": 61.439998626708984,
+      "anchor_y": 241.86012268066406,
+      "line_box": [
+        61.439998626708984,
+        232.7160186767578,
+        541.5396118164062,
+        251.0042266845703
+      ],
+      "placement": "start",
+      "section": "RECIPIENT 1",
+      "section_norm": "recipient 1",
+      "index": 1
+    },
+    {
+      "page": 16,
+      "label": "Account statements\nAnnual (audited)/quarterly (unaudited) financial statements",
+      "label_short": "Account statements\nAnnual (audited)/quarterly (unaudited) financial statements",
+      "label_full": "Account statements\nAnnual (audited)/quarterly (unaudited) financial statements",
+      "label_norm": "account statements annual quarterly financial statements",
+      "anchor_x": 61.439998626708984,
+      "anchor_y": 329.0401306152344,
+      "line_box": [
+        61.439998626708984,
+        319.9560241699219,
+        542.4512939453125,
+        338.1242370605469
+      ],
+      "placement": "start",
+      "section": "RECIPIENT 2",
+      "section_norm": "recipient 2",
+      "index": 1
+    },
+    {
+      "page": 16,
+      "label": "Account statements\nAnnual (audited)/quarterly (unaudited) financial statements",
+      "label_short": "Account statements\nAnnual (audited)/quarterly (unaudited) financial statements",
+      "label_full": "Account statements\nAnnual (audited)/quarterly (unaudited) financial statements",
+      "label_norm": "account statements annual quarterly financial statements",
+      "anchor_x": 61.439998626708984,
+      "anchor_y": 416.2202606201172,
+      "line_box": [
+        61.439998626708984,
+        407.0762939453125,
+        542.4512939453125,
+        425.3642272949219
+      ],
+      "placement": "start",
+      "section": "RECIPIENT 3",
+      "section_norm": "recipient 3",
+      "index": 1
+    },
+    {
+      "page": 16,
+      "label": "Account statements\nAnnual (audited)/quarterly (unaudited) financial statements",
+      "label_short": "Account statements\nAnnual (audited)/quarterly (unaudited) financial statements",
+      "label_full": "Account statements\nAnnual (audited)/quarterly (unaudited) financial statements",
+      "label_norm": "account statements annual quarterly financial statements",
+      "anchor_x": 61.439998626708984,
+      "anchor_y": 503.40013122558594,
+      "line_box": [
+        61.439998626708984,
+        494.3160095214844,
+        542.4512939453125,
+        512.4842529296875
+      ],
+      "placement": "start",
+      "section": "RECIPIENT 4",
+      "section_norm": "recipient 4",
+      "index": 1
+    },
+    {
+      "page": 16,
+      "label": "By providing e-mail and/or facsimile contact information specified above, the Investor is consenting to the transmittal \nelectronically, rather than in hard copy form, of the documents indicated above, any tax-related documents, and any Additional \nInformation, as such documents or information may be provided to the Investor from time to time. Currently, such documents\nare expected to be provided via the D. E. Shaw group Investor Relations Web site (www.deshaw.com/irweb).  The Manager will \ncontact the recipient(s) designated above to provide a user ID and password for such Web site and will send an e-mail \nannouncement whenever new documents become available thereon.  Please note that Members have the right to receive purchase \nconfirmations, account statements, and financial statements in hard copy form as well as electronically.  To request ongoing hard \ncopy documents for any particular recipient, please write “Hard Copy” and specify the recipient number(s) here:",
+      "label_short": "By providing e-mail and/or facsimile contact information specified above, the Investor is consenting to the transmittal \nelectronically, rather than in hard copy form, of the documents indicated above, any tax-related documents, and any Additional \nInformation, as such documents or information may be provided to the Investor from time to time. Currently, such documents\nare expected to be provided via the D. E. Shaw group Investor Relations Web site (www.deshaw.com/irweb).  The Manager will \ncontact the recipient(s) designated above to provide a user ID and password for such Web site and will send an e-mail \nannouncement whenever new documents become available thereon.  Please note that Members have the right to receive purchase \nconfirmations, account statements, and financial statements in hard copy form as well as electronically.  To request ongoing hard \ncopy documents for any particular recipient, please write “Hard Copy” and specify the recipient number(s) here:",
+      "label_full": "By providing e-mail and/or facsimile contact information specified above, the Investor is consenting to the transmittal \nelectronically, rather than in hard copy form, of the documents indicated above, any tax-related documents, and any Additional \nInformation, as such documents or information may be provided to the Investor from time to time. Currently, such documents\nare expected to be provided via the D. E. Shaw group Investor Relations Web site (www.deshaw.com/irweb).  The Manager will \ncontact the recipient(s) designated above to provide a user ID and password for such Web site and will send an e-mail \nannouncement whenever new documents become available thereon.  Please note that Members have the right to receive purchase \nconfirmations, account statements, and financial statements in hard copy form as well as electronically.  To request ongoing hard \ncopy documents for any particular recipient, please write “Hard Copy” and specify the recipient number(s) here:",
+      "label_norm": "by providing email andor facsimile contact information specified above the investor is consenting to the transmittal electronically rather than in hard copy form of the documents indicated above any taxrelated documents and any additional information as such documents or information may be provided to the investor from time to time currently such documents are expected to be provided via the d e shaw group investor relations web site  the manager will contact the recipient designated above to provide a user id and password for such web site and will send an email announcement whenever new documents become available thereon please note that members have the right to receive purchase confirmations account statements and financial statements in hard copy form as well as electronically to request ongoing hard copy documents for any particular recipient please write “hard copy” and specify the recipient number here",
+      "anchor_x": 4963.999969482422,
+      "anchor_y": 617.9229431152344,
+      "line_box": [
+        53.999969482421875,
+        551.4361572265625,
+        556.7366333007812,
+        684.4097290039062
+      ],
+      "placement": "start",
+      "section": "RECIPIENT 4",
+      "section_norm": "recipient 4",
+      "index": 1
+    },
+    {
+      "page": 18,
+      "label": "Number of Beneficial Owners for which the Nominee is acting:",
+      "label_short": "Number of Beneficial Owners for which the Nominee is acting:",
+      "label_full": "Number of Beneficial Owners for which the Nominee is acting:",
+      "label_norm": "number of beneficial owners for which the nominee is acting",
+      "anchor_x": 408.55999755859375,
+      "anchor_y": 143.02346801757812,
+      "line_box": [
+        103.55999755859375,
+        137.9159698486328,
+        523.9862670898438,
+        148.13096618652344
+      ],
+      "placement": "start",
+      "section": "",
+      "section_norm": "",
+      "index": 1
+    },
+    {
+      "page": 18,
+      "label": "5.\nDate of the Investor’s fiscal year end:",
+      "label_short": "5.\nDate of the Investor’s fiscal year end:",
+      "label_full": "5.\nDate of the Investor’s fiscal year end:",
+      "label_norm": "5 date of the investor’s fiscal year end",
+      "anchor_x": 268.999698638916,
+      "anchor_y": 162.82345581054688,
+      "line_box": [
+        53.999698638916016,
+        157.71595764160156,
+        393.0990905761719,
+        167.9309539794922
+      ],
+      "placement": "start",
+      "section": "",
+      "section_norm": "",
+      "index": 1
+    },
+    {
+      "page": 18,
+      "label": "6.\nJurisdiction of organization of the Investor:",
+      "label_short": "6.\nJurisdiction of organization of the Investor:",
+      "label_full": "6.\nJurisdiction of organization of the Investor:",
+      "label_norm": "6 jurisdiction of organization of the investor",
+      "anchor_x": 298.999698638916,
+      "anchor_y": 183.82315063476562,
+      "line_box": [
+        53.999698638916016,
+        178.7156524658203,
+        418.5977478027344,
+        188.93064880371094
+      ],
+      "placement": "start",
+      "section": "",
+      "section_norm": "",
+      "index": 1
+    },
+    {
+      "page": 19,
+      "label": "If checking this box, please indicate your NFA identification number here:",
+      "label_short": "If checking this box, please indicate your NFA identification number here:",
+      "label_full": "If checking this box, please indicate your NFA identification number here:",
+      "label_norm": "if checking this box please indicate your nfa identification number here",
+      "anchor_x": 483.55999755859375,
+      "anchor_y": 452.0235137939453,
+      "line_box": [
+        103.55999755859375,
+        446.916015625,
+        512.0079956054688,
+        457.1310119628906
+      ],
+      "placement": "start",
+      "section": "The Investor (and/or, if the Investor is a Nominee, each Beneficial Owner) is",
+      "section_norm": "the investor is",
+      "index": 1
+    },
+    {
+      "page": 19,
+      "label": "Other (describe here):",
+      "label_short": "Other (describe here):",
+      "label_full": "Other (describe here):",
+      "label_norm": "other ",
+      "anchor_x": 236.55999755859375,
+      "anchor_y": 721.0635070800781,
+      "line_box": [
+        121.55999755859375,
+        715.9559936523438,
+        552.5681762695312,
+        726.1710205078125
+      ],
+      "placement": "start",
+      "section": "pursuant to which you are claiming an exclusion or exemption from registration and membership",
+      "section_norm": "pursuant to which you are claiming an exclusion or exemption from registration and membership",
+      "index": 1
+    },
+    {
+      "page": 20,
+      "label": "Identification Number for entities):",
+      "label_short": "Identification Number for entities):",
+      "label_full": "Identification Number for entities):",
+      "label_norm": "identification number for entities",
+      "anchor_x": 257.0,
+      "anchor_y": 137.86380004882812,
+      "line_box": [
+        72.0,
+        132.7563018798828,
+        384.1463623046875,
+        142.97129821777344
+      ],
+      "placement": "start",
+      "section": "No",
+      "section_norm": "no",
+      "index": 1
+    },
+    {
+      "page": 20,
+      "label": "Identification number:",
+      "label_short": "Identification number:",
+      "label_full": "Identification number:",
+      "label_norm": "identification number",
+      "anchor_x": 186.99996948242188,
+      "anchor_y": 263.9852752685547,
+      "line_box": [
+        71.99996948242188,
+        258.8777770996094,
+        349.207275390625,
+        269.0927734375
+      ],
+      "placement": "start",
+      "section": "Items applicable only to Investors that are non-U.S. persons",
+      "section_norm": "items applicable only to investors that are nonus persons",
+      "index": 1
+    },
+    {
+      "page": 31,
+      "label": "2.\nThe year of this Closing Date is (please enter year):",
+      "label_short": "2.\nThe year of this Closing Date is (please enter year):",
+      "label_full": "2.\nThe year of this Closing Date is (please enter year):",
+      "label_norm": "2 the year of this closing date is ",
+      "anchor_x": 338.99993896484375,
+      "anchor_y": 449.38575744628906,
+      "line_box": [
+        53.99993896484375,
+        444.27825927734375,
+        428.3558044433594,
+        454.4932556152344
+      ],
+      "placement": "start",
+      "section": "The month and day of the Investor’s requested Acquisition (the “Closing Date”) is ( please circle only one of the following )",
+      "section_norm": "the month and day of the investor’s requested acquisition is",
+      "index": 1
+    },
+    {
+      "page": 31,
+      "label": "US $",
+      "label_short": "US $",
+      "label_full": "US $",
+      "label_norm": "us ",
+      "anchor_x": 97.00082397460938,
+      "anchor_y": 516.3457489013672,
+      "line_box": [
+        72.00082397460938,
+        511.2382507324219,
+        203.47645568847656,
+        521.4532470703125
+      ],
+      "placement": "start",
+      "section": "US $ ___________________.",
+      "section_norm": "us  ",
+      "index": 1
+    },
+    {
+      "page": 32,
+      "label": "Name of Bank:",
+      "label_short": "Name of Bank:",
+      "label_full": "Name of Bank:",
+      "label_norm": "name of bank",
+      "anchor_x": 160.00001525878906,
+      "anchor_y": 158.02371215820312,
+      "line_box": [
+        90.00001525878906,
+        152.9162139892578,
+        485.29559326171875,
+        163.13121032714844
+      ],
+      "placement": "start",
+      "section": "Name of Bank",
+      "section_norm": "name of bank",
+      "index": 1
+    },
+    {
+      "page": 32,
+      "label": "Address of Bank:",
+      "label_short": "Address of Bank:",
+      "label_full": "Address of Bank:",
+      "label_norm": "address of bank",
+      "anchor_x": 175.00001525878906,
+      "anchor_y": 184.06338500976562,
+      "line_box": [
+        90.00001525878906,
+        178.9558868408203,
+        485.3030090332031,
+        189.17088317871094
+      ],
+      "placement": "start",
+      "section": "Address of Bank",
+      "section_norm": "address of bank",
+      "index": 1
+    },
+    {
+      "page": 32,
+      "label": "Address of Bank:\n______________________________________________________",
+      "label_short": "Address of Bank:\n______________________________________________________",
+      "label_full": "Address of Bank:\n______________________________________________________",
+      "label_norm": "address of bank ",
+      "anchor_x": 180.47970581054688,
+      "anchor_y": 209.98336791992188,
+      "line_box": [
+        180.47970581054688,
+        204.87586975097656,
+        485.2748107910156,
+        215.0908660888672
+      ],
+      "placement": "start",
+      "section": "Address of Bank",
+      "section_norm": "address of bank",
+      "index": 1
+    },
+    {
+      "page": 32,
+      "label": "ABA Number:",
+      "label_short": "ABA Number:",
+      "label_full": "ABA Number:",
+      "label_norm": "aba number",
+      "anchor_x": 150.0,
+      "anchor_y": 250.06301879882812,
+      "line_box": [
+        90.0,
+        244.9555206298828,
+        485.4047546386719,
+        255.17051696777344
+      ],
+      "placement": "start",
+      "section": "ABA Number",
+      "section_norm": "aba number",
+      "index": 1
+    },
+    {
+      "page": 32,
+      "label": "Account Number:",
+      "label_short": "Account Number:",
+      "label_full": "Account Number:",
+      "label_norm": "account number",
+      "anchor_x": 170.0,
+      "anchor_y": 275.98301696777344,
+      "line_box": [
+        90.0,
+        270.8755187988281,
+        485.3236999511719,
+        281.09051513671875
+      ],
+      "placement": "start",
+      "section": "Account Number",
+      "section_norm": "account number",
+      "index": 1
+    },
+    {
+      "page": 32,
+      "label": "Account Is Held:",
+      "label_short": "Account Is Held:",
+      "label_full": "Account Is Held:",
+      "label_norm": "account is held",
+      "anchor_x": 175.0,
+      "anchor_y": 316.06272888183594,
+      "line_box": [
+        90.0,
+        310.9552307128906,
+        485.32525634765625,
+        321.17022705078125
+      ],
+      "placement": "start",
+      "section": "Account Is Held",
+      "section_norm": "account is held",
+      "index": 1
+    },
+    {
+      "page": 32,
+      "label": "Reference Number:",
+      "label_short": "Reference Number:",
+      "label_full": "Reference Number:",
+      "label_norm": "reference number",
+      "anchor_x": 180.0,
+      "anchor_y": 341.9827423095703,
+      "line_box": [
+        90.0,
+        336.875244140625,
+        485.3774719238281,
+        347.0902404785156
+      ],
+      "placement": "start",
+      "section": "Reference Number",
+      "section_norm": "reference number",
+      "index": 1
+    },
+    {
+      "page": 32,
+      "label": "Name of Bank:",
+      "label_short": "Name of Bank:",
+      "label_full": "Name of Bank:",
+      "label_norm": "name of bank",
+      "anchor_x": 160.00091552734375,
+      "anchor_y": 406.00245666503906,
+      "line_box": [
+        90.00091552734375,
+        400.89495849609375,
+        485.2964782714844,
+        411.1099548339844
+      ],
+      "placement": "start",
+      "section": "Name of Bank",
+      "section_norm": "name of bank",
+      "index": 2
+    },
+    {
+      "page": 32,
+      "label": "Address of Bank:",
+      "label_short": "Address of Bank:",
+      "label_full": "Address of Bank:",
+      "label_norm": "address of bank",
+      "anchor_x": 175.00091552734375,
+      "anchor_y": 431.92247009277344,
+      "line_box": [
+        90.00091552734375,
+        426.8149719238281,
+        485.30389404296875,
+        437.02996826171875
+      ],
+      "placement": "start",
+      "section": "Address of Bank",
+      "section_norm": "address of bank",
+      "index": 2
+    },
+    {
+      "page": 32,
+      "label": "Address of Bank:\n______________________________________________________",
+      "label_short": "Address of Bank:\n______________________________________________________",
+      "label_full": "Address of Bank:\n______________________________________________________",
+      "label_norm": "address of bank ",
+      "anchor_x": 180.48062133789062,
+      "anchor_y": 458.02247619628906,
+      "line_box": [
+        180.48062133789062,
+        452.91497802734375,
+        485.2757263183594,
+        463.1299743652344
+      ],
+      "placement": "start",
+      "section": "Address of Bank",
+      "section_norm": "address of bank",
+      "index": 2
+    },
+    {
+      "page": 32,
+      "label": "ABA Number:",
+      "label_short": "ABA Number:",
+      "label_full": "ABA Number:",
+      "label_norm": "aba number",
+      "anchor_x": 150.00091552734375,
+      "anchor_y": 497.9824676513672,
+      "line_box": [
+        90.00091552734375,
+        492.8749694824219,
+        485.4056701660156,
+        503.0899658203125
+      ],
+      "placement": "start",
+      "section": "ABA Number",
+      "section_norm": "aba number",
+      "index": 2
+    },
+    {
+      "page": 32,
+      "label": "Account Number:",
+      "label_short": "Account Number:",
+      "label_full": "Account Number:",
+      "label_norm": "account number",
+      "anchor_x": 170.00091552734375,
+      "anchor_y": 524.0221862792969,
+      "line_box": [
+        90.00091552734375,
+        518.9146728515625,
+        485.3246154785156,
+        529.1296997070312
+      ],
+      "placement": "start",
+      "section": "Account Number",
+      "section_norm": "account number",
+      "index": 2
+    },
+    {
+      "page": 32,
+      "label": "Account Is Held:",
+      "label_short": "Account Is Held:",
+      "label_full": "Account Is Held:",
+      "label_norm": "account is held",
+      "anchor_x": 175.00091552734375,
+      "anchor_y": 563.9821472167969,
+      "line_box": [
+        90.00091552734375,
+        558.8746337890625,
+        485.326171875,
+        569.0896606445312
+      ],
+      "placement": "start",
+      "section": "Account Is Held",
+      "section_norm": "account is held",
+      "index": 2
+    },
+    {
+      "page": 32,
+      "label": "Reference Number:",
+      "label_short": "Reference Number:",
+      "label_full": "Reference Number:",
+      "label_norm": "reference number",
+      "anchor_x": 180.00091552734375,
+      "anchor_y": 590.0218811035156,
+      "line_box": [
+        90.00091552734375,
+        584.9143676757812,
+        485.3783874511719,
+        595.12939453125
+      ],
+      "placement": "start",
+      "section": "Reference Number",
+      "section_norm": "reference number",
+      "index": 2
+    },
+    {
+      "page": 33,
+      "label": "INVESTOR:",
+      "label_short": "INVESTOR:",
+      "label_full": "INVESTOR:",
+      "label_norm": "investor",
+      "anchor_x": 54.0,
+      "anchor_y": 127.01994323730469,
+      "line_box": [
+        54.0,
+        117.87562561035156,
+        541.599609375,
+        136.1642608642578
+      ],
+      "placement": "start",
+      "section": "INVESTOR",
+      "section_norm": "investor",
+      "index": 1
+    },
+    {
+      "page": 33,
+      "label": "_________________________________________\n__________________________________________\nName of Investor (Printed or Typed)\nDate",
+      "label_short": "_________________________________________\n__________________________________________\nName of Investor (Printed or Typed)\nDate",
+      "label_full": "_________________________________________\n__________________________________________\nName of Investor (Printed or Typed)\nDate",
+      "label_norm": "  name of investor date",
+      "anchor_x": 54.0,
+      "anchor_y": 159.1801300048828,
+      "line_box": [
+        54.0,
+        150.03602600097656,
+        541.599609375,
+        168.32423400878906
+      ],
+      "placement": "start",
+      "section": "INVESTOR",
+      "section_norm": "investor",
+      "index": 1
+    },
+    {
+      "page": 33,
+      "label": "_________________________________________\n__________________________________________\nSignature of Authorized Signatory\nSignature of Witness",
+      "label_short": "_________________________________________\n__________________________________________\nSignature of Authorized Signatory\nSignature of Witness",
+      "label_full": "_________________________________________\n__________________________________________\nSignature of Authorized Signatory\nSignature of Witness",
+      "label_norm": "  signature of authorized signatory signature of witness",
+      "anchor_x": 54.0,
+      "anchor_y": 191.34007263183594,
+      "line_box": [
+        54.0,
+        182.1958770751953,
+        541.599609375,
+        200.48426818847656
+      ],
+      "placement": "start",
+      "section": "Signature of Witness",
+      "section_norm": "signature of witness",
+      "index": 1
+    },
+    {
+      "page": 33,
+      "label": "_________________________________________\n__________________________________________\nName of Authorized Signatory (Printed or Typed)\nName of Witness (Printed or Typed)",
+      "label_short": "_________________________________________\n__________________________________________\nName of Authorized Signatory (Printed or Typed)\nName of Witness (Printed or Typed)",
+      "label_full": "_________________________________________\n__________________________________________\nName of Authorized Signatory (Printed or Typed)\nName of Witness (Printed or Typed)",
+      "label_norm": "  name of authorized signatory name of witness",
+      "anchor_x": 54.0,
+      "anchor_y": 223.47010803222656,
+      "line_box": [
+        54.0,
+        214.2959747314453,
+        287.8228454589844,
+        232.6442413330078
+      ],
+      "placement": "start",
+      "section": "Signature of Witness",
+      "section_norm": "signature of witness",
+      "index": 1
+    },
+    {
+      "page": 33,
+      "label": "_________________________________________\nTitle of Authorized Signatory",
+      "label_short": "_________________________________________\nTitle of Authorized Signatory",
+      "label_full": "_________________________________________\nTitle of Authorized Signatory",
+      "label_norm": " title of authorized signatory",
+      "anchor_x": 54.0,
+      "anchor_y": 255.66007232666016,
+      "line_box": [
+        54.0,
+        246.51588439941406,
+        287.8228454589844,
+        264.80426025390625
+      ],
+      "placement": "start",
+      "section": "Signature of Witness",
+      "section_norm": "signature of witness",
+      "index": 1
+    },
+    {
+      "page": 33,
+      "label": "_________________________________________\nRegistered Address",
+      "label_short": "_________________________________________\nRegistered Address",
+      "label_full": "_________________________________________\nRegistered Address",
+      "label_norm": " registered address",
+      "anchor_x": 54.0,
+      "anchor_y": 287.82012939453125,
+      "line_box": [
+        54.0,
+        278.676025390625,
+        287.8228454589844,
+        296.9642333984375
+      ],
+      "placement": "start",
+      "section": "Signature of Witness",
+      "section_norm": "signature of witness",
+      "index": 1
+    },
+    {
+      "page": 33,
+      "label": "By:",
+      "label_short": "By:",
+      "label_full": "By:",
+      "label_norm": "by",
+      "anchor_x": 74.0,
+      "anchor_y": 399.989990234375,
+      "line_box": [
+        54.0,
+        390.81573486328125,
+        287.8282470703125,
+        409.16424560546875
+      ],
+      "placement": "start",
+      "section": "By",
+      "section_norm": "by",
+      "index": 1
+    },
+    {
+      "page": 33,
+      "label": "By:\n_____________________________________\nSignature of Authorized Signatory",
+      "label_short": "By:\n_____________________________________\nSignature of Authorized Signatory",
+      "label_full": "By:\n_____________________________________\nSignature of Authorized Signatory",
+      "label_norm": "by  signature of authorized signatory",
+      "anchor_x": 76.55999755859375,
+      "anchor_y": 432.1501159667969,
+      "line_box": [
+        76.55999755859375,
+        422.97601318359375,
+        287.8249206542969,
+        441.32421875
+      ],
+      "placement": "start",
+      "section": "Signature of Authorized Signatory",
+      "section_norm": "signature of authorized signatory",
+      "index": 1
+    },
+    {
+      "page": 33,
+      "label": "_____________________________________\nName of Authorized Signatory",
+      "label_short": "_____________________________________\nName of Authorized Signatory",
+      "label_full": "_____________________________________\nName of Authorized Signatory",
+      "label_norm": " name of authorized signatory",
+      "anchor_x": 76.55999755859375,
+      "anchor_y": 464.4601135253906,
+      "line_box": [
+        76.55999755859375,
+        455.3160095214844,
+        287.8249206542969,
+        473.6042175292969
+      ],
+      "placement": "start",
+      "section": "Signature of Authorized Signatory",
+      "section_norm": "signature of authorized signatory",
+      "index": 1
+    },
+    {
+      "page": 34,
+      "label": "International Fund, L.P. (the “Feeder”) in effect on the Closing Date (the “Organizational Document”) is made on",
+      "label_short": "International Fund, L.P. (the “Feeder”) in effect on the Closing Date (the “Organizational Document”) is made on",
+      "label_full": "International Fund, L.P. (the “Feeder”) in effect on the Closing Date (the “Organizational Document”) is made on",
+      "label_norm": "international fund lp in effect on the closing date is made on",
+      "anchor_x": 54.0,
+      "anchor_y": 111.58377456665039,
+      "line_box": [
+        54.0,
+        106.47627258300781,
+        546.3908081054688,
+        116.69127655029297
+      ],
+      "placement": "start",
+      "section": "",
+      "section_norm": "",
+      "index": 1
+    },
+    {
+      "page": 35,
+      "label": "INVESTOR:",
+      "label_short": "INVESTOR:",
+      "label_full": "INVESTOR:",
+      "label_norm": "investor",
+      "anchor_x": 54.0,
+      "anchor_y": 160.0200958251953,
+      "line_box": [
+        54.0,
+        150.8759307861328,
+        541.599609375,
+        169.1642608642578
+      ],
+      "placement": "start",
+      "section": "INVESTOR",
+      "section_norm": "investor",
+      "index": 1
+    },
+    {
+      "page": 35,
+      "label": "_________________________________________\n__________________________________________\nName of Investor (Printed or Typed)\nDate",
+      "label_short": "_________________________________________\n__________________________________________\nName of Investor (Printed or Typed)\nDate",
+      "label_full": "_________________________________________\n__________________________________________\nName of Investor (Printed or Typed)\nDate",
+      "label_norm": "  name of investor date",
+      "anchor_x": 54.0,
+      "anchor_y": 192.1801300048828,
+      "line_box": [
+        54.0,
+        183.03602600097656,
+        541.599609375,
+        201.32423400878906
+      ],
+      "placement": "start",
+      "section": "INVESTOR",
+      "section_norm": "investor",
+      "index": 1
+    },
+    {
+      "page": 35,
+      "label": "_________________________________________\n__________________________________________\nSignature of Authorized Signatory\nSignature of Witness",
+      "label_short": "_________________________________________\n__________________________________________\nSignature of Authorized Signatory\nSignature of Witness",
+      "label_full": "_________________________________________\n__________________________________________\nSignature of Authorized Signatory\nSignature of Witness",
+      "label_norm": "  signature of authorized signatory signature of witness",
+      "anchor_x": 54.0,
+      "anchor_y": 224.34007263183594,
+      "line_box": [
+        54.0,
+        215.1958770751953,
+        541.599609375,
+        233.48426818847656
+      ],
+      "placement": "start",
+      "section": "Signature of Witness",
+      "section_norm": "signature of witness",
+      "index": 1
+    },
+    {
+      "page": 35,
+      "label": "_________________________________________\n__________________________________________\nName of Authorized Signatory (Printed or Typed)\nName of Witness (Printed or Typed)",
+      "label_short": "_________________________________________\n__________________________________________\nName of Authorized Signatory (Printed or Typed)\nName of Witness (Printed or Typed)",
+      "label_full": "_________________________________________\n__________________________________________\nName of Authorized Signatory (Printed or Typed)\nName of Witness (Printed or Typed)",
+      "label_norm": "  name of authorized signatory name of witness",
+      "anchor_x": 54.0,
+      "anchor_y": 256.5000991821289,
+      "line_box": [
+        54.0,
+        247.35597229003906,
+        287.8228454589844,
+        265.64422607421875
+      ],
+      "placement": "start",
+      "section": "Signature of Witness",
+      "section_norm": "signature of witness",
+      "index": 1
+    },
+    {
+      "page": 35,
+      "label": "_________________________________________\nTitle of Authorized Signatory",
+      "label_short": "_________________________________________\nTitle of Authorized Signatory",
+      "label_full": "_________________________________________\nTitle of Authorized Signatory",
+      "label_norm": " title of authorized signatory",
+      "anchor_x": 54.0,
+      "anchor_y": 288.6600646972656,
+      "line_box": [
+        54.0,
+        279.5158996582031,
+        287.8228454589844,
+        297.8042297363281
+      ],
+      "placement": "start",
+      "section": "Signature of Witness",
+      "section_norm": "signature of witness",
+      "index": 1
+    },
+    {
+      "page": 35,
+      "label": "_________________________________________\nRegistered Address",
+      "label_short": "_________________________________________\nRegistered Address",
+      "label_full": "_________________________________________\nRegistered Address",
+      "label_norm": " registered address",
+      "anchor_x": 54.0,
+      "anchor_y": 320.82012939453125,
+      "line_box": [
+        54.0,
+        311.676025390625,
+        287.8228454589844,
+        329.9642333984375
+      ],
+      "placement": "start",
+      "section": "Signature of Witness",
+      "section_norm": "signature of witness",
+      "index": 1
+    },
+    {
+      "page": 35,
+      "label": "By:",
+      "label_short": "By:",
+      "label_full": "By:",
+      "label_norm": "by",
+      "anchor_x": 74.0,
+      "anchor_y": 421.07997131347656,
+      "line_box": [
+        54.0,
+        411.9956970214844,
+        287.8282470703125,
+        430.16424560546875
+      ],
+      "placement": "start",
+      "section": "By: ______________________________________",
+      "section_norm": "by ",
+      "index": 1
+    },
+    {
+      "page": 35,
+      "label": "By: ______________________________________\nSignature of Authorized Signatory",
+      "label_short": "By: ______________________________________\nSignature of Authorized Signatory",
+      "label_full": "By: ______________________________________\nSignature of Authorized Signatory",
+      "label_norm": "by  signature of authorized signatory",
+      "anchor_x": 76.55999755859375,
+      "anchor_y": 453.1501159667969,
+      "line_box": [
+        76.55999755859375,
+        443.97601318359375,
+        287.8249206542969,
+        462.32421875
+      ],
+      "placement": "start",
+      "section": "Signature of Authorized Signatory",
+      "section_norm": "signature of authorized signatory",
+      "index": 1
+    },
+    {
+      "page": 35,
+      "label": "_____________________________________\nName of Authorized Signatory",
+      "label_short": "_____________________________________\nName of Authorized Signatory",
+      "label_full": "_____________________________________\nName of Authorized Signatory",
+      "label_norm": " name of authorized signatory",
+      "anchor_x": 76.55999755859375,
+      "anchor_y": 485.4601135253906,
+      "line_box": [
+        76.55999755859375,
+        476.3160095214844,
+        287.8249206542969,
+        494.6042175292969
+      ],
+      "placement": "start",
+      "section": "Signature of Authorized Signatory",
+      "section_norm": "signature of authorized signatory",
+      "index": 1
+    }
+  ]
+}
