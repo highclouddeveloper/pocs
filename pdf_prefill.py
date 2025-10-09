@@ -415,15 +415,15 @@ def _line_like_segments(
 # Checkbox square detection (new)
 # ---------------------------
 def _square_checkboxes(page: fitz.Page,
-                       min_side: float = 8.0,
-                       max_side: float = 20.0,
-                       max_aspect: float = 1.35) -> List[Dict[str, float]]:
+                       min_side: float = 6.0,
+                       max_side: float = 30.0,
+                       max_aspect: float = 1.6) -> List[Dict[str, float]]:
     """
     Return small, nearly-square rectangles likely to be checkboxes.
-    Handles PyMuPDF variations where 're' items can be:
-      - ('re', x, y, w, h, ...)
-      - ('re', (x, y, w, h), ...)
-      - ('re', fitz.Rect(...), ...)
+    Now detects:
+      - Thin/stroked rectangles ('re' items) of various encodings
+      - Unicode checkbox glyphs in text spans (e.g., '☐', '□', '◻', '■')
+      - Small squares reconstructed from 4 line segments
     """
     def _as_float_tuple(obj, n):
         try:
@@ -434,6 +434,8 @@ def _square_checkboxes(page: fitz.Page,
         return None
 
     boxes: List[Dict[str, float]] = []
+
+    # ---- A) Vector rectangles ('re') with wider thresholds ----
     for d in page.get_drawings() or []:
         for it in d.get("items", []) or []:
             if not it or it[0] != "re":
@@ -441,52 +443,130 @@ def _square_checkboxes(page: fitz.Page,
 
             x = y = w = h = None
 
-            # Case A: flat scalars ('re', x, y, w, h, ...)
+            # Case 1: flat scalars
             if len(it) >= 5:
                 try:
                     x = float(it[1]); y = float(it[2]); w = float(it[3]); h = float(it[4])
                 except Exception:
                     x = y = w = h = None
 
-            # Case B: ('re', Rect, ...)
+            # Case 2: Rect object
             if x is None and len(it) >= 2 and isinstance(it[1], fitz.Rect):
                 r: fitz.Rect = it[1]  # type: ignore
                 x, y, w, h = float(r.x0), float(r.y0), float(r.width), float(r.height)
 
-            # Case C: ('re', (x,y,w,h), ...)
+            # Case 3: 4-tuple
             if x is None and len(it) >= 2:
                 rect4 = _as_float_tuple(it[1], 4)
                 if rect4:
                     x, y, w, h = rect4
 
             if x is None or w is None or h is None:
-                continue  # unrecognized shape -> skip safely
+                continue
 
-            # small-ish and nearly square
-            side_min = min(w, h)
-            side_max = max(w, h)
+            side_min, side_max = min(w, h), max(w, h)
             if side_min <= 0:
                 continue
             aspect = side_max / side_min
             if (min_side <= side_min <= max_side) and aspect <= max_aspect:
                 boxes.append({
-                    "x0": x, "y0": y,
-                    "x1": x + w, "y1": y + h,
+                    "x0": x, "y0": y, "x1": x + w, "y1": y + h,
                     "cx": x + w / 2.0, "cy": y + h / 2.0,
                     "w": w, "h": h
                 })
 
-    # de-dupe near-identical boxes (PDFs sometimes draw twice)
+    # ---- B) Unicode glyphs that look like empty/filled squares ----
+    GLYPHS = {"☐","■","□","◻","◼","▢","❏","❐","❑"}
+    td = page.get_text("dict") or {}
+    for b in td.get("blocks", []):
+        for l in b.get("lines", []):
+            for s in l.get("spans", []):
+                t = s.get("text") or ""
+                if len(t.strip()) != 1:
+                    continue
+                ch = t.strip()
+                if ch not in GLYPHS:
+                    continue
+                x0, y0, x1, y1 = map(float, s.get("bbox", (0, 0, 0, 0)))
+                w = x1 - x0; h = y1 - y0
+                side_min, side_max = min(w, h), max(w, h)
+                if side_min <= 0:
+                    continue
+                aspect = side_max / side_min
+                if (min_side <= side_min <= max_side) and aspect <= max_aspect:
+                    # small padding to better match visual box
+                    pad = 0.4
+                    boxes.append({
+                        "x0": x0 + pad, "y0": y0 + pad, "x1": x1 - pad, "y1": y1 - pad,
+                        "cx": (x0 + x1) / 2.0, "cy": (y0 + y1) / 2.0,
+                        "w": w, "h": h
+                    })
+
+    # ---- C) Squares traced by 4 line segments (no 're') ----
+    # collect short near-horizontal and near-vertical line segments
+    hseg, vseg = [], []
+    for d in page.get_drawings() or []:
+        for it in d.get("items", []) or []:
+            if not it or it[0] != "l" or len(it) < 3:
+                continue
+            p0 = _as_float_tuple(it[1], 2)
+            p1 = _as_float_tuple(it[2], 2)
+            if not p0 or not p1:
+                continue
+            x0, y0 = p0; x1, y1 = p1
+            dx, dy = (x1 - x0), (y1 - y0)
+            L = math.hypot(dx, dy)
+            if L < min_side * 0.7 or L > max_side * 1.6:
+                continue
+            slope = abs(dy) / (abs(dx) + 1e-6)
+            if slope < 0.15:  # horizontal-ish
+                y = (y0 + y1) / 2.0
+                hseg.append((min(x0, x1), max(x0, x1), y))
+            elif slope > 6.0:  # vertical-ish
+                x = (x0 + x1) / 2.0
+                vseg.append((x, min(y0, y1), max(y0, y1)))
+
+    # try to pair them into rectangles
+    def _near(a, b, tol=1.2): return abs(a - b) <= tol
+
+    for hx0, hx1, hy in hseg:
+        w = hx1 - hx0
+        if w <= 0:
+            continue
+        for hx0b, hx1b, hyb in hseg:
+            if hyb <= hy or not _near(hx0, hx0b, 2.0) or not _near(hx1, hx1b, 2.0):
+                continue
+            h2 = hyb - hy
+            if h2 <= 0:
+                continue
+            side_min, side_max = min(w, h2), max(w, h2)
+            if not (min_side <= side_min <= max_side):
+                continue
+            aspect = side_max / (side_min + 1e-6)
+            if aspect > max_aspect:
+                continue
+            # need 2 verticals roughly at x≈hx0 and x≈hx1 spanning [hy,hyb]
+            left_ok = any(_near(x, hx0, 2.0) and (yv0 <= hy + 2.0) and (yv1 >= hyb - 2.0) for x, yv0, yv1 in vseg)
+            right_ok = any(_near(x, hx1, 2.0) and (yv0 <= hy + 2.0) and (yv1 >= hyb - 2.0) for x, yv0, yv1 in vseg)
+            if left_ok and right_ok:
+                boxes.append({
+                    "x0": hx0, "y0": hy, "x1": hx1, "y1": hyb,
+                    "cx": (hx0 + hx1) / 2.0, "cy": (hy + hyb) / 2.0,
+                    "w": w, "h": h2
+                })
+
+    # ---- de-dupe near-identical boxes ----
     boxes.sort(key=lambda b: (round(b["y0"], 1), round(b["x0"], 1)))
     dedup: List[Dict[str, float]] = []
     for b in boxes:
         if dedup:
             m = dedup[-1]
-            if (abs(b["x0"] - m["x0"]) < 1.0 and abs(b["y0"] - m["y0"]) < 1.0 and
-                abs(b["x1"] - m["x1"]) < 1.0 and abs(b["y1"] - m["y1"]) < 1.0):
+            if (abs(b["x0"] - m["x0"]) < 1.2 and abs(b["y0"] - m["y0"]) < 1.2 and
+                abs(b["x1"] - m["x1"]) < 1.2 and abs(b["y1"] - m["y1"]) < 1.2):
                 continue
         dedup.append(b)
     return dedup
+
 
 # alias to tolerate either helper name in code
 _checkbox_squares = _square_checkboxes
@@ -522,24 +602,167 @@ def build_pdf_template(pdf_path: str,
 
     # --- helpers -------------------------------------------------------------
     def _section_core(name: str) -> str:
-        """
-        Make section names comparable to lookup rows:
-        - strip trailing parentheticals: 'For All Subscribers (U.S. and Non-U.S.)' -> 'For All Subscribers'
-        - squeeze spaces
-        """
         s = (name or "").strip()
         s = re.sub(r"\s*\(.*?\)\s*$", "", s).strip()
         return s
 
     def _short_label(section_name: str, ordinal: int) -> str:
-        """Concise key like 'For All Subscribers – item 1'."""
         core = _section_core(section_name) or "Checklist"
         return f"{core} – item {ordinal}"
+
+    # robustly pick nearest label text from (score, block) tuples OR blocks/strings
+    def _pick_nearest_text(cands):
+        if not cands:
+            return ""
+        def score_key(item):
+            if isinstance(item, (tuple, list)):
+                nums = []
+                for x in item:
+                    if isinstance(x, (int, float)):
+                        nums.append(x)
+                    else:
+                        break
+                return tuple(nums) if nums else (0,)
+            return (0,)
+        cands.sort(key=score_key)
+        item = cands[0]
+        if isinstance(item, (tuple, list)):
+            for el in reversed(item):
+                if isinstance(el, dict) and "text" in el:
+                    return (el.get("text") or "").strip()
+                if isinstance(el, str):
+                    return el.strip()
+            return ""
+        if isinstance(item, dict):
+            return (item.get("text") or "").strip()
+        if isinstance(item, str):
+            return item.strip()
+        return ""
+
+    # ---------- NEW: tougher tiny-vector square detector ----------
+    # Works even when page.get_drawings() doesn't populate 'rect' and when boxes are 2–12 px.
+    def _tiny_vector_squares(page: fitz.Page,
+                             size_min: float = 2.0,
+                             size_max: float = 12.5,
+                             squareness_tol: float = 0.55):
+        boxes = []
+        try:
+            drawings = page.get_drawings() or []
+        except Exception:
+            return boxes
+
+        for g in drawings:
+            # 1) Prefer the provided rect if present
+            r = g.get("rect", None)
+
+            # 2) Otherwise build a bbox from every point in every path item
+            if r is None:
+                xs, ys = [], []
+                for item in g.get("items", []) or []:
+                    # item = (operator, points, color)
+                    pts = item[1] if len(item) > 1 else None
+                    if not pts:
+                        continue
+                    for p in pts:
+                        xs.append(float(getattr(p, "x", p[0] if isinstance(p, (tuple, list)) else 0.0)))
+                        ys.append(float(getattr(p, "y", p[1] if isinstance(p, (tuple, list)) else 0.0)))
+                if xs and ys:
+                    r = fitz.Rect(min(xs), min(ys), max(xs), max(ys))
+            if r is None:
+                continue
+
+            w = float(r.x1 - r.x0)
+            h = float(r.y1 - r.y0)
+            if w <= 0 or h <= 0:
+                continue
+
+            # 3) size & squareness gates
+            if not (size_min <= w <= size_max and size_min <= h <= size_max):
+                continue
+            ar = w / h if h else 99.0
+            if abs(ar - 1.0) > squareness_tol:
+                continue
+
+            # 4) do NOT require stroke-only (some PDFs paint tiny filled squares)
+            boxes.append({
+                "x0": float(r.x0), "y0": float(r.y0),
+                "x1": float(r.x1), "y1": float(r.y1),
+                "cx": float((r.x0 + r.x1) / 2.0),
+                "cy": float((r.y0 + r.y1) / 2.0),
+            })
+        return boxes
+
+    # Conservative line-aware detector for glyph checkboxes (single-char squares / dingbats).
+    # Loosened so the miniature glyphs on page 17 get caught.
+    BOX_CHARS = {"☐","■","□","◻","◼","▢","❏","❐","❑","❒"}
+    def _glyph_line_checkboxes(page_dict,
+                               min_side=2.4,    # smaller
+                               max_side=14.0,   # small / normal
+                               ar_low=0.40, ar_high=2.00,
+                               min_gap=1.0, max_gap=140.0):
+        boxes = []
+        for b in page_dict.get("blocks", []) or []:
+            for ln in b.get("lines", []) or []:
+                spans = (ln.get("spans") or [])
+                spans = sorted(spans, key=lambda s: (s["bbox"][0], s["bbox"][1]))
+
+                # first non-empty span on the line
+                first_i = None
+                for i, sp in enumerate(spans):
+                    if (sp.get("text") or "").strip():
+                        first_i = i
+                        break
+                if first_i is None:
+                    continue
+
+                sp = spans[first_i]
+                txt = (sp.get("text") or "").strip()
+                x0, y0, x1, y1 = sp["bbox"]
+                w = float(x1 - x0); h = float(y1 - y0)
+                if not (min_side <= w <= max_side and min_side <= h <= max_side):
+                    continue
+
+                ar = (w / h) if h else 99.0
+                fnt = (sp.get("font") or "").lower()
+                looks_like_box = (len(txt) == 1 and (txt in BOX_CHARS)) or \
+                                 ("dingbat" in fnt or "wingd" in fnt or "symbol" in fnt) or \
+                                 (len(txt) == 1 and ar_low <= ar <= ar_high)
+                if not looks_like_box:
+                    continue
+
+                # must have real text to the right
+                right_text_ok = False
+                for j in range(first_i + 1, len(spans)):
+                    t2 = (spans[j].get("text") or "").strip()
+                    if not t2:
+                        continue
+                    gap = float(spans[j]["bbox"][0]) - float(x1)
+                    if min_gap <= gap <= max_gap:
+                        right_text_ok = True
+                    break
+                if not right_text_ok:
+                    continue
+
+                boxes.append({
+                    "x0": float(x0), "y0": float(y0),
+                    "x1": float(x1), "y1": float(y1),
+                    "cx": float((x0 + x1) / 2.0),
+                    "cy": float((y0 + y1) / 2.0),
+                })
+        return boxes
+
+    def _rects_overlap(a, b, pad=1.6):
+        ax0, ay0, ax1, ay1 = a
+        bx0, by0, bx1, by1 = b
+        ax0 -= pad; ay0 -= pad; ax1 += pad; ay1 += pad
+        bx0 -= pad; by0 -= pad; bx1 += pad; by1 += pad
+        return not (ax1 < bx0 or bx1 < ax0 or ay1 < by0 or by1 < ay0)
 
     expected = expected_section_set(lookup_rows or [])
     doc = fitz.open(pdf_path)
     tpl = {"pdf": pdf_path, "fields": []}
-    underline_re = re.compile(r'_{3,}')
+
+    underline_re = re.compile(r"_{3,}")
     counters: Dict[Tuple[int, str, str], int] = {}
 
     for pno, page in enumerate(doc, start=1):
@@ -549,46 +772,69 @@ def build_pdf_template(pdf_path: str,
         blocks = _text_blocks(page)
         y_tol = 18.0
 
-        # === NEW: collect checkbox / radio widget rects right away for this page
-        try:
-            _all_widgets = list(page.widgets() or [])
-        except TypeError:
-            _all_widgets = list(page.widgets or [])
-        cb_rects: List[fitz.Rect] = []
-        for _w in _all_widgets or []:
-            try:
-                if _w.field_type in (fitz.PDF_WIDGET_TYPE_CHECKBOX, fitz.PDF_WIDGET_TYPE_RADIOBUTTON):
-                    cb_rects.append(fitz.Rect(_w.rect))
-            except Exception:
-                # best-effort fallback by name
-                nm = (getattr(_w, "field_name", "") or "").lower()
-                if "check" in nm or "box" in nm or "radio" in nm:
-                    cb_rects.append(fitz.Rect(_w.rect))
+        # ---------- 1) TYPED UNDERSCORES (line-aware) ----------
+        d = page.get_text("dict")
+        lines_on_page: List[Dict[str, Any]] = []
+        for b in d.get("blocks", []):
+            for ln in b.get("lines", []):
+                spans = ln.get("spans", []) or []
+                texts = []
+                x0 = None; x1 = None
+                y_mids = []
+                for sp in spans:
+                    t = (sp.get("text") or "").replace("\xa0", " ").strip()
+                    if not t:
+                        continue
+                    texts.append(t)
+                    x0 = sp["bbox"][0] if x0 is None else min(x0, sp["bbox"][0])
+                    x1 = sp["bbox"][2] if x1 is None else max(x1, sp["bbox"][2])
+                    y_mids.append((sp["bbox"][1] + sp["bbox"][3]) / 2.0)
+                if texts:
+                    lines_on_page.append({
+                        "text": " ".join(texts),
+                        "x0": float(x0 or 0.0),
+                        "x1": float(x1 or 0.0),
+                        "y_mid": float(sum(y_mids) / len(y_mids) if y_mids else 0.0),
+                    })
 
-        # ---------- 1) typed underscores ----------
-        for i, b in enumerate(blocks):
-            txt = b["text"]
-            if not txt:
+        for li, ln in enumerate(lines_on_page):
+            txt = ln["text"]
+            if not txt or not underline_re.search(txt):
                 continue
-            m = underline_re.search(txt)
-            if not m:
-                continue
 
-            left_txt = txt.split('_')[0] if '_' in txt else ""
-            label_text = (left_txt or _nearest_label_for_block(b, blocks) or f"unknown_{pno}_{i}").strip()
+            y_window = 2.0 * y_tol
+            x_band_pad = 28.0
+            cands = []
+            for lj, other in enumerate(lines_on_page):
+                if lj == li:
+                    continue
+                t2 = other["text"]
+                if not t2 or underline_re.search(t2):
+                    continue
+                dy = abs(other["y_mid"] - ln["y_mid"])
+                if dy > y_window:
+                    continue
+                start_x = ln["x0"]
+                if other["x1"] >= start_x - x_band_pad:
+                    cands.append((dy, max(0.0, abs(other["x0"] - start_x)), other))
+            label_text = _pick_nearest_text(cands) if cands else ""
+            if not label_text:
+                near_blocks = [blk for blk in blocks
+                               if blk["text"]
+                               and abs(((blk["y0"] + blk["y1"]) / 2.0) - ln["y_mid"]) < (1.6 * y_tol)
+                               and blk["x1"] <= ln["x0"] + 6]
+                near_blocks.sort(key=lambda blk: ln["x0"] - blk["x1"])
+                label_text = (near_blocks[0]["text"].strip() if near_blocks else "Field")
 
-            insert_x   = (b["x0"] + m.start() * 5.0) if m else (b["x1"] + 10.0)
-            baseline_y = (b["y0"] + b["y1"]) / 2.0
-            y_mid      = baseline_y
-
-            section_name, section_norm = nearest_section_name(sections, y_mid)
+            insert_x   = float(ln["x0"] + 6.0)
+            baseline_y = float(ln["y_mid"])
+            section_name, section_norm = nearest_section_name(sections, baseline_y)
             label_norm = alias_normal(_normalize(label_text))
-
             key = (pno, section_norm, label_norm)
             counters[key] = counters.get(key, 0) + 1
             idx = counters[key]
 
-            entry = {
+            tpl["fields"].append({
                 "page": pno,
                 "label": label_text,
                 "label_short": label_text,
@@ -596,17 +842,16 @@ def build_pdf_template(pdf_path: str,
                 "label_norm": label_norm,
                 "anchor_x": insert_x,
                 "anchor_y": baseline_y,
-                "line_box": [b["x0"], b["y0"], b["x1"], b["y1"]],
+                "line_box": [ln["x0"], ln["y_mid"], ln["x1"], ln["y_mid"]],
                 "placement": "start",
                 "section": section_name,
                 "section_norm": section_norm,
                 "index": idx,
-            }
-            tpl["fields"].append(entry)
+            })
             if dry_run:
-                print(f"   • field[{idx}] (typed underscores) → '{entry['label']}' @y≈{y_mid:.1f} (sec: {section_name})")
+                print(f"   • field[{idx}] (typed underscores, line) → '{label_text}' @y≈{baseline_y:.1f} (sec: {section_name})")
 
-        # ---------- 2) drawn underlines ----------
+        # ---------- 2) DRAWN UNDERLINES ----------
         segs = _line_like_segments(page)
         for j, seg in enumerate(segs):
             same_row = [blk for blk in blocks
@@ -627,14 +872,13 @@ def build_pdf_template(pdf_path: str,
 
             insert_x = seg["x0"] + 6
             y_mid    = seg["y0"]
-
             section_name, section_norm = nearest_section_name(sections, y_mid)
             label_norm = alias_normal(_normalize(label_text))
             key = (pno, section_norm, label_norm)
             counters[key] = counters.get(key, 0) + 1
             idx = counters[key]
 
-            entry = {
+            tpl["fields"].append({
                 "page": pno,
                 "label": label_text.strip(),
                 "label_short": label_text.strip(),
@@ -647,68 +891,79 @@ def build_pdf_template(pdf_path: str,
                 "section": section_name,
                 "section_norm": section_norm,
                 "index": idx,
-            }
-            tpl["fields"].append(entry)
+            })
             if dry_run:
-                print(f"   • field[{idx}] (drawn line)        → '{entry['label']}' @y≈{y_mid:.1f} (sec: {section_name})")
+                print(f"   • field[{idx}] (drawn line) → '{label_text.strip()}' @y≈{y_mid:.1f} (sec: {section_name})")
 
-        # ---------- 3) drawn square checkboxes (vectors) ----------
+        # ---------- 3) CHECKBOXES ----------
+        # (a) your existing vector detector (if present elsewhere)
         vector_boxes = _square_checkboxes(page) if '_square_checkboxes' in globals() else []
+        # (b) NEW tiny vectors
+        tiny_vector_boxes = _tiny_vector_squares(page)
+        # (c) NEW glyph squares
+        glyph_boxes = _glyph_line_checkboxes(page.get_text("dict"))
 
-        # === NEW: drop vector boxes that overlap real checkbox / radio widgets
-        pruned_vector_boxes = []
-        for bx in vector_boxes:
-            B = fitz.Rect(bx["x0"], bx["y0"], bx["x1"], bx["y1"])
-            if any(B.intersects(R) for R in cb_rects):
-                continue
-            pruned_vector_boxes.append(bx)
+        # merge + de-dup (prefer vector > tiny-vector > glyph)
+        merged_boxes = []
+        def _add_if_not_overlapping(bx):
+            grect = (bx["x0"], bx["y0"], bx["x1"], bx["y1"])
+            for mb in merged_boxes:
+                if _rects_overlap((mb["x0"], mb["y0"], mb["x1"], mb["y1"]), grect, pad=1.6):
+                    return
+            merged_boxes.append(bx)
+        for src in (vector_boxes, tiny_vector_boxes, glyph_boxes):
+            for b in src: _add_if_not_overlapping(b)
 
-        # (loop uses pruned_vector_boxes)
-        for k, bx in enumerate(pruned_vector_boxes, start=1):
+        # Also include AcroForm widgets
+        try:
+            widgets = list(page.widgets() or [])
+        except TypeError:
+            widgets = list(page.widgets or [])
+        cb_widgets, text_widgets = [], []
+        for w in widgets:
+            try:
+                if w.field_type in (fitz.PDF_WIDGET_TYPE_CHECKBOX, fitz.PDF_WIDGET_TYPE_RADIOBUTTON):
+                    cb_widgets.append(w)
+                elif w.field_type == fitz.PDF_WIDGET_TYPE_TEXT:
+                    text_widgets.append(w)
+            except Exception:
+                nm = (w.field_name or "").lower()
+                if "check" in nm or "box" in nm or "radio" in nm:
+                    cb_widgets.append(w)
 
+        # emit merged drawn/glyph boxes
+        for k, bx in enumerate(merged_boxes, start=1):
             cx = bx.get("cx", (bx["x0"] + bx["x1"]) / 2.0)
             cy = bx.get("cy", (bx["y0"] + bx["y1"]) / 2.0)
 
             right_cands = [
-                (
-                    abs(((blk["y0"] + blk["y1"]) / 2.0) - cy) + max(0.0, blk["x0"] - bx["x1"]),
-                    blk
-                )
+                (abs(((blk["y0"] + blk["y1"]) / 2.0) - cy) + max(0.0, blk["x0"] - bx["x1"]), blk)
                 for blk in blocks
                 if blk["text"] and abs(((blk["y0"] + blk["y1"]) / 2.0) - cy) < y_tol and blk["x0"] >= bx["x1"] - 2
             ]
             if right_cands:
-                right_cands.sort(key=lambda t: t[0])
-                bullet_text = right_cands[0][1]["text"].strip()
+                bullet_text = _pick_nearest_text(right_cands)
             else:
                 left_cands = [
-                    (
-                        abs(((blk["y0"] + blk["y1"]) / 2.0) - cy) + max(0.0, bx["x0"] - blk["x1"]),
-                        blk
-                    )
+                    (abs(((blk["y0"] + blk["y1"]) / 2.0) - cy) + max(0.0, bx["x0"] - blk["x1"]), blk)
                     for blk in blocks
                     if blk["text"] and abs(((blk["y0"] + blk["y1"]) / 2.0) - cy) < y_tol and blk["x1"] <= bx["x0"] + 2
                 ]
-                if left_cands:
-                    left_cands.sort(key=lambda t: t[0])
-                    bullet_text = left_cands[0][1]["text"].strip()
-                else:
-                    bullet_text = ""
+                bullet_text = _pick_nearest_text(left_cands)
 
             section_name, section_norm = nearest_section_name(sections, cy)
-
-            short_key  = _short_label(section_name, k)          # e.g., "For All Subscribers – item 1"
+            short_key  = _short_label(section_name, k)
             pretty     = f"{short_key}: {bullet_text}".strip(": ")
             label_norm = alias_normal(_normalize(pretty))
             key = (pno, section_norm, label_norm)
             counters[key] = counters.get(key, 0) + 1
             idx = counters[key]
 
-            entry = {
+            tpl["fields"].append({
                 "page": pno,
-                "label": pretty,                   # readable label
-                "label_short": short_key,          # concise canonical key for lookup
-                "label_full": bullet_text,         # raw bullet text
+                "label": pretty,
+                "label_short": short_key,
+                "label_full": bullet_text,
                 "label_norm": label_norm,
                 "anchor_x": cx,
                 "anchor_y": cy,
@@ -718,27 +973,11 @@ def build_pdf_template(pdf_path: str,
                 "section": section_name,
                 "section_norm": section_norm,
                 "index": idx,
-            }
-            tpl["fields"].append(entry)
+            })
             if dry_run:
-                print(f"   • checkbox[{idx}] (vector)         → '{entry['label']}' "
-                      f"[short='{entry['label_short']}'] @y≈{cy:.1f} (sec: {section_name})")
+                print(f"   • checkbox[{idx}] (drawn/glyph) → '{pretty}' @y≈{cy:.1f} (sec: {section_name})")
 
-        # ---------- 4) REAL AcroForm checkbox/radio widgets ----------
-        try:
-            widgets = list(page.widgets() or [])
-        except TypeError:
-            widgets = list(page.widgets or [])
-        cb_widgets = []
-        for w in widgets:
-            try:
-                if w.field_type in (fitz.PDF_WIDGET_TYPE_CHECKBOX, fitz.PDF_WIDGET_TYPE_RADIOBUTTON):
-                    cb_widgets.append(w)
-            except Exception:
-                nm = (w.field_name or "").lower()
-                if "check" in nm or "box" in nm or "radio" in nm:
-                    cb_widgets.append(w)
-
+        # emit AcroForm check/radio widgets
         cb_widgets.sort(key=lambda ww: (round(ww.rect.y0, 2), round(ww.rect.x0, 2)))
         for m, w in enumerate(cb_widgets, start=1):
             r  = w.rect
@@ -746,47 +985,32 @@ def build_pdf_template(pdf_path: str,
             cy = (r.y0 + r.y1) / 2.0
 
             right_cands = [
-                (
-                    abs(((blk["y0"] + blk["y1"]) / 2.0) - cy) + max(0.0, blk["x0"] - r.x1),
-                    blk
-                )
+                (abs(((blk["y0"] + blk["y1"]) / 2.0) - cy) + max(0.0, blk["x0"] - r.x1), blk)
                 for blk in blocks
-                if blk["text"]
-                and abs(((blk["y0"] + blk["y1"]) / 2.0) - cy) < y_tol
-                and blk["x0"] >= r.x1 - 2
+                if blk["text"] and abs(((blk["y0"] + blk["y1"]) / 2.0) - cy) < y_tol and blk["x0"] >= r.x1 - 2
             ]
             if right_cands:
-                right_cands.sort(key=lambda t: t[0])
-                bullet_text = right_cands[0][1]["text"].strip()
+                bullet_text = _pick_nearest_text(right_cands)
             else:
                 left_cands = [
-                    (
-                        abs(((blk["y0"] + blk["y1"]) / 2.0) - cy) + max(0.0, r.x0 - blk["x1"]),
-                        blk
-                    )
+                    (abs(((blk["y0"] + blk["y1"]) / 2.0) - cy) + max(0.0, r.x0 - blk["x1"]), blk)
                     for blk in blocks
-                    if blk["text"]
-                    and abs(((blk["y0"] + blk["y1"]) / 2.0) - cy) < y_tol
-                    and blk["x1"] <= r.x0 + 2
+                    if blk["text"] and abs(((blk["y0"] + blk["y1"]) / 2.0) - cy) < y_tol and blk["x1"] <= r.x0 + 2
                 ]
-                if left_cands:
-                    left_cands.sort(key=lambda t: t[0])
-                    bullet_text = left_cands[0][1]["text"].strip()
-                else:
-                    bullet_text = ""
+                bullet_text = _pick_nearest_text(left_cands)
 
             section_name, section_norm = nearest_section_name(sections, cy)
             short_key  = _short_label(section_name, m)
             pretty     = f"{short_key}: {bullet_text}".strip(": ")
-            label_norm = alias_normal(_normalize(pretty))
+            label_norm = alias_normal(_normalize(prety))
             key = (pno, section_norm, label_norm)
             counters[key] = counters.get(key, 0) + 1
             idx = counters[key]
 
-            entry = {
+            tpl["fields"].append({
                 "page": pno,
                 "label": pretty,
-                "label_short": short_key,          # concise canonical key
+                "label_short": short_key,
                 "label_full": bullet_text,
                 "label_norm": label_norm,
                 "anchor_x": cx,
@@ -797,89 +1021,76 @@ def build_pdf_template(pdf_path: str,
                 "section": section_name,
                 "section_norm": section_norm,
                 "index": idx,
-            }
-            tpl["fields"].append(entry)
+            })
             if dry_run:
-                print(
-                    f"   • checkbox[{idx}] (AcroForm)       → '{entry['label']}' "
-                    f"[short='{entry['label_short']}'] @y≈{cy:.1f} (sec: {section_name})"
-                )
+                print(f"   • checkbox[{idx}] (AcroForm) → '{pretty}' @y≈{cy:.1f} (sec: {section_name})")
 
-        # ---------- 5) REAL AcroForm TEXT widgets (adds things like "Subscriber's Name") ----------
-        try:
-            widgets_all = list(page.widgets() or [])
-        except TypeError:
-            widgets_all = list(page.widgets or [])
-
-        text_widgets = []
-        for w in widgets_all:
-            try:
-                if w.field_type == fitz.PDF_WIDGET_TYPE_TEXT:
-                    text_widgets.append(w)
-            except Exception:
-                # heuristic fallback by name
-                nm = (w.field_name or "").lower()
-                if any(k in nm for k in ["text", "name", "address", "city", "state", "zip"]):
-                    text_widgets.append(w)
+        # ---------- 4.5) AcroForm TEXT widgets (unchanged) ----------
+        def _rects_overlap_field_line(r):
+            for fd in tpl["fields"]:
+                if fd["page"] != pno:
+                    continue
+                if fd.get("placement") not in ("start", "center"):
+                    continue
+                lb = fd.get("line_box")
+                if not lb:
+                    continue
+                if _rects_overlap((float(lb[0]), float(lb[1]) - 2, float(lb[2]), float(lb[3]) + 2),
+                                  (float(r.x0), float(r.y0), float(r.x1), float(r.y1)), pad=0.0):
+                    return True
+            return False
 
         text_widgets.sort(key=lambda ww: (round(ww.rect.y0, 2), round(ww.rect.x0, 2)))
-
-        for t_idx, w in enumerate(text_widgets, start=1):
+        for n, w in enumerate(text_widgets, start=1):
             r = w.rect
-            y_mid = (r.y0 + r.y1) / 2.0
+            if _rects_overlap_field_line(r):
+                continue
+            cx = (r.x0 + r.x1) / 2.0
+            cy = (r.y0 + r.y1) / 2.0
 
-            same_row = [blk for blk in blocks
-                        if blk["text"]
-                        and abs(((blk["y0"] + blk["y1"]) / 2.0) - y_mid) < y_tol
-                        and blk["x1"] <= r.x0 + 4]
+            same_row = [
+                (abs(((blk["y0"] + blk["y1"]) / 2.0) - cy) + max(0.0, r.x0 - blk["x1"]), blk)
+                for blk in blocks
+                if blk["text"] and abs(((blk["y0"] + blk["y1"]) / 2.0) - cy) < y_tol and blk["x1"] <= r.x0 + 6
+            ]
             if same_row:
-                same_row.sort(key=lambda blk: r.x0 - blk["x1"])
-                label_text = same_row[0]["text"]
+                label_text = _pick_nearest_text(same_row)
             else:
-                above = [blk for blk in blocks
-                         if blk["text"]
-                         and (0 <= (y_mid - blk["y1"]) < 2 * y_tol)
-                         and blk["x0"] <= r.x0]
-                if above:
-                    above.sort(key=lambda blk: (y_mid - blk["y1"], r.x0 - blk["x1"]))
-                    label_text = above[0]["text"]
-                else:
-                    label_text = (w.field_name or f"acro_text_{pno}_{t_idx}")
+                above = [
+                    ((cy - blk["y1"]), blk)
+                    for blk in blocks
+                    if blk["text"] and (0 <= (cy - blk["y1"]) < 2 * y_tol) and blk["x0"] <= r.x0
+                ]
+                label_text = _pick_nearest_text(above) or (w.field_name or "Field").strip()
 
-            section_name, section_norm = nearest_section_name(sections, y_mid)
+            section_name, section_norm = nearest_section_name(sections, cy)
             label_norm = alias_normal(_normalize(label_text))
-
             key = (pno, section_norm, label_norm)
             counters[key] = counters.get(key, 0) + 1
             idx = counters[key]
-
-            entry = {
+            tpl["fields"].append({
                 "page": pno,
-                "label": label_text.strip(),
-                "label_short": label_text.strip(),
-                "label_full": label_text.strip(),
+                "label": label_text,
+                "label_short": label_text,
+                "label_full": label_text,
                 "label_norm": label_norm,
-                "anchor_x": float((r.x0 + r.x1) / 2.0),
-                "anchor_y": float((r.y0 + r.y1) / 2.0),
+                "anchor_x": cx,
+                "anchor_y": cy,
                 "box_rect": [float(r.x0), float(r.y0), float(r.x1), float(r.y1)],
                 "line_box": [float(r.x0), float(r.y0), float(r.x1), float(r.y1)],
                 "placement": "acro_text",
                 "section": section_name,
                 "section_norm": section_norm,
                 "index": idx,
-            }
-            tpl["fields"].append(entry)
+            })
             if dry_run:
-                print(f"   • field[{idx}] (AcroForm text)     → '{entry['label']}' @y≈{y_mid:.1f} (sec: {section_name})")
-
-    # <<< end for pno, page loop
+                print(f"   • field[{idx}] (AcroForm TEXT) → '{label_text}' @y≈{cy:.1f} (sec: {section_name})")
 
     with open(template_json, "w", encoding="utf-8") as f:
         json.dump(tpl, f, indent=2, ensure_ascii=False)
     print(f"🧩 Template saved to {template_json} with {len(tpl['fields'])} fields.")
     doc.close()
     return template_json
-
 
 
 
@@ -1349,7 +1560,6 @@ def fill_from_template(pdf_path: str,
         cands = [r for r in lookup_rows if r.get("field_norm") == norm]
         if not cands:
             return None
-        # prefer section, then page
         if section_norm:
             sec = [r for r in cands if r.get("section_norm") == section_norm]
             if sec:
@@ -1358,7 +1568,6 @@ def fill_from_template(pdf_path: str,
             pg = [r for r in cands if r.get("Page") is not None and int(r["Page"]) == int(page_no)]
             if pg:
                 cands = pg
-        # if any candidate rows specify Index, require exact Index
         with_idx = [r for r in cands if r.get("Index") is not None]
         if with_idx:
             exact = [r for r in with_idx if int(r["Index"]) == int(occurrence_index)]
@@ -1366,7 +1575,6 @@ def fill_from_template(pdf_path: str,
                 cands = exact
             else:
                 return None
-        # simple tie-breaker: prefer those that match both page & section
         def _score(r):
             s = 0
             if r.get("section_norm") == section_norm and section_norm:
@@ -1384,6 +1592,9 @@ def fill_from_template(pdf_path: str,
     occ_counters: Dict[Tuple[int, str, str], int] = {}
     used_indices: Dict[Tuple[int, str, str], Set[int]] = {}
 
+    # >>> NEW: Prevent duplicate writes of same logical occurrence
+    written_once: Set[Tuple[int, str, str, int]] = set()
+
     for fdef in tpl.get("fields", []):
         label = fdef.get("label", "") or ""
         if not label or label.startswith("unknown_"):
@@ -1397,10 +1608,9 @@ def fill_from_template(pdf_path: str,
         # ---- Phase 1: discover bucket (ignore Index) ----
         raw_label   = label
         label_short = fdef.get("label_short", "")
-        # For CHECKBOXES: only use label_short to avoid “item 1” vs “item 2” fuzzy slips
         if placement == "checkbox" and label_short:
             search_keys = [label_short]
-            fuzzy_for_this = 0.999  # effectively disables fuzzy
+            fuzzy_for_this = 0.999
         else:
             search_keys: List[str] = []
             if label_short:
@@ -1451,12 +1661,17 @@ def fill_from_template(pdf_path: str,
             occ_counters[bucket_key] = occ_counters.get(bucket_key, 0) + 1
             idx = occ_counters[bucket_key]
 
+        # >>> NEW: if we’ve already written this logical occurrence, skip now
+        logical_key = (page_idx + 1, effective_section, field_norm, idx)
+        if logical_key in written_once:
+            if dry_run:
+                print(f"[DRY] p{page_idx+1} '{label}' (idx={idx}) → skip (already written this occurrence)")
+            continue
+
         # ---- Phase 2: get value
         if placement == "checkbox" and label_short:
-            # STRICT path: exact match on label_short
             value = _strict_checkbox_value(label_short, page_idx + 1, effective_section, idx)
         else:
-            # normal path
             value = resolve_value(
                 lookup_rows, picked_key or label,
                 page=page_idx + 1,
@@ -1464,11 +1679,9 @@ def fill_from_template(pdf_path: str,
                 occurrence_index=idx,
                 min_field_fuzzy=fuzzy_for_this,
                 strict_index=True,
-                require_page_match=True,          # NEW: do not cross-fill from other pages
-                require_section_match=True        # NEW: do not cross-fill from other sections
+                require_page_match=True,
+                require_section_match=True
             )
-
-
         if value is None:
             if dry_run:
                 print(f"[DRY] p{page_idx+1} '{label}' (idx={idx}) → no value")
@@ -1488,13 +1701,11 @@ def fill_from_template(pdf_path: str,
             rk = _rect_key(r.x0, r.y0, r.x1, r.y1)
             pgset = ticked_regions.setdefault(page_idx, set())
             if rk in pgset:
-                # already handled this rectangle
                 continue
 
-            # If yes/no tokens are around this rectangle, ensure we only tick the *matching* one.
             rcx = (r.x0 + r.x1) / 2.0
             rcy = (r.y0 + r.y1) / 2.0
-            opt_here = _nearby_yes_no_option(page, rcx, rcy)  # 'yes'/'no'/None
+            opt_here = _nearby_yes_no_option(page, rcx, rcy)
             if opt_here in {"yes", "no"}:
                 if (yn and opt_here != "yes") or ((yn is False) and opt_here != "no"):
                     if dry_run:
@@ -1504,28 +1715,26 @@ def fill_from_template(pdf_path: str,
             if dry_run:
                 print(f"[DRY] p{page_idx+1} checkbox '{label_short or label}' -> TICK @ ({rcx:.1f},{rcy:.1f})")
                 pgset.add(rk)
+                written_once.add(logical_key)   # <<< record once in dry mode too
                 continue
 
-            # prefer widget
             w = _find_any_widget_overlapping(page, (r.x0, r.y0, r.x1, r.y1))
             if w is not None:
                 try:
                     if getattr(w, "field_value", "") != "Yes" and yn is True:
                         w.field_value = "Yes"; w.update()
-                    elif getattr(w, "field_value", "") == "Yes" and yn is False:
-                        # If needed, you could set to "Off". We leave it as-is to avoid surprises.
-                        pass
                     filled += 1
                     pgset.add(rk)
+                    written_once.add(logical_key)   # <<< prevent future duplicates
                     continue
                 except Exception:
                     pass
 
-            # else draw centered X if truthy
             if yn is True:
                 _draw_center_X(page, r)
                 filled += 1
                 pgset.add(rk)
+                written_once.add(logical_key)       # <<< prevent future duplicates
             continue
 
         # =========================
@@ -1546,10 +1755,12 @@ def fill_from_template(pdf_path: str,
 
         if dry_run:
             print(f"[DRY] p{page_idx+1} '{label}' (idx={idx}) → '{value}' at ({draw_x:.1f},{draw_y:.1f})")
+            written_once.add(logical_key)           # <<< record once
         else:
             rect = fitz.Rect(draw_x, draw_y - font_size, draw_x + 1200, draw_y + 2 * font_size)
             page.insert_textbox(rect, str(value), fontsize=font_size, align=fitz.TEXT_ALIGN_LEFT)
             filled += 1
+            written_once.add(logical_key)           # <<< record once
 
     if dry_run:
         print("Dry-run complete (overlay). No file written.")
@@ -1565,6 +1776,7 @@ def fill_from_template(pdf_path: str,
     doc.close()
     print(f"🎉 Overlay filled PDF saved to {out_pdf} (values placed: {filled})")
     return filled
+
 
 
 # ---------------------------
