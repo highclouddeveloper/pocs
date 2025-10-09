@@ -1002,7 +1002,7 @@ def build_pdf_template(pdf_path: str,
             section_name, section_norm = nearest_section_name(sections, cy)
             short_key  = _short_label(section_name, m)
             pretty     = f"{short_key}: {bullet_text}".strip(": ")
-            label_norm = alias_normal(_normalize(prety))
+            label_norm = alias_normal(_normalize(pretty))
             key = (pno, section_norm, label_norm)
             counters[key] = counters.get(key, 0) + 1
             idx = counters[key]
