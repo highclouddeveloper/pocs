@@ -313,6 +313,8 @@ def _nearby_yes_no_option(page: fitz.Page, x: float, y: float) -> Optional[str]:
                     nearest = token
     return nearest
 
+
+
 # ---------------------------
 # Drawn underline detection (for non-form PDFs)
 # ---------------------------
@@ -567,6 +569,74 @@ def _square_checkboxes(page: fitz.Page,
         dedup.append(b)
     return dedup
 
+def _dropdown_like_boxes(
+    page: fitz.Page,
+    min_w: float = 90.0,
+    max_w: float = 1600.0,
+    min_h: float = 10.0,
+    max_h: float = 38.0,
+    min_aspect: float = 4.0,
+):
+    """
+    Detect long, shallow rectangles that look like drawn dropdowns (combo boxes)
+    rather than real AcroForm CHOICE widgets.
+
+    Heuristics:
+      - vector rectangle ('re') with width >> height (aspect >= min_aspect)
+      - height roughly in a typical text-field range
+    """
+    def _rect_ok(w, h):
+        if w <= 0 or h <= 0:
+            return False
+        if not (min_w <= w <= max_w and min_h <= h <= max_h):
+            return False
+        return (w / h) >= min_aspect
+
+    dropdowns = []
+
+    try:
+        for dr in page.get_drawings() or []:
+            for it in dr.get("items", []) or []:
+                if not it or it[0] != "re":
+                    continue
+
+                # Support ('re', fitz.Rect) OR ('re', x, y, w, h) OR ('re', (x,y,w,h))
+                x = y = w = h = None
+                try:
+                    if len(it) >= 2 and isinstance(it[1], fitz.Rect):
+                        r: fitz.Rect = it[1]  # type: ignore
+                        x, y, w, h = float(r.x0), float(r.y0), float(r.width), float(r.height)
+                    elif len(it) >= 5:
+                        x, y, w, h = float(it[1]), float(it[2]), float(it[3]), float(it[4])
+                    elif len(it) >= 2 and isinstance(it[1], (list, tuple)) and len(it[1]) >= 4:
+                        x, y, w, h = [float(v) for v in it[1][:4]]
+                except Exception:
+                    x = y = w = h = None
+
+                if x is None or w is None or h is None:
+                    continue
+
+                if _rect_ok(w, h):
+                    dropdowns.append({
+                        "x0": x, "y0": y, "x1": x + w, "y1": y + h,
+                        "cx": x + w / 2.0, "cy": y + h / 2.0,
+                        "w": w, "h": h
+                    })
+    except Exception:
+        pass
+
+    # De-dupe near-identical rects
+    dropdowns.sort(key=lambda b: (round(b["y0"], 1), round(b["x0"], 1)))
+    dedup = []
+    for b in dropdowns:
+        if dedup:
+            m = dedup[-1]
+            if (abs(b["x0"] - m["x0"]) < 1.2 and abs(b["y0"] - m["y0"]) < 1.2 and
+                abs(b["x1"] - m["x1"]) < 1.2 and abs(b["y1"] - m["y1"]) < 1.2):
+                continue
+        dedup.append(b)
+    return dedup
+
 
 # alias to tolerate either helper name in code
 _checkbox_squares = _square_checkboxes
@@ -594,7 +664,7 @@ def _nearest_label_for_block(ul_block: Dict[str, Any], neighbor_blocks: List[Dic
         return cands[0]["text"]
     return ""
 
-def build_pdf_template(pdf_path: str,
+def build_pdf_template(pdf_path: str, 
                        template_json: str = "template_fields.json",
                        lookup_rows: Optional[List[Dict[str, Any]]] = None,
                        dry_run: bool = False):
@@ -639,8 +709,208 @@ def build_pdf_template(pdf_path: str,
             return item.strip()
         return ""
 
-    # ---------- NEW: tougher tiny-vector square detector ----------
-    # Works even when page.get_drawings() doesn't populate 'rect' and when boxes are 2–12 px.
+    def _right_zone_has_dropdown_affordance(page: fitz.Page, rect: fitz.Rect, arrow_zone_w: float = 30.0) -> bool:
+        """
+        Return True if the right side of a long underline/box looks like a dropdown:
+          - arrow glyph (▼ ▾ ▿ ▸ ▹ ▻ ⯆ ⯈),
+          - small 'V' made of two slanted vector lines,
+          - or a small image/button at the right end.
+        """
+        rz = fitz.Rect(float(rect.x1 - arrow_zone_w), float(rect.y0 - 6), float(rect.x1 + 6), float(rect.y1 + 6))
+
+        # 1) Arrow glyphs in text
+        ARROWS = {"▼", "▾", "▿", "▸", "▹", "▻", "⯆", "⯈"}
+        td = page.get_text("dict") or {}
+        for b in td.get("blocks", []) or []:
+            for ln in b.get("lines", []) or []:
+                for sp in ln.get("spans", []) or []:
+                    t = (sp.get("text") or "").strip()
+                    if len(t) == 1 and t in ARROWS:
+                        x0, y0, x1, y1 = map(float, sp.get("bbox", (0, 0, 0, 0)))
+                        if fitz.Rect(x0, y0, x1, y1).intersects(rz):
+                            return True
+
+        # 2) Small image/bitmap at right end
+        try:
+            for (xref, *_rest) in page.get_images(full=True) or []:
+                for r in page.get_image_rects(xref) or []:
+                    if r.intersects(rz):
+                        if r.width <= 24 and (r.height <= (rect.height * 1.6)):
+                            return True
+        except Exception:
+            pass
+
+        # 3) Two slanted vector lines that meet (a small chevron)
+        lines = []
+        try:
+            for g in page.get_drawings() or []:
+                for it in g.get("items", []) or []:
+                    if not it or it[0] != "l" or len(it) < 3:
+                        continue
+                    p0, p1 = it[1], it[2]
+                    x0 = float(getattr(p0, "x", p0[0] if isinstance(p0, (list, tuple)) else 0.0))
+                    y0 = float(getattr(p0, "y", p0[1] if isinstance(p0, (list, tuple)) else 0.0))
+                    x1 = float(getattr(p1, "x", p1[0] if isinstance(p1, (list, tuple)) else 0.0))
+                    y1 = float(getattr(p1, "y", p1[1] if isinstance(p1, (list, tuple)) else 0.0))
+                    segrect = fitz.Rect(min(x0, x1), min(y0, y1), max(x0, x1), max(y0, y1))
+                    if not segrect.intersects(rz):
+                        continue
+                    dx, dy = (x1 - x0), (y1 - y0)
+                    if min(abs(dx), abs(dy)) < 1.0:
+                        continue  # ignore near-horizontal/vertical
+                    slope = abs(dy / (dx + 1e-6))
+                    if 0.3 <= slope <= 3.5:
+                        lines.append((x0, y0, x1, y1))
+        except Exception:
+            pass
+
+        # Look for a 'V' made by two lines sharing an endpoint and slanting opposite
+        for i in range(len(lines)):
+            x0a, y0a, x1a, y1a = lines[i]
+            for j in range(i + 1, len(lines)):
+                x0b, y0b, x1b, y1b = lines[j]
+                ptsA = [(x0a, y0a), (x1a, y1a)]
+                ptsB = [(x0b, y0b), (x1b, y1b)]
+                share = any(abs(ax - bx) <= 3.0 and abs(ay - by) <= 3.0 for ax, ay in ptsA for bx, by in ptsB)
+                if not share:
+                    continue
+                s1 = (y1a - y0a) * (x1a - x0a)
+                s2 = (y1b - y0b) * (x1b - x0b)
+                if s1 != 0 and s2 != 0 and ((s1 > 0 and s2 < 0) or (s1 < 0 and s2 > 0)):
+                    return True
+
+        return False
+
+
+    # ---------- drawn dropdowns (long rect + right-side arrow/chevron) ----------
+    def _drawn_dropdowns(page: fitz.Page,
+                         min_width: float = 80.0,
+                         min_aspect: float = 3.0,
+                         min_h: float = 10.0,
+                         max_h: float = 30.0,
+                         arrow_zone_w: float = 28.0) -> List[Dict[str, float]]:
+        """
+        Heuristic detector for non-AcroForm dropdowns:
+          • a long, short rectangle (outline of the field), and
+          • a small arrow/chevron at the right side (glyph or 2 slanted lines).
+        Returns list of dicts with x0,y0,x1,y1,cx,cy.
+        """
+        found: List[Dict[str, float]] = []
+
+        # Collect candidate long rectangles
+        rects: List[fitz.Rect] = []
+        try:
+            for g in page.get_drawings() or []:
+                for it in g.get("items", []) or []:
+                    if not it or it[0] != "re":
+                        continue
+                    # Support ('re', x, y, w, h, ...) and ('re', (x,y,w,h), ...)
+                    x = y = w = h = None
+                    try:
+                        if len(it) >= 5:
+                            x = float(it[1]); y = float(it[2]); w = float(it[3]); h = float(it[4])
+                        elif len(it) >= 2 and isinstance(it[1], fitz.Rect):
+                            r = it[1]; x, y, w, h = r.x0, r.y0, r.width, r.height
+                        elif len(it) >= 2 and isinstance(it[1], (list, tuple)) and len(it[1]) >= 4:
+                            x, y, w, h = map(float, it[1][:4])
+                    except Exception:
+                        x = y = w = h = None
+
+                    if x is None or w is None or h is None:
+                        continue
+                    if w < min_width or h < min_h or h > max_h:
+                        continue
+                    if (w / max(h, 1e-6)) < min_aspect:
+                        continue
+                    rects.append(fitz.Rect(float(x), float(y), float(x + w), float(y + h)))
+        except Exception:
+            pass
+
+        if not rects:
+            return found
+
+        # Helper: look for arrow glyphs near right edge
+        ARROWS = {"▼", "▾", "▿", "▸", "▹", "▻", "⯆", "⯈"}
+        td = page.get_text("dict") or {}
+
+        def has_arrow_glyph(r: fitz.Rect) -> bool:
+            rz = fitz.Rect(r.x1 - arrow_zone_w, r.y0, r.x1 + 6, r.y1)
+            for b in td.get("blocks", []) or []:
+                for ln in b.get("lines", []) or []:
+                    for sp in ln.get("spans", []) or []:
+                        t = (sp.get("text") or "").strip()
+                        if len(t) != 1 or t not in ARROWS:
+                            continue
+                        bx0, by0, bx1, by1 = map(float, sp.get("bbox", (0, 0, 0, 0)))
+                        if fitz.Rect(bx0, by0, bx1, by1).intersects(rz):
+                            return True
+            return False
+
+        # Helper: look for two slanted lines forming a "V" in the right zone
+        def has_vector_chevron(r: fitz.Rect) -> bool:
+            rz = fitz.Rect(r.x1 - arrow_zone_w, r.y0, r.x1, r.y1)
+            lines = []
+            try:
+                for g in page.get_drawings() or []:
+                    for it in g.get("items", []) or []:
+                        if not it or it[0] != "l" or len(it) < 3:
+                            continue
+                        p0, p1 = it[1], it[2]
+                        x0 = float(getattr(p0, "x", p0[0] if isinstance(p0, (list, tuple)) else 0.0))
+                        y0 = float(getattr(p0, "y", p0[1] if isinstance(p0, (list, tuple)) else 0.0))
+                        x1 = float(getattr(p1, "x", p1[0] if isinstance(p1, (list, tuple)) else 0.0))
+                        y1 = float(getattr(p1, "y", p1[1] if isinstance(p1, (list, tuple)) else 0.0))
+                        seg = fitz.Rect(min(x0, x1), min(y0, y1), max(x0, x1), max(y0, y1))
+                        if not seg.intersects(rz):
+                            continue
+                        dx, dy = (x1 - x0), (y1 - y0)
+                        if min(abs(dx), abs(dy)) < 1.0:
+                            continue  # nearly horizontal/vertical; not chevron-ish
+                        slope = abs(dy / (dx + 1e-6))
+                        if 0.3 <= slope <= 3.5:
+                            lines.append((x0, y0, x1, y1))
+            except Exception:
+                pass
+
+            # Look for two segments that meet to form a V
+            for i in range(len(lines)):
+                x0a, y0a, x1a, y1a = lines[i]
+                for j in range(i + 1, len(lines)):
+                    x0b, y0b, x1b, y1b = lines[j]
+                    # meeting point near each other
+                    pts = [(x0a, y0a), (x1a, y1a)]
+                    pts2 = [(x0b, y0b), (x1b, y1b)]
+                    ok = False
+                    for ax, ay in pts:
+                        for bx, by in pts2:
+                            if abs(ax - bx) <= 3.0 and abs(ay - by) <= 3.0:
+                                ok = True
+                                break
+                        if ok:
+                            break
+                    if not ok:
+                        continue
+                    # one slants up, one slants down
+                    s1 = (y1a - y0a) * (x1a - x0a)
+                    s2 = (y1b - y0b) * (x1b - x0b)
+                    if s1 == 0 or s2 == 0:
+                        continue
+                    if (s1 > 0 and s2 < 0) or (s1 < 0 and s2 > 0):
+                        return True
+            return False
+
+        for r in rects:
+            if has_arrow_glyph(r) or has_vector_chevron(r):
+                found.append({
+                    "x0": float(r.x0), "y0": float(r.y0),
+                    "x1": float(r.x1), "y1": float(r.y1),
+                    "cx": float((r.x0 + r.x1) / 2.0),
+                    "cy": float((r.y0 + r.y1) / 2.0),
+                })
+        return found
+
+
+    # ---------- tiny vector squares ----------
     def _tiny_vector_squares(page: fitz.Page,
                              size_min: float = 2.0,
                              size_max: float = 12.5,
@@ -650,16 +920,11 @@ def build_pdf_template(pdf_path: str,
             drawings = page.get_drawings() or []
         except Exception:
             return boxes
-
         for g in drawings:
-            # 1) Prefer the provided rect if present
             r = g.get("rect", None)
-
-            # 2) Otherwise build a bbox from every point in every path item
             if r is None:
                 xs, ys = [], []
                 for item in g.get("items", []) or []:
-                    # item = (operator, points, color)
                     pts = item[1] if len(item) > 1 else None
                     if not pts:
                         continue
@@ -670,34 +935,24 @@ def build_pdf_template(pdf_path: str,
                     r = fitz.Rect(min(xs), min(ys), max(xs), max(ys))
             if r is None:
                 continue
-
-            w = float(r.x1 - r.x0)
-            h = float(r.y1 - r.y0)
+            w = float(r.x1 - r.x0); h = float(r.y1 - r.y0)
             if w <= 0 or h <= 0:
                 continue
-
-            # 3) size & squareness gates
             if not (size_min <= w <= size_max and size_min <= h <= size_max):
                 continue
             ar = w / h if h else 99.0
             if abs(ar - 1.0) > squareness_tol:
                 continue
-
-            # 4) do NOT require stroke-only (some PDFs paint tiny filled squares)
-            boxes.append({
-                "x0": float(r.x0), "y0": float(r.y0),
-                "x1": float(r.x1), "y1": float(r.y1),
-                "cx": float((r.x0 + r.x1) / 2.0),
-                "cy": float((r.y0 + r.y1) / 2.0),
-            })
+            boxes.append({"x0": float(r.x0), "y0": float(r.y0),
+                          "x1": float(r.x1), "y1": float(r.y1),
+                          "cx": float((r.x0 + r.x1) / 2.0),
+                          "cy": float((r.y0 + r.y1) / 2.0)})
         return boxes
 
-    # Conservative line-aware detector for glyph checkboxes (single-char squares / dingbats).
-    # Loosened so the miniature glyphs on page 17 get caught.
+    # glyph squares
     BOX_CHARS = {"☐","■","□","◻","◼","▢","❏","❐","❑","❒"}
     def _glyph_line_checkboxes(page_dict,
-                               min_side=2.4,    # smaller
-                               max_side=14.0,   # small / normal
+                               min_side=2.4, max_side=14.0,
                                ar_low=0.40, ar_high=2.00,
                                min_gap=1.0, max_gap=140.0):
         boxes = []
@@ -705,8 +960,6 @@ def build_pdf_template(pdf_path: str,
             for ln in b.get("lines", []) or []:
                 spans = (ln.get("spans") or [])
                 spans = sorted(spans, key=lambda s: (s["bbox"][0], s["bbox"][1]))
-
-                # first non-empty span on the line
                 first_i = None
                 for i, sp in enumerate(spans):
                     if (sp.get("text") or "").strip():
@@ -714,14 +967,12 @@ def build_pdf_template(pdf_path: str,
                         break
                 if first_i is None:
                     continue
-
                 sp = spans[first_i]
                 txt = (sp.get("text") or "").strip()
                 x0, y0, x1, y1 = sp["bbox"]
                 w = float(x1 - x0); h = float(y1 - y0)
                 if not (min_side <= w <= max_side and min_side <= h <= max_side):
                     continue
-
                 ar = (w / h) if h else 99.0
                 fnt = (sp.get("font") or "").lower()
                 looks_like_box = (len(txt) == 1 and (txt in BOX_CHARS)) or \
@@ -729,8 +980,6 @@ def build_pdf_template(pdf_path: str,
                                  (len(txt) == 1 and ar_low <= ar <= ar_high)
                 if not looks_like_box:
                     continue
-
-                # must have real text to the right
                 right_text_ok = False
                 for j in range(first_i + 1, len(spans)):
                     t2 = (spans[j].get("text") or "").strip()
@@ -742,14 +991,47 @@ def build_pdf_template(pdf_path: str,
                     break
                 if not right_text_ok:
                     continue
-
-                boxes.append({
-                    "x0": float(x0), "y0": float(y0),
-                    "x1": float(x1), "y1": float(y1),
-                    "cx": float((x0 + x1) / 2.0),
-                    "cy": float((y0 + y1) / 2.0),
-                })
+                boxes.append({"x0": float(x0), "y0": float(y0),
+                              "x1": float(x1), "y1": float(y1),
+                              "cx": float((x0 + x1) / 2.0),
+                              "cy": float((y0 + y1) / 2.0)})
         return boxes
+
+    # large square boxes
+    def _large_square_boxes(page: fitz.Page,
+                            min_side: float = 18.0,
+                            max_side: float = 60.0,
+                            ar_low: float = 0.80, ar_high: float = 1.30):
+        out = []
+        try:
+            drs = page.get_drawings()
+        except Exception:
+            drs = []
+        for dr in drs or []:
+            for it in dr.get("items", []):
+                if not it or it[0] != "re":
+                    continue
+                rect = it[1]
+                x0, y0, x1, y1 = float(rect.x0), float(rect.y0), float(rect.x1), float(rect.y1)
+                w = abs(x1 - x0); h = abs(y1 - y0)
+                if (min_side <= w <= max_side) and (min_side <= h <= max_side):
+                    ar = (w / h) if h else 99.0
+                    if ar_low <= ar <= ar_high:
+                        out.append({"x0": x0, "y0": y0, "x1": x1, "y1": y1,
+                                    "cx": (x0 + x1) / 2.0, "cy": (y0 + y1) / 2.0})
+        try:
+            for (xref, *_rest) in page.get_images(full=True) or []:
+                for r in page.get_image_rects(xref) or []:
+                    x0, y0, x1, y1 = float(r.x0), float(r.y0), float(r.x1), float(r.y1)
+                    w = abs(x1 - x0); h = abs(y1 - y0)
+                    if (min_side <= w <= max_side) and (min_side <= h <= max_side):
+                        ar = (w / h) if h else 99.0
+                        if ar_low <= ar <= ar_high:
+                            out.append({"x0": x0, "y0": y0, "x1": x1, "y1": y1,
+                                        "cx": (x0 + x1) / 2.0, "cy": (y0 + y1) / 2.0})
+        except Exception:
+            pass
+        return out
 
     def _rects_overlap(a, b, pad=1.6):
         ax0, ay0, ax1, ay1 = a
@@ -772,7 +1054,7 @@ def build_pdf_template(pdf_path: str,
         blocks = _text_blocks(page)
         y_tol = 18.0
 
-        # ---------- 1) TYPED UNDERSCORES (line-aware) ----------
+        # ---------- 1) typed underscores ----------
         d = page.get_text("dict")
         lines_on_page: List[Dict[str, Any]] = []
         for b in d.get("blocks", []):
@@ -801,7 +1083,6 @@ def build_pdf_template(pdf_path: str,
             txt = ln["text"]
             if not txt or not underline_re.search(txt):
                 continue
-
             y_window = 2.0 * y_tol
             x_band_pad = 28.0
             cands = []
@@ -851,9 +1132,13 @@ def build_pdf_template(pdf_path: str,
             if dry_run:
                 print(f"   • field[{idx}] (typed underscores, line) → '{label_text}' @y≈{baseline_y:.1f} (sec: {section_name})")
 
-        # ---------- 2) DRAWN UNDERLINES ----------
+        # ---------- 2) drawn underlines ----------
         segs = _line_like_segments(page)
         for j, seg in enumerate(segs):
+            # always start with a safe default so label_text exists
+            label_text = "Field"
+
+            # try to find a label on the same row (left side)
             same_row = [blk for blk in blocks
                         if blk["text"]
                         and abs(((blk["y0"] + blk["y1"]) / 2.0) - seg["y0"]) < y_tol
@@ -862,17 +1147,99 @@ def build_pdf_template(pdf_path: str,
                 same_row.sort(key=lambda blk: seg["x0"] - blk["x1"])
                 label_text = same_row[0]["text"]
             else:
+                # else: try a label just above
                 above = [blk for blk in blocks
-                         if blk["text"] and (0 <= (seg["y0"] - blk["y1"]) < 2 * y_tol) and blk["x0"] <= seg["x0"]]
+                         if blk["text"]
+                         and (0 <= (seg["y0"] - blk["y1"]) < 2 * y_tol)
+                         and blk["x0"] <= seg["x0"]]
                 if above:
                     above.sort(key=lambda blk: (seg["y0"] - blk["y1"], seg["x0"] - blk["x1"]))
                     label_text = above[0]["text"]
                 else:
                     label_text = f"unknown_drawn_{pno}_{j}"
 
-            insert_x = seg["x0"] + 6
-            y_mid    = seg["y0"]
+            # use a local variable for any normalization to avoid pre-assignment issues
+            _label_use = (label_text or "Field").strip()
+
+            insert_x = float(seg["x0"] + 6.0)
+            y_mid    = float(seg["y0"])
             section_name, section_norm = nearest_section_name(sections, y_mid)
+
+            # Treat long underlines with a right-edge affordance as dropdowns
+            line_w = float(seg["x1"] - seg["x0"])
+            if line_w >= 90.0:
+                underline_rect = fitz.Rect(float(seg["x0"]), float(seg["y0"] - 8),
+                                           float(seg["x1"]), float(seg["y1"] + 8))
+                if _right_zone_has_dropdown_affordance(page, underline_rect, arrow_zone_w=30.0):
+                    label_norm = alias_normal(_normalize(_label_use))
+                    key = (pno, section_norm, label_norm)
+                    counters[key] = counters.get(key, 0) + 1
+                    idx = counters[key]
+
+                    tpl["fields"].append({
+                        "page": pno,
+                        "label": _label_use,
+                        "label_short": _label_use,
+                        "label_full": _label_use,
+                        "label_norm": label_norm,
+                        "anchor_x": float((seg["x0"] + seg["x1"]) / 2.0),
+                        "anchor_y": y_mid,
+                        "box_rect": [float(seg["x0"]), float(seg["y0"] - 8), float(seg["x1"]), float(seg["y1"] + 8)],
+                        "line_box": [float(seg["x0"]), float(seg["y0"]), float(seg["x1"]), float(seg["y0"])],
+                        "placement": "acro_choice",
+                        "choices": [],
+                        "section": section_name,
+                        "section_norm": section_norm,
+                        "index": idx,
+                    })
+                    if dry_run:
+                        print(f"   • field[{idx}] (UNDERLINE→dropdown) → '{_label_use}' @y≈{y_mid:.1f} (sec: {section_name})")
+                    continue  # don’t also add as normal text
+
+            # Default: normal drawn underline → text field
+            label_norm = alias_normal(_normalize(_label_use))
+            key = (pno, section_norm, label_norm)
+            counters[key] = counters.get(key, 0) + 1
+            idx = counters[key]
+
+            tpl["fields"].append({
+                "page": pno,
+                "label": _label_use,
+                "label_short": _label_use,
+                "label_full": _label_use,
+                "label_norm": label_norm,
+                "anchor_x": insert_x,
+                "anchor_y": y_mid,
+                "line_box": [float(seg["x0"]), float(seg["y0"]), float(seg["x1"]), float(seg["y0"])],
+                "placement": "center",
+                "section": section_name,
+                "section_norm": section_norm,
+                "index": idx,
+            })
+            if dry_run:
+                print(f"   • field[{idx}] (drawn line) → '{_label_use}' @y≈{y_mid:.1f} (sec: {section_name})")
+
+        # ---------- 2.5) drawn dropdowns (long rectangle + right arrow) ----------
+        dd_rects = _drawn_dropdowns(page)
+        for j, r in enumerate(dd_rects, start=1):
+            # resolve label from same row (to the left) or above, like other fields
+            same_row = [blk for blk in blocks
+                        if blk["text"]
+                        and abs(((blk["y0"] + blk["y1"]) / 2.0) - r["cy"]) < y_tol
+                        and blk["x1"] <= r["x0"] + 6]
+            if same_row:
+                same_row.sort(key=lambda blk: r["x0"] - blk["x1"])
+                label_text = same_row[0]["text"]
+            else:
+                above = [blk for blk in blocks
+                         if blk["text"] and (0 <= (r["cy"] - blk["y1"]) < 2 * y_tol) and blk["x0"] <= r["x0"]]
+                if above:
+                    above.sort(key=lambda blk: (r["cy"] - blk["y1"], r["x0"] - blk["x1"]))
+                    label_text = above[0]["text"]
+                else:
+                    label_text = "Field"
+
+            section_name, section_norm = nearest_section_name(sections, r["cy"])
             label_norm = alias_normal(_normalize(label_text))
             key = (pno, section_norm, label_norm)
             counters[key] = counters.get(key, 0) + 1
@@ -880,30 +1247,86 @@ def build_pdf_template(pdf_path: str,
 
             tpl["fields"].append({
                 "page": pno,
-                "label": label_text.strip(),
-                "label_short": label_text.strip(),
-                "label_full": label_text.strip(),
+                "label": label_text,
+                "label_short": label_text,
+                "label_full": label_text,
                 "label_norm": label_norm,
-                "anchor_x": insert_x,
-                "anchor_y": y_mid,
-                "line_box": [seg["x0"], seg["y0"], seg["x1"], seg["y0"]],
-                "placement": "center",
+                "anchor_x": r["cx"],
+                "anchor_y": r["cy"],
+                "box_rect": [r["x0"], r["y0"], r["x1"], r["y1"]],
+                "line_box": [r["x0"], r["cy"], r["x1"], r["cy"]],
+                "placement": "acro_choice",     # treated as text by overlay fill
+                "choices": [],                   # unknown for drawn dropdowns
                 "section": section_name,
                 "section_norm": section_norm,
                 "index": idx,
             })
             if dry_run:
-                print(f"   • field[{idx}] (drawn line) → '{label_text.strip()}' @y≈{y_mid:.1f} (sec: {section_name})")
+                print(f"   • field[{idx}] (DRAWN dropdown) → '{label_text}' @y≈{r['cy']:.1f} (sec: {section_name})")
 
-        # ---------- 3) CHECKBOXES ----------
-        # (a) your existing vector detector (if present elsewhere)
+        # ---------- 2.6) fallback: long shallow rectangles (no arrow) ----------
+        dl_rects = _dropdown_like_boxes(page)
+        if dl_rects:
+            # avoid duplicating ones we already added as dd_rects
+            existing_keys = set()
+            for f in tpl["fields"]:
+                if f.get("placement") == "acro_choice" and f.get("page") == pno and f.get("box_rect"):
+                    x0, y0, x1, y1 = map(float, f["box_rect"])
+                    existing_keys.add((round(x0,1), round(y0,1), round(x1,1), round(y1,1)))
+
+            for j, r in enumerate(dl_rects, start=1):
+                key4 = (round(r["x0"],1), round(r["y0"],1), round(r["x1"],1), round(r["y1"],1))
+                if key4 in existing_keys:
+                    continue
+
+                # resolve label from same row (to the left) or above
+                same_row = [blk for blk in blocks
+                            if blk["text"]
+                            and abs(((blk["y0"] + blk["y1"]) / 2.0) - r["cy"]) < y_tol
+                            and blk["x1"] <= r["x0"] + 6]
+                if same_row:
+                    same_row.sort(key=lambda blk: r["x0"] - blk["x1"])
+                    label_text = same_row[0]["text"]
+                else:
+                    above = [blk for blk in blocks
+                             if blk["text"] and (0 <= (r["cy"] - blk["y1"]) < 2 * y_tol) and blk["x0"] <= r["x0"]]
+                    if above:
+                        above.sort(key=lambda blk: (r["cy"] - blk["y1"], r["x0"] - blk["x1"]))
+                        label_text = above[0]["text"]
+                    else:
+                        label_text = "Field"
+
+                section_name, section_norm = nearest_section_name(sections, r["cy"])
+                label_norm = alias_normal(_normalize(label_text))
+                key = (pno, section_norm, label_norm)
+                counters[key] = counters.get(key, 0) + 1
+                idx = counters[key]
+
+                tpl["fields"].append({
+                    "page": pno,
+                    "label": label_text,
+                    "label_short": label_text,
+                    "label_full": label_text,
+                    "label_norm": label_norm,
+                    "anchor_x": r["cx"],
+                    "anchor_y": r["cy"],
+                    "box_rect": [r["x0"], r["y0"], r["x1"], r["y1"]],
+                    "line_box": [r["x0"], r["cy"], r["x1"], r["cy"]],
+                    "placement": "acro_choice",
+                    "choices": [],
+                    "section": section_name,
+                    "section_norm": section_norm,
+                    "index": idx,
+                })
+                if dry_run:
+                    print(f"   • field[{idx}] (FALLBACK dropdown) → '{label_text}' @y≈{r['cy']:.1f} (sec: {section_name})")
+
+
+        # ---------- 3) checkboxes (drawn/glyph) ----------
         vector_boxes = _square_checkboxes(page) if '_square_checkboxes' in globals() else []
-        # (b) NEW tiny vectors
+        large_boxes  = _large_square_boxes(page)
         tiny_vector_boxes = _tiny_vector_squares(page)
-        # (c) NEW glyph squares
-        glyph_boxes = _glyph_line_checkboxes(page.get_text("dict"))
-
-        # merge + de-dup (prefer vector > tiny-vector > glyph)
+        glyph_boxes  = _glyph_line_checkboxes(page.get_text("dict"))
         merged_boxes = []
         def _add_if_not_overlapping(bx):
             grect = (bx["x0"], bx["y0"], bx["x1"], bx["y1"])
@@ -911,25 +1334,60 @@ def build_pdf_template(pdf_path: str,
                 if _rects_overlap((mb["x0"], mb["y0"], mb["x1"], mb["y1"]), grect, pad=1.6):
                     return
             merged_boxes.append(bx)
-        for src in (vector_boxes, tiny_vector_boxes, glyph_boxes):
-            for b in src: _add_if_not_overlapping(b)
+        for src in (vector_boxes, large_boxes, tiny_vector_boxes, glyph_boxes):
+            for b in src:
+                _add_if_not_overlapping(b)
 
-        # Also include AcroForm widgets
+        # ---------- 4) AcroForm widgets (collect all types) ----------
         try:
             widgets = list(page.widgets() or [])
         except TypeError:
             widgets = list(page.widgets or [])
-        cb_widgets, text_widgets = [], []
+        except Exception:
+            widgets = []
+
+        cb_widgets, text_widgets, choice_widgets = [], [], []
+
+        # tolerate enum differences across PyMuPDF versions
+        _CHK = getattr(fitz, "PDF_WIDGET_TYPE_CHECKBOX", 2)
+        _RAD = getattr(fitz, "PDF_WIDGET_TYPE_RADIOBUTTON", 3)
+        _TXT = getattr(fitz, "PDF_WIDGET_TYPE_TEXT", 1)
+        _CBX = getattr(fitz, "PDF_WIDGET_TYPE_COMBOBOX", 7)   # some builds
+        _LBX = getattr(fitz, "PDF_WIDGET_TYPE_LISTBOX", 6)    # some builds
+        _CHO = getattr(fitz, "PDF_WIDGET_TYPE_CHOICE", 6)     # others report a generic CHOICE
+
         for w in widgets:
+            # robust, version-agnostic classification
+            ft = getattr(w, "field_type", None)
+            ft_str = (getattr(w, "field_type_string", "") or getattr(w, "field_type_str", "") or "").lower()
+            name_l = (getattr(w, "field_name", "") or "").lower()
+
+            is_checkbox = ft in (_CHK, _RAD)
+            is_text = ft == _TXT
+
+            # Choice detection across versions / encodings
+            is_choice = ft in (_CBX, _LBX, _CHO)
+            if not is_choice and any(k in ft_str for k in ("combo", "list", "choice")):
+                is_choice = True
+            if not is_choice and (hasattr(w, "choice_values") or hasattr(w, "options") or hasattr(w, "items")):
+                is_choice = True
+            if not is_choice and any(k in name_l for k in ("combo", "list", "select", "dropdown")):
+                is_choice = True
+
+            # bucket
             try:
-                if w.field_type in (fitz.PDF_WIDGET_TYPE_CHECKBOX, fitz.PDF_WIDGET_TYPE_RADIOBUTTON):
+                if is_checkbox:
                     cb_widgets.append(w)
-                elif w.field_type == fitz.PDF_WIDGET_TYPE_TEXT:
+                elif is_choice:
+                    choice_widgets.append(w)
+                elif is_text:
+                    text_widgets.append(w)
+                else:
+                    # fall back: most non-choice, non-checkbox widgets behave like text
                     text_widgets.append(w)
             except Exception:
-                nm = (w.field_name or "").lower()
-                if "check" in nm or "box" in nm or "radio" in nm:
-                    cb_widgets.append(w)
+                # extremely defensive fallback
+                text_widgets.append(w)
 
         # emit merged drawn/glyph boxes
         for k, bx in enumerate(merged_boxes, start=1):
@@ -1002,7 +1460,7 @@ def build_pdf_template(pdf_path: str,
             section_name, section_norm = nearest_section_name(sections, cy)
             short_key  = _short_label(section_name, m)
             pretty     = f"{short_key}: {bullet_text}".strip(": ")
-            label_norm = alias_normal(_normalize(pretty))
+            label_norm = alias_normal(_normalize(prety)) if False else alias_normal(_normalize(pretty))  # keep original
             key = (pno, section_norm, label_norm)
             counters[key] = counters.get(key, 0) + 1
             idx = counters[key]
@@ -1025,7 +1483,7 @@ def build_pdf_template(pdf_path: str,
             if dry_run:
                 print(f"   • checkbox[{idx}] (AcroForm) → '{pretty}' @y≈{cy:.1f} (sec: {section_name})")
 
-        # ---------- 4.5) AcroForm TEXT widgets (unchanged) ----------
+        # ---------- 4.5) AcroForm TEXT widgets ----------
         def _rects_overlap_field_line(r):
             for fd in tpl["fields"]:
                 if fd["page"] != pno:
@@ -1085,6 +1543,67 @@ def build_pdf_template(pdf_path: str,
             })
             if dry_run:
                 print(f"   • field[{idx}] (AcroForm TEXT) → '{label_text}' @y≈{cy:.1f} (sec: {section_name})")
+
+        # ---------- 4.6) AcroForm CHOICE widgets (COMBOBOX/LISTBOX) ----------
+        choice_widgets.sort(key=lambda ww: (round(ww.rect.y0, 2), round(ww.rect.x0, 2)))
+        for q, w in enumerate(choice_widgets, start=1):
+            r  = w.rect
+            cx = (r.x0 + r.x1) / 2.0
+            cy = (r.y0 + r.y1) / 2.0
+
+            same_row = [
+                (abs(((blk["y0"] + blk["y1"]) / 2.0) - cy) + max(0.0, r.x0 - blk["x1"]), blk)
+                for blk in blocks
+                if blk["text"] and abs(((blk["y0"] + blk["y1"]) / 2.0) - cy) < y_tol and blk["x1"] <= r.x0 + 6
+            ]
+            if same_row:
+                label_text = _pick_nearest_text(same_row)
+            else:
+                above = [
+                    ((cy - blk["y1"]), blk)
+                    for blk in blocks
+                    if blk["text"] and (0 <= (cy - blk["y1"]) < 2 * y_tol) and blk["x0"] <= r.x0
+                ]
+                label_text = _pick_nearest_text(above) or (w.field_name or "Field").strip()
+
+            section_name, section_norm = nearest_section_name(sections, cy)
+            label_norm = alias_normal(_normalize(label_text))
+            key = (pno, section_norm, label_norm)
+            counters[key] = counters.get(key, 0) + 1
+            idx = counters[key]
+
+            # Try to extract available choices (if exposed by this PyMuPDF build)
+            choices = []
+            try:
+                raw = getattr(w, "choice_values", None) or getattr(w, "options", None) or getattr(w, "items", None)
+                if raw:
+                    for opt in list(raw):
+                        if isinstance(opt, (list, tuple)) and opt:
+                            choices.append(str(opt[0]))
+                        else:
+                            choices.append(str(opt))
+            except Exception:
+                pass
+
+            tpl["fields"].append({
+                "page": pno,
+                "label": label_text,
+                "label_short": label_text,
+                "label_full": label_text,
+                "label_norm": label_norm,
+                "anchor_x": cx,
+                "anchor_y": cy,
+                "box_rect": [float(r.x0), float(r.y0), float(r.x1), float(r.y1)],
+                "line_box": [float(r.x0), float(r.y0), float(r.x1), float(r.y1)],
+                "placement": "acro_choice",     # treat as dropdown / list in downstream fill
+                "choices": choices,             # optional: may be empty if API doesn’t expose
+                "section": section_name,
+                "section_norm": section_norm,
+                "index": idx,
+            })
+            if dry_run:
+                extra = f" (choices={len(choices)})" if choices else ""
+                print(f"   • field[{idx}] (AcroForm CHOICE) → '{label_text}' @y≈{cy:.1f}{extra} (sec: {section_name})")
 
     with open(template_json, "w", encoding="utf-8") as f:
         json.dump(tpl, f, indent=2, ensure_ascii=False)
@@ -1220,6 +1739,53 @@ def fill_acroform_with_context(input_pdf: str,
         if dry_run:
             print(f"p{pno+1}:")
         sections = find_sections_on_page(page, expected_sections_norm=expected, dry_run=dry_run)
+
+        # --- AUGMENT: detect letter-only section headers like (A), A), A., A ---
+        # This catches cases where (B)/(C) are printed as plain spans and missed by the relaxed header logic.
+        try:
+            d_for_sections = page.get_text("dict")
+        except Exception:
+            d_for_sections = None
+
+        if d_for_sections:
+            letter_pat = re.compile(r"^\s*\(?([A-Za-z])\)?\.?\s*$")
+            letter_hits = []
+            for b_ in d_for_sections.get("blocks", []) or []:
+                for ln_ in b_.get("lines", []) or []:
+                    for sp_ in (ln_.get("spans") or []):
+                        t_ = (sp_.get("text") or "").strip()
+                        if not t_ or len(t_) > 6:  # super short tokens only
+                            continue
+                        m_ = letter_pat.match(t_)
+                        if not m_:
+                            continue
+                        ch = m_.group(1).upper()
+                        # You can restrict the allowed letters here if desired:
+                        # if ch not in {"A","B","C","D","E"}: continue
+                        ymid_ = (float(sp_["bbox"][1]) + float(sp_["bbox"][3])) / 2.0
+                        name_ = f"({ch})"
+                        letter_hits.append({"name": name_, "name_norm": _normalize(name_), "y1": ymid_})
+
+            if letter_hits:
+                # merge with existing 'sections' preserving order; de-dup on (name_norm, y1~)
+                merged = (sections or []) + letter_hits
+                merged.sort(key=lambda c: (round(c["y1"], 1), c["name_norm"]))
+                dedup = []
+                seen_keys = set()
+                for c in merged:
+                    key_ = (c["name_norm"], round(c["y1"], 1))
+                    if key_ in seen_keys:
+                        continue
+                    seen_keys.add(key_)
+                    dedup.append(c)
+                sections = dedup
+
+                if dry_run and sections:
+                    print("  sections (augmented):")
+                    for s_ in sections:
+                        print("   -", s_["name"])
+
+
         blocks = _text_blocks(page)
 
         widgets = list(page.widgets() or [])
