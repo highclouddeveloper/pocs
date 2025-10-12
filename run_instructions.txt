@@ -11,9 +11,30 @@ Run the script in order below:
 python field_map_generate.py --input input.pdf --template template_fields.json --make-lookup lookup_template.xlsx --rebuild-template #This will generate the Section, Page, Key, index and value
 python pdf_prefill.py --input input.pdf --output out.pdf --lookup lookup_template.xlsx #This will take the generated lookup_template.xlsx and run the main python script then generate out.pdf file prefilled
 
+#while passing the word document docx, doc as input to python code use command first in shell
+py -m pip install docx2pdf
+
 #The Occudo file was not working because of the dynamic form format and not pdf format, so have converted that to save as pdf first then processing started to work.  In the code 
 #should change the Occudo kind of file flatten to pdf first then start processing
 
 #There can be cases where image needs to be affixed in the signature boxes.  DocuSign is one option but also digital signature image should also be placed inside the signature boxes correctly
 
 #Should provide an option to edit the content in the sub doc page
+
+# Follow below steps for doc / docx processing
+
+python pdf_prefill.py --input input.docx --output filled.pdf --lookup lookup_template_doc.xlsx --template template_fields.json
+
+python field_map_generate.py --input input.docx --template template_docs.json --make-lookup lookup_template_docx.xlsx --rebuild-template
+
+python pdf_prefill.py --input input.docx --lookup lookup_template_docx.xlsx --dry-run --export-docx-json template_docx.json - not working
+
+python pdf_prefill.py --input input.docx --output out.docx --lookup lookup_template_docx.xlsx
+
+If RuntimeError: python-docx is required for native DOCX filling. Install with: pip install python-docx then follow below
+
+#Install python-docx dependency
+py -3.13 -m pip install python-docx
+
+#Verify Install
+py -3.13 -c "import docx; print(docx.__version__)"

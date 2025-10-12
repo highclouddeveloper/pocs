@@ -19,7 +19,9 @@ from typing import List, Dict, Any, Tuple, Optional, Set
 # -- Word→PDF adapter (non-invasive) -----------------------------------------
 import tempfile, shutil, subprocess
 from contextlib import contextmanager
-
+# --- DOCX support ---
+from typing import Iterable
+from numbers import Number
 @contextmanager
 def _as_pdf(input_path: str):
     """
@@ -134,6 +136,59 @@ def _rect_key(x0, y0, x1, y1):
 # ---------------------------
 # Lookup loader (Excel/CSV) with Section/Page/Index
 # ---------------------------
+
+
+def to_text_value(v) -> str:
+    """
+    Robustly convert Excel/CSV values to clean text:
+      - ints stay ints ("123456")
+      - floats lose trailing .0 / zeros ("123456.5", "123456")
+      - NaN/None -> ""
+      - strings like "123456.0" -> "123456"
+    """
+    # Pandas NaN / None
+    try:
+        import pandas as _pd
+        if _pd.isna(v):
+            return ""
+    except Exception:
+        pass
+    if v is None:
+        return ""
+
+    # Numeric types (covers Python & NumPy via Number)
+    if isinstance(v, Number):
+        # guard weird non-finite floats
+        try:
+            if isinstance(v, float) and not math.isfinite(v):
+                return ""
+        except Exception:
+            pass
+        # integer-like
+        try:
+            if float(v).is_integer():
+                return str(int(v))
+        except Exception:
+            pass
+        # general float formatting, trim trailing zeros
+        s = f"{float(v):.12f}".rstrip("0").rstrip(".")
+        return s or "0"
+
+    # Strings – normalize common “.0” artifacts
+    s = str(v).strip()
+    if not s:
+        return ""
+    # if it looks like 123.000 -> 123 ;  123.4500 -> 123.45
+    m = re.fullmatch(r"([+-]?\d+)\.0+\b", s)
+    if m:
+        return m.group(1)
+    m = re.fullmatch(r"([+-]?\d+\.\d*?[1-9])0+\b", s)
+    if m:
+        return m.group(1)
+    return s
+
+
+
 def read_lookup_rows(path: str) -> List[Dict[str, Any]]:
     """
     Returns rows with keys:
@@ -183,9 +238,12 @@ def read_lookup_rows(path: str) -> List[Dict[str, Any]]:
             (df["Value"].astype(str).str.lower() != "nan")]
 
     rows: List[Dict[str, Any]] = []
+
+    # ...
     for _, r in df.iterrows():
         field = str(r.get("Field", "")).strip()
-        value = str(r.get("Value", "")).strip()
+        # 👇 use the cleaner
+        value = to_text_value(r.get("Value", ""))
         section = str(r.get("Section", "")).strip() if "Section" in df.columns else ""
         page = int(r["Page"]) if ("Page" in df.columns and pd.notna(r["Page"])) else None
         index = int(r["Index"]) if ("Index" in df.columns and pd.notna(r["Index"])) else None
@@ -199,6 +257,7 @@ def read_lookup_rows(path: str) -> List[Dict[str, Any]]:
             "field_norm": alias_normal(_normalize(field)),
             "section_norm": _normalize(section) if section else "",
         })
+
 
     # Append defaults (lowest priority)
     for k, v in SUBSCRIPTION_DEFAULTS.items():
@@ -215,6 +274,769 @@ def read_lookup_rows(path: str) -> List[Dict[str, Any]]:
 
 def expected_section_set(lookup_rows: List[Dict[str, Any]]) -> Set[str]:
     return {r["section_norm"] for r in lookup_rows if r.get("section_norm")}
+
+# ---------------------------
+# DOCX (native) prefill
+# ---------------------------
+def _iter_all_paragraphs_and_cells(doc) -> Iterable:
+    """Yield every paragraph-like container: doc paragraphs + each table cell's paragraphs."""
+    for p in doc.paragraphs:
+        yield p
+    for tbl in doc.tables:
+        for row in tbl.rows:
+            for cell in row.cells:
+                for p in cell.paragraphs:
+                    yield p
+
+def _field_value_for_name(lookup_rows, name: str):
+    """Resolve a value for a simple field name, ignoring page/section/index (best-effort)."""
+    v = resolve_value(
+        rows=lookup_rows,
+        field_label=name,
+        page=None,
+        section_norm="",
+        occurrence_index=1,
+        min_field_fuzzy=0.82,
+        return_row=False,
+        strict_index=False,
+        require_page_match=False,
+        require_section_match=False,
+    )
+    return v
+
+def _replace_placeholders_in_text(text: str, lookup_rows) -> str:
+    """
+    Replace {{Field}}, [[Field]], ${Field} placeholders using lookup values.
+    Keeps original text otherwise.
+    """
+    import re
+    patterns = [
+        re.compile(r"\{\{\s*(.*?)\s*\}\}"),
+        re.compile(r"\[\[\s*(.*?)\s*\]\]"),
+        re.compile(r"\$\{\s*(.*?)\s*\}"),
+    ]
+    def _sub_one(m):
+        key = (m.group(1) or "").strip()
+        val = _field_value_for_name(lookup_rows, key)
+        return str(val) if val is not None else m.group(0)
+    for pat in patterns:
+        text = pat.sub(_sub_one, text)
+    return text
+
+def _set_paragraph_text_keep_simple_format(p, new_text: str):
+    """
+    Safer than 'p.text = ...' when we want to keep the paragraph object alive.
+    We rebuild runs minimally. Complex inline styles may be lost, but this is robust.
+    """
+    while p.runs:
+        p.runs[0].clear()
+        p.runs[0].text = ""
+        p.runs[0].element.getparent().remove(p.runs[0].element)
+    r = p.add_run(new_text)
+
+def _fill_table_right_cells(doc, lookup_rows, dry_run=False):
+    """
+    If a cell looks like a label (short, ends with ':' or not too long),
+    write the value into the immediate right cell (if exists and empty-ish).
+    """
+    import re
+    for tbl in doc.tables:
+        for row in tbl.rows:
+            cells = row.cells
+            for i in range(len(cells) - 1):
+                left = cells[i].text.strip()
+                right = cells[i+1]
+                if not left:
+                    continue
+                # Prefer lines that look like labels
+                lab = left
+                lab = re.sub(r"[:：﹕꞉˸፡︓]\s*$", "", lab).strip()
+                if not lab or len(lab) > 80:
+                    continue
+                val = _field_value_for_name(lookup_rows, lab)
+                if val is None:
+                    continue
+                if dry_run:
+                    print(f"[DRY][DOCX] table: '{lab}' → '{val}'")
+                else:
+                    # only replace if the right cell is empty-ish
+                    if right.text.strip() in {"", "________", "_____"} or True:
+                        # overwrite regardless; comment the 'or True' to make it conditional
+                        right.text = str(val)
+
+def _fill_colon_underscore_lines(doc, lookup_rows, dry_run=False):
+    """
+    For paragraphs like 'Name: ________', replace the underscores with the value.
+    """
+    import re
+    us_pat = re.compile(r"^(.*?[:：﹕꞉˸፡︓])\s*_+\s*$")
+    for p in _iter_all_paragraphs_and_cells(doc):
+        txt = p.text.strip()
+        if not txt:
+            continue
+        m = us_pat.match(txt)
+        if not m:
+            continue
+        label_full = m.group(1)
+        lab = re.sub(r"[:：﹕꞉˸፡︓]\s*$", "", label_full).strip()
+        if not lab:
+            continue
+        val = _field_value_for_name(lookup_rows, lab)
+        if val is None:
+            continue
+        new_text = f"{label_full} {val}"
+        if dry_run:
+            print(f"[DRY][DOCX] underline: '{lab}' → '{val}'")
+        else:
+            _set_paragraph_text_keep_simple_format(p, new_text)
+
+def _fill_checkboxes(doc, lookup_rows, dry_run=False):
+    """
+    Very simple checkbox logic:
+    - Turns '☐ Label' / '[ ] Label' into '☒ Label' / '[x] Label' if value is truthy.
+      If value is falsey -> keep empty box.
+    - Matching tries the text after the box as a field name.
+    NOTE: This does NOT manipulate Word content-control checkboxes (rich XML).
+    """
+    import re
+    box_patterns = [
+        re.compile(r"^\s*[□☐]\s+(.*)$"),           # unicode empty box
+        re.compile(r"^\s*\[\s?\]\s+(.*)$"),        # [ ] Label
+        re.compile(r"^\s*\[\s?[xX✓]\s?\]\s+(.*)$") # already ticked; we re-evaluate
+    ]
+    for p in _iter_all_paragraphs_and_cells(doc):
+        t = p.text.strip()
+        if not t:
+            continue
+        for pat in box_patterns:
+            m = pat.match(t)
+            if not m:
+                continue
+            lab = m.group(1).strip()
+            if not lab:
+                break
+            val = _field_value_for_name(lookup_rows, lab)
+            yn = _truthy(val)
+            if yn is None:
+                # if label contains Yes/No token try to be clever
+                # e.g., '☐ Yes'/'☐ No' under a section; skip unless explicit
+                continue
+            new = (f"☒ {lab}" if yn else f"☐ {lab}")
+            if dry_run:
+                print(f"[DRY][DOCX] checkbox: '{lab}' → {'CHECK' if yn else 'UNCHECK'}")
+            else:
+                _set_paragraph_text_keep_simple_format(p, new)
+            break  # only first pattern
+
+def _replace_placeholders_everywhere(doc, lookup_rows, dry_run=False):
+    """
+    Replace placeholders in all paragraphs and table cells.
+    """
+    for p in _iter_all_paragraphs_and_cells(doc):
+        old = p.text
+        new = _replace_placeholders_in_text(old, lookup_rows)
+        if new != old:
+            if dry_run:
+                print(f"[DRY][DOCX] placeholder: '{old}' → '{new}'")
+            else:
+                _set_paragraph_text_keep_simple_format(p, new)
+
+# ---------- DOCX helpers: block order + cell text ----------
+from docx.table import _Cell, Table
+from docx.text.paragraph import Paragraph
+from docx.oxml.table import CT_Tbl
+from docx.oxml.text.paragraph import CT_P
+
+def _iter_block_items(parent):
+    """
+    Yield paragraphs and tables in document order.
+    """
+    parent_elm = parent._element
+    for child in parent_elm.body.iterchildren():
+        if isinstance(child, CT_P):
+            yield Paragraph(child, parent)
+        elif isinstance(child, CT_Tbl):
+            yield Table(child, parent)
+
+def _cell_text(cell: _Cell) -> str:
+    # Consolidate runs, strip whitespace/newlines
+    return "\n".join(p.text for p in cell.paragraphs).strip()
+
+def _set_cell_text(cell: _Cell, text: str):
+    # Replace all content with a single paragraph containing 'text'
+    for p in list(cell.paragraphs):
+        p.clear()
+    cell.text = str(text)
+
+def _looks_like_section_title(text: str) -> bool:
+    if not text:
+        return False
+    t = unicodedata.normalize("NFKC", text).strip()
+    if len(t) > 180:
+        return False
+    # headings or shouty short lines or lines ending with colon
+    letters = [c for c in t if c.isalpha()]
+    caps_ratio = (sum(1 for c in letters if c.isupper()) / max(1, len(letters))) if letters else 0.0
+    return t.endswith(":") or (caps_ratio >= 0.45 and len(t.split()) <= 15)
+
+# ---------- Exact, write-once DOCX table filler ----------
+def _fill_table_right_cells(doc, lookup_rows, dry_run: bool = False, label_col: int = 0, value_col: int = 1):
+    """
+    For each table:
+      - detect a section title from recent paragraphs above
+      - for each row, use the left cell as label, write value into the right cell
+      - EXACT field match (normalized), no fuzzy reuse
+      - respect explicit Index in Excel; otherwise count occurrences per (Section, Field)
+      - write each (Section, Field, Index) at most once
+    """
+    written_once = set()  # (section_norm, field_norm, idx)
+    occ_counters: Dict[Tuple[str, str], int] = {}
+    used_indices: Dict[Tuple[str, str], Set[int]] = {}
+
+    # Walk document in order so we can find the paragraph(s) immediately above each table
+    last_section_text = ""
+    for block in _iter_block_items(doc):
+        if isinstance(block, Paragraph):
+            txt = (block.text or "").strip()
+            if txt:
+                last_section_text = txt
+            continue
+
+        # It's a table
+        table: Table = block
+        # section detection: use the last non-empty paragraph if it "looks like" a title
+        section_text = last_section_text if _looks_like_section_title(last_section_text) else ""
+        section_norm = _normalize(_strip_colon_like(section_text)) if section_text else ""
+
+        # Iterate rows; treat first column as label, second as value
+        for row in table.rows:
+            # Guard against short rows
+            if len(row.cells) <= max(label_col, value_col):
+                continue
+
+            label = _cell_text(row.cells[label_col])
+            if not label:
+                continue
+
+            # Normalize the field key
+            field_norm = alias_normal(_normalize(label))
+
+            # Compute occurrence index: explicit first, else rolling per (section, field)
+            bucket = (section_norm, field_norm)
+            explicit = _explicit_indices_for(lookup_rows, field_norm, page=None, section_norm=section_norm)
+            if explicit:
+                used = used_indices.setdefault(bucket, set())
+                next_idx = next((i for i in explicit if i not in used), None)
+                if next_idx is None:
+                    occ_counters[bucket] = occ_counters.get(bucket, 0) + 1
+                    next_idx = occ_counters[bucket]
+                used.add(next_idx)
+                idx = next_idx
+            else:
+                occ_counters[bucket] = occ_counters.get(bucket, 0) + 1
+                idx = occ_counters[bucket]
+
+            logical_key = (section_norm, field_norm, idx)
+            if logical_key in written_once:
+                continue
+
+            # EXACT match only (min_field_fuzzy ~ exact after normalization)
+            val = resolve_value(
+                lookup_rows,
+                field_label=label,
+                page=None,
+                section_norm=section_norm,
+                occurrence_index=idx,
+                min_field_fuzzy=0.999,
+                strict_index=True,
+                require_page_match=False,
+                require_section_match=bool(section_norm),
+            )
+            if val is None:
+                # Try relaxing section requirement if we didn't detect a section
+                if not section_norm:
+                    val = resolve_value(
+                        lookup_rows,
+                        field_label=label,
+                        page=None,
+                        section_norm="",
+                        occurrence_index=idx,
+                        min_field_fuzzy=0.999,
+                        strict_index=True,
+                        require_page_match=False,
+                        require_section_match=False,
+                    )
+
+            if val is None:
+                continue
+
+            # Write once
+            if dry_run:
+                print(f"[DRY][DOCX] '{label}' (sec='{section_text or ''}', idx={idx}) -> {val}")
+                written_once.add(logical_key)
+                continue
+
+            _set_cell_text(row.cells[value_col], str(val))
+            written_once.add(logical_key)
+
+
+def sanitize_lookup_for_docx(lookup_rows: List[Dict[str, Any]]):
+    """
+    Generic sanitizer for DOCX filling:
+      • Ignore Page (Word reflows)
+      • De-duplicate by (section_norm, field_norm, Index), keep first non-empty Value
+      • Merge Choices when present
+    Returns: (sanitized_rows, report_dict)
+    """
+    total_rows = len(lookup_rows)
+
+    # Page-agnostic copy, normalize keys
+    page_free_rows: List[Dict[str, Any]] = []
+    for r in lookup_rows:
+        d = dict(r)
+        d["Page"] = None  # DOCX never uses Page
+        # normalize Index
+        try:
+            d["Index"] = int(d["Index"]) if d.get("Index") is not None else None
+        except Exception:
+            d["Index"] = None
+        # ensure norms
+        if not d.get("field_norm"):
+            d["field_norm"] = alias_normal(_normalize(d.get("Field", "")))
+        if "section_norm" not in d:
+            d["section_norm"] = _normalize(d.get("Section", "")) if d.get("Section") else ""
+        page_free_rows.append(d)
+
+    # De-dupe
+    def _idx_or_one(x):
+        try:
+            return int(x) if x is not None else 1
+        except Exception:
+            return 1
+
+    dedup: Dict[Tuple[str, str, int], Dict[str, Any]] = {}
+    conflicts: List[Tuple[str, str, int, str, str]] = []
+
+    for d in page_free_rows:
+        sec = d.get("section_norm", "") or ""
+        fld = d.get("field_norm", "") or alias_normal(_normalize(d.get("Field", "")))
+        idx = _idx_or_one(d.get("Index"))
+        key = (sec, fld, idx)
+        v = str(d.get("Value", "")).strip()
+
+        if key not in dedup:
+            dedup[key] = d
+        else:
+            kept = dedup[key]
+            kept_v = str(kept.get("Value", "")).strip()
+            # prefer non-empty values
+            if kept_v == "" and v != "":
+                dedup[key] = d
+            elif v != "" and kept_v != "" and v != kept_v:
+                conflicts.append((sec, fld, idx, kept_v, v))
+            # merge choices if needed
+            if "Choices" in d and d["Choices"] and not kept.get("Choices"):
+                kept["Choices"] = d["Choices"]
+
+    sanitized_rows = list(dedup.values())
+    report = {
+        "total_rows": total_rows,
+        "kept_rows": len(sanitized_rows),
+        "deduped": total_rows - len(sanitized_rows),
+        "conflicts": conflicts,
+    }
+    return sanitized_rows, report
+
+
+def prefill_docx(input_docx: str,
+                 output_docx: str,
+                 lookup_rows: List[Dict[str, Any]],
+                 dry_run: bool = False):
+    """
+    Native DOCX fill (no conversion). Strategies:
+      1) Replace placeholders: {{Field}}, [[Field]], ${Field}
+      2) Table label (left cell) -> write value in the right cell
+      3) 'Label: ________' underline-style lines
+      4) Basic checkboxes '☐ Label' / '[ ] Label' -> checked if value truthy
+    """
+    try:
+        from docx import Document
+    except Exception as e:
+        raise RuntimeError(
+            "python-docx is required for native DOCX filling. Install with: pip install python-docx"
+        ) from e
+
+    # -----------------------
+    # Canonicalize lookup rows
+    # -----------------------
+    def _norm(s: str) -> str:
+        import unicodedata, re, string
+        s = unicodedata.normalize("NFKC", str(s or ""))
+        s = re.sub(r"\s+", " ", s).strip().lower()
+        return s.translate(str.maketrans("", "", string.punctuation))
+
+    def _val_to_text(v):
+        if isinstance(v, float):
+            if v.is_integer():
+                return str(int(v))
+            s = f"{v:.6f}".rstrip("0").rstrip(".")
+            return s if s else "0"
+        return str(v).strip()
+
+    rows_in = len(lookup_rows or [])
+    seen, conflicts, rows_use = {}, {}, []
+
+    for r in (lookup_rows or []):
+        sec_raw  = r.get("Section") or r.get("section") or r.get("section_norm") or ""
+        fld_raw  = r.get("Field")   or r.get("label")   or r.get("label_norm")   or ""
+        idx_raw  = r.get("Index")   or r.get("index")   or 1
+        try:
+            idx = int(idx_raw)
+        except Exception:
+            idx = 1
+
+        sec_norm = _norm(sec_raw)
+        fld_norm = _norm(fld_raw)
+        if not fld_norm:
+            continue
+
+        val = _val_to_text(r.get("Value", ""))
+
+        key = (sec_norm, fld_norm, idx)
+        if key in seen:
+            prior_val = seen[key]
+            if val and prior_val and val != prior_val:
+                conflicts.setdefault(key, set()).update([prior_val, val])
+            continue
+
+        seen[key] = val
+        rows_use.append({
+            "Section": sec_raw,
+            "section_norm": sec_norm,
+            "Field":   fld_raw,
+            "field_norm": fld_norm,
+            "Index": idx,
+            "Value": val,
+        })
+
+    lookup_rows = rows_use
+
+    print(f"📋 DOCX prefill (generic): rows in -> {rows_in}, kept -> {len(rows_use)}, deduped -> {rows_in - len(rows_use)}")
+    if conflicts:
+        print(f"   • {len(conflicts)} conflicting non-empty value key(s) detected; first match wins in DOCX mode.")
+        for (sec_norm, fld_norm, idx), vals in list(conflicts.items())[:20]:
+            sec_disp = sec_norm or "(no section)"
+            print(f"     - [{sec_disp}] {fld_norm} (Index {idx}) : {sorted(vals)}")
+
+    # -----------------------
+    # Do the actual filling
+    # -----------------------
+    doc = Document(input_docx)
+
+    # 1) placeholders
+    _replace_placeholders_everywhere(doc, lookup_rows, dry_run=dry_run)
+    # 2) tables (left label -> right value)
+    _fill_table_right_cells(doc, lookup_rows, dry_run=dry_run)
+    # 3) colon + underscores
+    _fill_colon_underscore_lines(doc, lookup_rows, dry_run=dry_run)
+    # 4) checkboxes
+    _fill_checkboxes(doc, lookup_rows, dry_run=dry_run)
+
+    # --- Section-aware table refill (handles repeated labels across sections) ---
+    from collections import defaultdict
+
+    def _norm_key(s: str) -> str:
+        import unicodedata, re, string
+        s = unicodedata.normalize("NFKC", str(s or "")).strip().lower()
+        s = re.sub(r"\s+", " ", s)
+        return s.translate(str.maketrans("", "", string.punctuation))
+
+    def _to_text_value(v):
+        try:
+            import math
+            if isinstance(v, float) and math.isfinite(v):
+                if v.is_integer():
+                    return str(int(v))
+                s = f"{v:.6f}".rstrip("0").rstrip(".")
+                return s if s else "0"
+        except Exception:
+            pass
+        return str(v).strip()
+
+    values_exact = {}
+    values_by_field = defaultdict(dict)
+    values_sectionless = defaultdict(dict)
+
+    for r in lookup_rows:
+        sec = _norm_key(r.get("Section", ""))
+        fld = _norm_key(r.get("Field", ""))
+        idx = int(r.get("Index") or 1)
+        val = _to_text_value(r.get("Value", ""))
+        if not fld or val == "":
+            continue
+        values_exact[(sec, fld, idx)] = val
+        if not sec:
+            values_sectionless[fld][idx] = val
+        if idx not in values_by_field[fld]:
+            values_by_field[fld][idx] = val
+
+    def _first_cell_text(cell):
+        return " ".join(p.text for p in cell.paragraphs).strip()
+
+    def _guess_pair_headers(tbl):
+        hdr = {}
+        try:
+            row0 = tbl.rows[0]
+            ncols0 = len(row0.cells)
+            for ci in range(0, ncols0, 2):
+                try:
+                    hdr[ci] = _first_cell_text(row0.cells[ci]).strip()
+                except Exception:
+                    hdr[ci] = ""
+        except Exception:
+            pass
+        return hdr
+
+    def _strip_trailing_paren(s: str) -> str:
+        import re
+        return re.sub(r"\s*\([^()]*\)\s*$", "", s or "").strip()
+
+    # --- scan upwards for a non-empty label in same column (fixes merged/blank labels) ---
+    def _scan_up_label(tbl, ri: int, ci: int) -> str:
+        try:
+            hdr = _first_cell_text(tbl.rows[0].cells[ci]).strip()
+            if hdr:
+                return hdr
+        except Exception:
+            pass
+        for rj in range(ri - 1, -1, -1):
+            try:
+                t = _first_cell_text(tbl.rows[rj].cells[ci]).strip()
+            except Exception:
+                t = ""
+            if t:
+                return t
+        return ""
+
+    # -- write the value inside the form "box" in a table cell.
+    #    Priority: underscores → shaded paragraph → cell shading → first box-like para → last para
+    #    Keeps labels & grey boxes; removes visible "FORMTEXT" remnants only.
+    def _write_into_form_area(cell, text: str):
+        import re
+        val = text or ""
+
+        def _para_is_shaded(para) -> bool:
+            try:
+                return bool(para._element.xpath('.//w:pPr/w:shd', namespaces=para._element.nsmap))
+            except Exception:
+                return False
+
+        def _cell_is_shaded(c) -> bool:
+            try:
+                return bool(c._tc.xpath('.//w:tcPr/w:shd', namespaces=c._tc.nsmap))
+            except Exception:
+                return False
+
+        target_para = None
+        shaded_paras, box_like_paras, placeholder_runs = [], [], []
+
+        for para in cell.paragraphs:
+            if _para_is_shaded(para):
+                shaded_paras.append(para)
+
+            # remove visible FORMTEXT tokens only
+            for run in list(para.runs):
+                if (run.text or "").strip().upper() == "FORMTEXT":
+                    run.text = ""
+
+            # collect placeholder runs (______ etc.)
+            for run in para.runs:
+                t = (run.text or "")
+                if t and re.fullmatch(r"[_\-\u2014\.\s]+", t):
+                    L = len(t.replace(" ", ""))
+                    placeholder_runs.append((L, run))
+
+            vis = "".join((r.text or "") for r in para.runs)
+            if vis and not re.search(r"[A-Za-z0-9]", vis):
+                box_like_paras.append(para)
+
+        # 1) Prefer the longest underscore placeholder
+        if placeholder_runs:
+            placeholder_runs.sort(key=lambda x: x[0], reverse=True)
+            L, run = placeholder_runs[0]
+            run.text = val[: max(1, L)]
+            return
+
+        # 2) Shaded paragraph
+        if shaded_paras:
+            target_para = shaded_paras[0]
+        # 3) Cell-level shading → first paragraph
+        elif _cell_is_shaded(cell):
+            target_para = cell.paragraphs[0] if cell.paragraphs else cell.add_paragraph()
+        # 4) First “box-like” paragraph
+        elif box_like_paras:
+            target_para = box_like_paras[0]
+        # 5) Fallback
+        elif cell.paragraphs:
+            target_para = cell.paragraphs[-1]
+        else:
+            target_para = cell.add_paragraph()
+
+        empties = [r for r in target_para.runs if not (r.text or "").strip()]
+        if empties:
+            empties[-1].text = val
+        else:
+            target_para.add_run(val)
+
+    # ------------------------
+    # Pass 1: multi-pair grids
+    # ------------------------
+    import re as _re
+
+    for tbl in doc.tables:
+        try:
+            ncols = len(tbl.rows[0].cells)
+        except Exception:
+            continue
+        if ncols < 2:
+            continue
+
+        pair_headers = _guess_pair_headers(tbl)
+        start_row = 1 if any(_first_cell_text(tbl.rows[0].cells[c]).strip()
+                             for c in range(min(ncols, 2))) else 0
+
+        for ri in range(start_row, len(tbl.rows)):
+            row = tbl.rows[ri]
+            for ci in range(0, ncols - 1, 2):
+                try:
+                    label_cell = row.cells[ci]
+                    value_cell = row.cells[ci + 1]
+                except Exception:
+                    continue
+
+                label_text = _first_cell_text(label_cell).strip()
+                if not label_text:
+                    label_text = _scan_up_label(tbl, ri, ci).strip()
+
+                fld_norm = _norm_key(label_text)
+                if not fld_norm:
+                    continue
+
+                sec_display = (pair_headers.get(ci, "") or "").strip()
+                sec_norm = _norm_key(_strip_trailing_paren(sec_display))
+
+                # derive index: column pair + number in header (e.g., "Contact 3")
+                pair_index_hint = (ci // 2) + 1
+                m = _re.search(r'(\d+)\b', sec_display)
+                if m:
+                    try:
+                        pair_index_hint = int(m.group(1))
+                    except Exception:
+                        pass
+
+                # --- choose value with robust fallbacks ---
+                chosen_value = ""
+                # 1) exact (section, field, index) – try header-derived index first
+                for idx_try in (pair_index_hint, 1, 2, 3, 4):
+                    chosen_value = values_exact.get((sec_norm, fld_norm, idx_try), "")
+                    if chosen_value:
+                        break
+                # 2) sectionless fallback
+                if not chosen_value:
+                    for idx_try in (pair_index_hint, 1, 2, 3, 4):
+                        chosen_value = values_sectionless.get(fld_norm, {}).get(idx_try, "")
+                        if chosen_value:
+                            break
+                # 3) field-only fallback by index
+                if not chosen_value:
+                    for idx_try in (pair_index_hint, 1, 2, 3, 4):
+                        chosen_value = values_by_field.get(fld_norm, {}).get(idx_try, "")
+                        if chosen_value:
+                            break
+                # 4) FINAL GREEDY FALLBACK: take any available index for this field (smallest index)
+                if not chosen_value:
+                    idx_map = values_by_field.get(fld_norm, {})
+                    if idx_map:
+                        chosen_value = (idx_map.get(pair_index_hint, "")
+                                        or idx_map.get(1, "")
+                                        or idx_map.get(2, "")
+                                        or idx_map.get(3, "")
+                                        or next((v for _, v in sorted(idx_map.items(), key=lambda kv: kv[0])), ""))
+
+                if chosen_value:
+                    _write_into_form_area(value_cell, chosen_value)
+
+    # ------------------------
+    # Pass 2: simple 2-col grids
+    # ------------------------
+    for tbl in doc.tables:
+        try:
+            ncols = len(tbl.rows[0].cells)
+        except Exception:
+            continue
+        if ncols < 2:
+            continue
+
+        sec_display = _first_cell_text(tbl.rows[0].cells[0]) if tbl.rows else ""
+        sec_norm = _norm_key(_strip_trailing_paren(sec_display))
+
+        for ri, row in enumerate(tbl.rows):
+            if ri == 0:
+                continue
+            try:
+                left = _first_cell_text(row.cells[0])
+                right_cell = row.cells[1]
+            except Exception:
+                continue
+
+            fld_norm = _norm_key(left)
+            if not fld_norm:
+                # scan up in column 0 for a label if current left is blank
+                left_up = _scan_up_label(tbl, ri, 0)
+                fld_norm = _norm_key(left_up)
+                if not fld_norm:
+                    continue
+
+            # choose value with the same robust fallbacks
+            chosen_value = ""
+            for idx_try in (1, 2, 3, 4):
+                chosen_value = values_exact.get((sec_norm, fld_norm, idx_try), "")
+                if chosen_value:
+                    break
+            if not chosen_value:
+                for idx_try in (1, 2, 3, 4):
+                    chosen_value = values_sectionless.get(fld_norm, {}).get(idx_try, "")
+                    if chosen_value:
+                        break
+            if not chosen_value:
+                for idx_try in (1, 2, 3, 4):
+                    chosen_value = values_by_field.get(fld_norm, {}).get(idx_try, "")
+                    if chosen_value:
+                        break
+            # FINAL GREEDY FALLBACK
+            if not chosen_value:
+                idx_map = values_by_field.get(fld_norm, {})
+                if idx_map:
+                    chosen_value = (idx_map.get(1, "")
+                                    or idx_map.get(2, "")
+                                    or idx_map.get(3, "")
+                                    or next((v for _, v in sorted(idx_map.items(), key=lambda kv: kv[0])), ""))
+
+            if chosen_value:
+                _write_into_form_area(right_cell, chosen_value)
+
+    # ---- finish ----
+    if dry_run:
+        print("Dry-run complete (DOCX). No file written.")
+        return 0
+
+    doc.save(output_docx)
+    print(f"📝 DOCX write complete → {output_docx}")
+    return 1
+
+
+
+
 
 # ---------------------------
 # Text / section helpers
@@ -290,11 +1112,65 @@ def _is_section_header_relaxed(text: str) -> bool:
 def find_sections_on_page(page: fitz.Page,
                           expected_sections_norm: Optional[Set[str]] = None,
                           dry_run: bool = False) -> List[Dict[str, Any]]:
+    import re, unicodedata
     expected_sections_norm = expected_sections_norm or set()
     lines = _page_lines_with_fonts(page)
-    candidates = []
+    candidates: List[Dict[str, Any]] = []
 
-    # 1) relaxed headers
+    # ---- helpers (local; no hard-coded names) --------------------------------
+    def _strip_trailing_paren(s: str) -> str:
+        # drop ONE trailing (...) — common in DOCX table headers
+        return re.sub(r"\s*\([^()]*\)\s*$", "", str(s or "")).strip()
+
+    def _norm_key(s: str) -> str:
+        # mirror your _normalize but safe here
+        t = unicodedata.normalize("NFKC", str(s or "")).lower().strip()
+        t = re.sub(r"\s+", " ", t)
+        return re.sub(r"[^\w\s]", "", t)
+
+    # ---- (0) geometry-aware pass using text dict (handles table headers) -----
+    try:
+        td = page.get_text("dict") or {}
+        page_w = float(page.rect.x1) or 1.0
+        for b in td.get("blocks", []) or []:
+            for ln in b.get("lines", []) or []:
+                spans = [s for s in (ln.get("spans") or []) if (s.get("text") or "").strip()]
+                if not spans:
+                    continue
+                x0 = min(float(s["bbox"][0]) for s in spans)
+                x1 = max(float(s["bbox"][2]) for s in spans)
+                y0 = min(float(s["bbox"][1]) for s in spans)
+                y1 = max(float(s["bbox"][3]) for s in spans)
+                txt_raw = " ".join((s.get("text") or "").strip() for s in spans).strip()
+                if not txt_raw:
+                    continue
+
+                core = _strip_trailing_paren(unicodedata.normalize("NFKC", txt_raw))
+                if not core:
+                    continue
+
+                # textual filters (digit-free, not extremely long)
+                if any(ch.isdigit() for ch in core):
+                    continue
+                words = core.split()
+                if not words or len(words) > 16:
+                    continue
+
+                # geometry: treat left-aligned, wide spans as headers too
+                span_frac = max(0.0, (x1 - x0) / max(1.0, page_w))
+                titleish = (sum(1 for w in words if w[:1].isupper()) / max(1, len(words))) >= 0.5
+                wide_enough = span_frac >= 0.45  # relaxed for DOCX table rows
+
+                if wide_enough or titleish:
+                    candidates.append({
+                        "name": txt_raw,                      # keep original (with parenthetical) for display
+                        "name_norm": _norm_key(core),         # normalize on core
+                        "y1": (y0 + y1) / 2.0                 # mid-line Y
+                    })
+    except Exception:
+        pass
+
+    # ---- (1) your relaxed header pass (kept) ---------------------------------
     for ln in lines:
         t = ln["text"].strip()
         if not t:
@@ -305,7 +1181,7 @@ def find_sections_on_page(page: fitz.Page,
             name = _strip_colon_like(unicodedata.normalize("NFKC", t))
             candidates.append({"name": name, "name_norm": _normalize(name), "y1": ln["y_mid"]})
 
-    # 2) fuzzy vs expected sections (from Excel)
+    # ---- (2) fuzzy vs expected sections (kept) --------------------------------
     if expected_sections_norm:
         expected_list = list(expected_sections_norm)
         for ln in lines:
@@ -317,7 +1193,7 @@ def find_sections_on_page(page: fitz.Page,
                 name = _strip_colon_like(ln["text"])
                 candidates.append({"name": name, "name_norm": norm_line, "y1": ln["y_mid"]})
 
-    # 3) size-based catch (top 20% lines)
+    # ---- (3) size-based catch (kept) ------------------------------------------
     if lines:
         sizes = sorted([ln["max_size"] for ln in lines if ln["max_size"] > 0])
         if sizes:
@@ -328,7 +1204,8 @@ def find_sections_on_page(page: fitz.Page,
                     if t and _is_section_header_relaxed(t):
                         candidates.append({"name": t, "name_norm": _normalize(t), "y1": ln["y_mid"]})
 
-    candidates.sort(key=lambda c: (round(c["y1"], 1)))
+    # ---- dedupe & order -------------------------------------------------------
+    candidates.sort(key=lambda c: (round(c["y1"], 1), c["name_norm"]))
     dedup, seen = [], set()
     for c in candidates:
         key = (c["name_norm"], round(c["y1"], 1))
@@ -343,11 +1220,14 @@ def find_sections_on_page(page: fitz.Page,
             print("   -", s["name"])
     return dedup
 
+
 def nearest_section_name(sections: List[Dict[str, Any]], y_mid: float) -> Tuple[str, str]:
-    above = [s for s in sections if s["y1"] <= y_mid]
+    above = [s for s in sections if s["y1"] <= y_mid + 1e-6]  # tiny tolerance
     if not above:
         return "", ""
-    return above[-1]["name"], above[-1]["name_norm"]
+    last = above[-1]
+    return last["name"], last["name_norm"]
+
 
 # ---------------------------
 # Yes/No detection around a point
@@ -2162,10 +3042,167 @@ def build_pdf_template(pdf_path: str,
                 print(f"   • field[{idx}] (AcroForm CHOICE) → '{label_text}' @y≈{cy:.1f}{extra} (sec: {section_name})")
 
     with open(template_json, "w", encoding="utf-8") as f:
-        json.dump(tpl, f, indent=2, ensure_ascii=False)
-    print(f"🧩 Template saved to {template_json} with {len(tpl['fields'])} fields.")
-    doc.close()
-    return template_json
+
+        # --- DOCX: promote header-like rows to sections (generic, no hard-coded names) ---
+        def _norm_text(s: str) -> str:
+            import unicodedata, re
+            s = unicodedata.normalize("NFKC", str(s or ""))
+            s = re.sub(r"\s+", " ", s).strip()
+            return s
+
+        def _norm_key(s: str) -> str:
+            import unicodedata, re, string
+            s = unicodedata.normalize("NFKC", str(s or "")).lower()
+            s = re.sub(r"\s+", " ", s).strip()
+            return s.translate(str.maketrans("", "", string.punctuation))
+
+        def _order_key(fd):
+            # stable visual order: page -> y -> x -> index
+            p = int(fd.get("page", 1) or 1)
+            y = float(fd.get("anchor_y", 0.0) or 0.0)
+            x = float(fd.get("anchor_x", 0.0) or 0.0)
+            i = int(fd.get("index", 10**9) or 10**9)
+            return (p, y, x, i)
+
+        def _looks_like_header_generic(f, page_min_x, page_max_x) -> bool:
+            """
+            Generic header detector:
+              • short, digit-free, punctuation-light text (≤ ~7 words)
+              • title-ish capitalization (majority of words capitalized OR many caps)
+              • visually spans most of the row and roughly centered
+            """
+            txt = _norm_text(f.get("label", ""))
+            if not txt:
+                return False
+
+            # textual filters (no hard-coded names)
+            if any(ch.isdigit() for ch in txt):
+                return False
+            words = [w for w in txt.split() if w]
+            if len(words) == 0 or len(words) > 7:
+                return False
+
+            # avoid obvious field-ish endings (colon => treat as a header line though)
+            ends_colon = txt.endswith(":")
+            # if it ends with a colon, that's a very strong signal already
+            strong_text_signal = ends_colon
+
+            # capitalization heuristics
+            caps_start_ratio = sum(1 for w in words if w[:1].isupper()) / max(1, len(words))
+            letters = [c for c in txt if c.isalpha()]
+            caps_ratio = (sum(1 for c in letters if c.isupper()) / max(1, len(letters))) if letters else 0.0
+            titleish = (caps_start_ratio >= 0.55) or (caps_ratio >= 0.55)
+
+            # geometric heuristics (use line_box if present, else anchor_x as a tiny box)
+            x0 = x1 = None
+            if f.get("line_box"):
+                xb = f["line_box"]
+                x0, x1 = float(xb[0]), float(xb[2])
+            elif f.get("box_rect"):
+                xb = f["box_rect"]
+                x0, x1 = float(xb[0]), float(xb[2])
+            else:
+                # synthesize a small span around anchor_x so we can still compute center
+                ax = float(f.get("anchor_x", 0.0) or 0.0)
+                x0, x1 = ax - 1.0, ax + 1.0
+
+            page_w = max(1.0, float(page_max_x - page_min_x))
+            span_w = max(0.0, float(x1 - x0))
+            span_frac = span_w / page_w
+
+            # center-ish?
+            center = (abs(((x0 + x1) / 2.0) - (page_min_x + page_w / 2.0)) <= 0.25 * page_w)
+
+            # header-ish if it spans a good portion and is centered
+            strong_geom_signal = (span_frac >= 0.55 and center)
+
+            # combine signals
+            return (titleish and strong_geom_signal) or (strong_text_signal and center)
+
+        _is_docx_source = str(tpl.get("pdf", "")).lower().endswith((".docx", ".doc"))
+        _is_docx_source = str(tpl.get("pdf", "")).lower().endswith((".docx", ".doc"))
+        if _is_docx_source and tpl.get("fields"):
+            # 1) sort fields in visual order
+            fields_sorted = sorted(list(tpl["fields"]), key=_order_key)
+
+            # 2) per-page horizontal bounds
+            from collections import defaultdict
+            bounds = defaultdict(lambda: [float("+inf"), float("-inf")])  # page -> [min_x, max_x]
+            for f in fields_sorted:
+                p = int(f.get("page", 1) or 1)
+                if f.get("line_box"):
+                    x0, x1 = float(f["line_box"][0]), float(f["line_box"][2])
+                elif f.get("box_rect"):
+                    x0, x1 = float(f["box_rect"][0]), float(f["box_rect"][2])
+                else:
+                    ax = float(f.get("anchor_x", 0.0) or 0.0)
+                    x0, x1 = ax - 1.0, ax + 1.0
+                bounds[p][0] = min(bounds[p][0], x0)
+                bounds[p][1] = max(bounds[p][1], x1)
+
+            # 3) scan: detect headers, KEEP them as rows, and propagate section to following fields
+            current_sec_name = ""
+            current_sec_norm = ""
+            keep = []
+
+            # separate counter for section headers so they don’t collide with normal fields
+            section_counters = {}
+
+            for fd in fields_sorted:
+                p = int(fd.get("page", 1) or 1)
+                min_x, max_x = bounds[p]
+
+                if _looks_like_header_generic(fd, min_x, max_x):
+                    # header text -> section
+                    sec_name = _norm_text(fd.get("label", "")).rstrip(":").strip()
+                    sec_norm = _norm_key(sec_name) if sec_name else ""
+
+                    current_sec_name = sec_name
+                    current_sec_norm = sec_norm
+
+                    # KEEP header as its own row in the template
+                    sh_key = (p, sec_norm)
+                    section_counters[sh_key] = section_counters.get(sh_key, 0) + 1
+                    header_idx = section_counters[sh_key]
+
+                    header_row = dict(fd)  # shallow copy
+                    header_row["section"] = sec_name
+                    header_row["section_norm"] = sec_norm
+                    header_row["label"] = sec_name  # clean label
+                    header_row["label_short"] = sec_name
+                    header_row["label_full"] = sec_name
+                    header_row["label_norm"] = alias_normal(_normalize(sec_name))
+                    header_row["placement"] = "section_header"
+                    header_row["is_section"] = True
+                    header_row["index"] = header_idx
+
+                    keep.append(header_row)
+                    continue
+
+                # normal field: inherit last seen section if missing
+                if not _norm_key(fd.get("section_norm", "")) and current_sec_norm:
+                    fd["section"] = current_sec_name
+                    fd["section_norm"] = current_sec_norm
+
+                keep.append(fd)
+
+            # 4) replace with full list (headers INCLUDED, sections propagated)
+            tpl["fields"] = keep
+
+
+        # ... your template post-processing code above ...
+        # (Make sure any loops use e.g. `for fd in fields_sorted:` to avoid `f` lingering.)
+
+        # --- write template JSON safely ---
+        out_path = str(template_json)  # template_json is the path passed from field_map_generate
+        import os, json
+        os.makedirs(os.path.dirname(out_path) or ".", exist_ok=True)
+
+        with open(out_path, "w", encoding="utf-8") as fh:   # <- use fh, not f
+            json.dump(tpl, fh, indent=2, ensure_ascii=False)
+
+        return tpl
+
 
 
 
@@ -2677,19 +3714,17 @@ def fill_from_template(pdf_path: str,
         page.draw_line(p1, p2, width=width, color=(0, 0, 0), overlay=True)
         page.draw_line(p3, p4, width=width, color=(0, 0, 0), overlay=True)
 
-    # --- NEW: find vertical cell boundaries near a y-row to snap text inside tables (DOCX) ---
+    # --- find vertical cell boundaries (DOCX table snap) ---
     def _cell_span_from_verticals(page: fitz.Page,
                                   y: float,
                                   x_pref: float,
                                   y_tol: float = 10.0,
                                   max_gap: float = 540.0,
-                                  min_gap: float = 28.0) -> Optional[Tuple[float, float]]:
-        """Return (x_left, x_right) of the nearest table cell around x_pref at row y."""
+                                  min_gap: float = 28.0):
         try:
             drawings = page.get_drawings() or []
         except Exception:
             return None
-
         verts = []
         for g in drawings:
             for it in g.get("items", []) or []:
@@ -2704,42 +3739,31 @@ def fill_from_template(pdf_path: str,
                 except Exception:
                     continue
                 dx, dy = (x1 - x0), (y1 - y0)
-                if abs(dx) > 2.0:           # vertical-ish only
+                if abs(dx) > 2.0:
                     continue
                 ymin, ymax = sorted([y0, y1])
                 if ymin - y_tol <= y <= ymax + y_tol:
-                    verts.append(( (x0 + x1) / 2.0, ymin, ymax ))
-
+                    verts.append(((x0 + x1) / 2.0, ymin, ymax))
         if not verts:
             return None
-
-        # Sort by x and find adjacent pair surrounding x_pref
         verts.sort(key=lambda v: v[0])
         xs = [v[0] for v in verts]
-
-        # quickly bail if x_pref is outside vertical grid entirely
         if x_pref <= xs[0] or x_pref >= xs[-1]:
             return None
-
-        left_idx = None
-        right_idx = None
+        left_idx = right_idx = None
         for i in range(1, len(xs)):
             if xs[i-1] <= x_pref <= xs[i]:
-                left_idx = i - 1
-                right_idx = i
+                left_idx, right_idx = i-1, i
                 break
-        if left_idx is None or right_idx is None:
+        if left_idx is None:
             return None
-
         xL, xR = xs[left_idx], xs[right_idx]
         gap = xR - xL
         if gap < min_gap or gap > max_gap:
             return None
-
-        # Tiny inward padding so we don't touch borders
         return (xL + 2.0, xR - 2.0)
 
-    # STRICT lookup just for checkboxes: match EXACTLY on label_short
+    # STRICT lookup just for checkboxes
     def _strict_checkbox_value(label_short: str, page_no: int, section_norm: str, occurrence_index: int):
         norm = alias_normal(_normalize(label_short))
         cands = [r for r in lookup_rows if r.get("field_norm") == norm]
@@ -2772,7 +3796,7 @@ def fill_from_template(pdf_path: str,
         best = max(cands, key=_score, default=None)
         return best["Value"] if best else None
 
-    # book-keeping
+    # bookkeeping
     ticked_regions: Dict[int, Set[Tuple[int, int, int, int]]] = {}
     occ_counters: Dict[Tuple[int, str, str], int] = {}
     used_indices: Dict[Tuple[int, str, str], Set[int]] = {}
@@ -2784,7 +3808,7 @@ def fill_from_template(pdf_path: str,
             continue
 
         page_idx = max(0, int(fdef["page"]) - 1)
-        if page_idx >= len(doc):                  # guard if template page > doc pages
+        if page_idx >= len(doc):
             if dry_run:
                 print(f"[DRY] skip '{label}' – template refers to missing page {page_idx+1}")
             continue
@@ -2829,6 +3853,7 @@ def fill_from_template(pdf_path: str,
 
         field_norm         = picked_row["field_norm"]
         excel_section_norm = picked_row.get("section_norm") or ""
+        excel_page         = picked_row.get("Page", None)
         effective_section  = excel_section_norm or detected_section_norm
         bucket_key         = (page_idx + 1, effective_section, field_norm)
 
@@ -2855,23 +3880,48 @@ def fill_from_template(pdf_path: str,
                 print(f"[DRY] p{page_idx+1} '{label}' (idx={idx}) → skip (already written this occurrence)")
             continue
 
-        # ---- Phase 2: get value
-        if placement == "checkbox" and label_short:
-            value = _strict_checkbox_value(label_short, page_idx + 1, effective_section, idx)
-        else:
-            value = resolve_value(
+        # ---- Phase 2: resolve with ordered, scoped matching (no global fallback) ----
+        # Prefer (page & section) → section-only → page-only.
+        # We DO NOT fall back to "anywhere in document".
+        excel_has_page    = (excel_page is not None)
+        excel_has_section = bool(excel_section_norm)
+
+        def _resolve(require_page: bool, require_section: bool,
+                     strict_idx: bool = True, pg=None, sec=None):
+            return resolve_value(
                 lookup_rows, picked_key or label,
-                page=page_idx + 1,
-                section_norm=effective_section,
+                page=(pg if pg is not None else page_idx + 1),
+                section_norm=(sec if sec is not None else effective_section),
                 occurrence_index=idx,
                 min_field_fuzzy=fuzzy_for_this,
-                strict_index=True,
-                require_page_match=True,
-                require_section_match=True
+                strict_index=strict_idx,
+                require_page_match=require_page,
+                require_section_match=require_section
             )
+
+        value = None
+        if excel_has_page and excel_has_section:
+            value = _resolve(True, True, strict_idx=True)
+            if value is None:
+                value = _resolve(False, True, strict_idx=True)   # section-only
+            if value is None:
+                value = _resolve(True, False, strict_idx=True)   # page-only
+        elif excel_has_section and not excel_has_page:
+            value = _resolve(False, True, strict_idx=True)       # section-only
+            if value is None:
+                value = _resolve(True, False, strict_idx=True)   # page-only
+        elif excel_has_page and not excel_has_section:
+            value = _resolve(True, False, strict_idx=True)       # page-only
+            if value is None:
+                value = _resolve(False, True, strict_idx=True)   # section-only
+        else:
+            value = _resolve(True, False, strict_idx=True)       # page-only
+            if value is None:
+                value = _resolve(False, True, strict_idx=True)   # section-only
+
         if value is None:
             if dry_run:
-                print(f"[DRY] p{page_idx+1} '{label}' (idx={idx}) → no value")
+                print(f"[DRY] p{page_idx+1} '{label}' (idx={idx}) → no value (scoped search only)")
             continue
 
         # =========================
@@ -2883,13 +3933,11 @@ def fill_from_template(pdf_path: str,
                 if dry_run:
                     print(f"[DRY] p{page_idx+1} checkbox '{label_short or label}' -> skip (unclear '{value}')")
                 continue
-
             r = _rect_from_fdef(fdef)
             rk = _rect_key(r.x0, r.y0, r.x1, r.y1)
             pgset = ticked_regions.setdefault(page_idx, set())
             if rk in pgset:
                 continue
-
             rcx = (r.x0 + r.x1) / 2.0
             rcy = (r.y0 + r.y1) / 2.0
             opt_here = _nearby_yes_no_option(page, rcx, rcy)
@@ -2898,30 +3946,22 @@ def fill_from_template(pdf_path: str,
                     if dry_run:
                         print(f"[DRY] p{page_idx+1} checkbox '{label_short or label}' -> skip (token mismatch)")
                     continue
-
             if dry_run:
                 print(f"[DRY] p{page_idx+1} checkbox '{label_short or label}' -> TICK @ ({rcx:.1f},{rcy:.1f})")
-                pgset.add(rk)
-                written_once.add(logical_key)
+                pgset.add(rk); written_once.add(logical_key)
                 continue
-
             w = _find_any_widget_overlapping(page, (r.x0, r.y0, r.x1, r.y1))
             if w is not None:
                 try:
                     if getattr(w, "field_value", "") != "Yes" and yn is True:
                         w.field_value = "Yes"; w.update()
-                    filled += 1
-                    pgset.add(rk)
-                    written_once.add(logical_key)
+                    filled += 1; pgset.add(rk); written_once.add(logical_key)
                     continue
                 except Exception:
                     pass
-
             if yn is True:
                 _draw_center_X(page, r)
-                filled += 1
-                pgset.add(rk)
-                written_once.add(logical_key)
+                filled += 1; pgset.add(rk); written_once.add(logical_key)
             continue
 
         # =========================
@@ -2929,12 +3969,10 @@ def fill_from_template(pdf_path: str,
         # =========================
         x = float(fdef["anchor_x"])
         y = float(fdef["anchor_y"])
-
-        # (A) default span: use line_box if present, otherwise tiny box at anchor
+        # default span
         if fdef.get("line_box"):
             x0_lb, y0_lb, x1_lb, y1_lb = map(float, fdef["line_box"])
-            ux0 = max(x0_lb, x)
-            ux1 = x1_lb
+            ux0 = max(x0_lb, x); ux1 = x1_lb
             base_y0, base_y1 = y0_lb, y1_lb
         elif fdef.get("box_rect"):
             x0_lb, y0_lb, x1_lb, y1_lb = map(float, fdef["box_rect"])
@@ -2944,18 +3982,13 @@ def fill_from_template(pdf_path: str,
             ux0, ux1 = x - 6, x + 6
             base_y0, base_y1 = y - 6, y + 6
 
-        # (B) NEW: if the page has DOCX-style table lines, snap to the nearest cell
-        # around this row using vertical borders. This greatly improves alignment
-        # for "First name" / "Middle Initial" cells in Word-converted PDFs.
+        # DOCX table snap
         snap = _cell_span_from_verticals(page, (base_y0 + base_y1) / 2.0, x_pref=x)
         if snap:
             cell_x0, cell_x1 = snap
-            # only replace if the cell is reasonably sized and overlaps our current span
             if (cell_x1 - cell_x0) >= 20 and not (cell_x1 < ux0 or cell_x0 > ux1):
-                ux0 = max(ux0, cell_x0)
-                ux1 = min(ux1, cell_x1)
+                ux0 = max(ux0, cell_x0); ux1 = min(ux1, cell_x1)
 
-        # Cap to a sane width so we don't center across huge spans accidentally
         max_span = 520.0
         if (ux1 - ux0) > max_span:
             mid = (ux0 + ux1) / 2.0
@@ -2972,8 +4005,7 @@ def fill_from_template(pdf_path: str,
             draw_x, draw_y = max(ux0, x), (base_y0 + base_y1) / 2.0
 
         if dry_run:
-            print(f"[DRY] p{page_idx+1} '{label}' (idx={idx}) → '{value}' at ({draw_x:.1f},{draw_y:.1f}) "
-                  f"[span {ux0:.1f}-{ux1:.1f}]")
+            print(f"[DRY] p{page_idx+1} '{label}' (idx={idx}) → '{value}' at ({draw_x:.1f},{draw_y:.1f}) [span {ux0:.1f}-{ux1:.1f}]")
             written_once.add(logical_key)
         else:
             rect = fitz.Rect(draw_x, draw_y - font_size, draw_x + 1200, draw_y + 2 * font_size)
@@ -2999,6 +4031,7 @@ def fill_from_template(pdf_path: str,
 
 
 
+
 # ---------------------------
 # Coordinates exporter (debug)
 # ---------------------------
@@ -3016,6 +4049,36 @@ def export_pdf_coordinates(pdf_path: str, csv_path: str = "pdf_coordinates.csv")
             writer.writerows(rows)
         print(f"📄 Export complete: {csv_path}")
         doc.close()
+
+def prefill_any(input_path: str,
+                output_path: str,
+                lookup_path: str,
+                template_json: str = "template_fields.json",
+                build_template_if_missing: bool = True,
+                dry_run: bool = False,
+                rebuild_template: bool = False):
+    """
+    Dispatch to DOCX or PDF path based on input/output extensions.
+    """
+    in_ext = os.path.splitext(input_path)[1].lower()
+    out_ext = os.path.splitext(output_path)[1].lower()
+
+    lookup_rows = read_lookup_rows(lookup_path)
+
+    if in_ext in (".docx", ".doc") and out_ext in (".docx", ".doc"):
+        # Native DOCX
+        return prefill_docx(input_path, output_path, lookup_rows, dry_run=dry_run)
+
+    # Fallback to your existing PDF flow (unchanged)
+    return prefill_pdf(
+        input_pdf=input_path,
+        output_pdf=output_path if out_ext == ".pdf" else "out.pdf",
+        lookup_path=lookup_path,
+        template_json=template_json,
+        build_template_if_missing=build_template_if_missing,
+        dry_run=dry_run,
+        rebuild_template=rebuild_template,
+    )
 
 
 # ---------------------------
@@ -3075,35 +4138,407 @@ def prefill_pdf(input_pdf: str,
         )
 
 
+# -------------------------------
+# DOCX parsing helpers (no-PDF)
+# -------------------------------
+def _is_word_path(path: str) -> bool:
+    p = str(path).lower()
+    return p.endswith(".docx") or p.endswith(".doc")
+
+def _require_python_docx():
+    try:
+        import docx  # noqa
+    except Exception:
+        raise RuntimeError(
+            "DOCX parsing requires the 'python-docx' package. "
+            "Install it with: pip install python-docx"
+        )
+
+def _docx_iter_pages(doc):
+    """
+    Yield (page_no, block) across the document.
+    A 'block' is either ('para', paragraph) or ('table', table).
+    We increment 'page_no' on explicit page breaks and on section breaks.
+    """
+    from docx.enum.text import WD_BREAK
+
+    page_no = 1
+
+    # Helper to scan page breaks in paragraph runs
+    def _para_has_page_break(p):
+        for r in p.runs:
+            br_elems = r._r.xpath("./w:br")
+            for br in br_elems:
+                # if w:br has @w:type="page"
+                t = br.get("{http://schemas.openxmlformats.org/wordprocessingml/2006/main}type")
+                if t == "page":
+                    return True
+            # some producers mark it as an explicit break on the run
+            if r._r.xpath("./w:lastRenderedPageBreak"):
+                return True
+        return False
+
+    # If the document has sections, a new section can imply a new page (depending on type).
+    def _section_new_page(sec):
+        # If there is explicit type "nextPage", "oddPage", "evenPage" -> count as new page.
+        # python-docx doesn't expose the break type directly, so we detect sectPr child @w:type.
+        sp = sec._sectPr
+        if sp is None:
+            return False
+        type_el = sp.xpath("./w:type")
+        if not type_el:
+            return False
+        tval = type_el[0].get("{http://schemas.openxmlformats.org/wordprocessingml/2006/main}val")
+        return tval in ("nextPage", "oddPage", "evenPage")
+
+    # Walk the document in *source order* (paragraphs and tables interleaved)
+    # python-docx doesn’t give us a direct interleaved iterator, so we iterate the body XML.
+    body = doc._element.body
+    for child in body.iterchildren():
+        tag = child.tag
+        if tag.endswith("}p"):
+            p = docx.text.paragraph.Paragraph(child, doc)
+            # detect section end before emitting next block? (Word pages are rendered,
+            # but we approximate: first yield, then if there's a page break -> increment)
+            yield (page_no, ("para", p))
+            if _para_has_page_break(p):
+                page_no += 1
+        elif tag.endswith("}tbl"):
+            t = docx.table.Table(child, doc)
+            yield (page_no, ("table", t))
+        elif tag.endswith("}sectPr"):
+            # section properties outside paragraphs (rare), count as a new page if type says so
+            # and bump page number for *next* content
+            sp = child
+            type_el = sp.xpath("./w:type")
+            if type_el:
+                tval = type_el[0].get("{http://schemas.openxmlformats.org/wordprocessingml/2006/main}val")
+                if tval in ("nextPage", "oddPage", "evenPage"):
+                    page_no += 1
+        else:
+            # other elements ignored
+            pass
+
+def _docx_guess_sections(line_text: str) -> Optional[str]:
+    """
+    Heuristic: treat all-caps lines, title-cased headings, or lines ending with 'FORM'
+    etc. as a section header; return normalized section or None.
+    """
+    s = (line_text or "").strip()
+    if not s:
+        return None
+    # Simple headers: ALL CAPS (≥ 2 words) or Ends with FORM / APPLICATION
+    import re
+    caps_words = sum(1 for w in s.split() if w.isupper())
+    if caps_words >= 2 or re.search(r"(FORM|APPLICATION|SIGNATURE|REGISTRATION)\b", s.upper()):
+        return s
+    # Bold-only detection is not reliable in python-docx (style varies).
+    return None
+
+_CHECKBOX_TOKENS = ("☑", "☒", "☐", "■", "[ ]", "( )")
+
+def _docx_detect_checkbox(text: str) -> bool:
+    t = (text or "")
+    if any(tok in t for tok in _CHECKBOX_TOKENS):
+        return True
+    # also allow 'Yes / No' patterns bracketed:
+    if "Yes" in t and "No" in t and any(ch in t for ch in "[]()"):
+        return True
+    return False
+
+def _docx_field_candidates_from_para(p):
+    """
+    Very light heuristic:
+      - If a line has a colon or looks like 'Label .....' (with tab/underline),
+        we treat the left part as a field label (split on colon).
+      - Otherwise, if it matches common keys we've seen (e.g., 'Street 1', 'First name', etc.) we keep as is.
+    """
+    txt = p.text.strip()
+    if not txt:
+        return []
+
+    cands = []
+    # Split on colon if present (Label: __________)
+    if ":" in txt:
+        left = txt.split(":", 1)[0].strip()
+        if left:
+            cands.append(left)
+    else:
+        # If line is like "Field ......" with tabs or underscores, keep left token
+        if "\t" in txt:
+            cands.append(txt.split("\t", 1)[0].strip())
+        else:
+            # common keys (customize or allow all single short lines)
+            tokens = txt.split()
+            if len(tokens) <= 6:  # keep short headings as possible labels
+                cands.append(txt)
+
+    # Remove over-generic strings
+    cands = [c for c in cands if c and len(c) >= 2]
+    return list(dict.fromkeys(cands))  # unique, keep order
+
+def _docx_field_rows_from_table(tbl):
+    """
+    Extract label-ish content from the first column (or header row) of tables.
+    Returns a list of strings (candidate field labels).
+    """
+    rows = []
+    try:
+        for r in tbl.rows:
+            try:
+                if len(r.cells) >= 1:
+                    raw = r.cells[0].text.strip()
+                    if raw:
+                        rows.append(raw)
+            except Exception:
+                continue
+    except Exception:
+        pass
+    return rows
+
+def _normalize_and_shorten(label: str) -> Tuple[str, str]:
+    # Reuse normalize helpers already present in your file if available.
+    # Fallback small normalizer here to avoid breaking PDF code.
+    def _basic_norm(s):
+        import re, unicodedata
+        s = unicodedata.normalize("NFKD", s)
+        s = re.sub(r"[^\w\s\-\/()]", "", s, flags=re.UNICODE).strip().lower()
+        s = re.sub(r"\s+", " ", s)
+        return s
+    lab = label.strip()
+    norm = _basic_norm(lab)
+    short = lab.split(":", 1)[0].strip()
+    return norm, short if short else lab
+
+def parse_docx_structure(docx_path: str,
+                         lookup_rows: Optional[List[Dict[str, Any]]] = None,
+                         dry_run: bool = True) -> List[Dict[str, Any]]:
+    """
+    Parse a DOCX and produce a list of dicts with:
+      { 'page': int, 'section': str, 'section_norm': str,
+        'label': str, 'label_short': str, 'placement': 'text'|'checkbox',
+        'Index': int, 'Value': Optional[str] (resolved if lookup_rows provided) }
+
+    We do not compute coordinates (PDF-only feature).
+    """
+    _require_python_docx()
+    import docx
+    document = docx.Document(docx_path)
+
+    fields = []
+    current_section = ""
+    current_section_norm = ""
+    page_no = 1
+    bucket_occ = {}  # (page, section_norm, field_norm) -> next index
+
+    # we iterate in source order with page numbers from explicit breaks
+    for pg, (kind, obj) in _docx_iter_pages(document):
+        page_no = pg
+
+        if kind == "para":
+            p = obj
+            txt = (p.text or "").strip()
+            if not txt:
+                continue
+
+            # Section detection (heuristic)
+            sec_guess = _docx_guess_sections(txt)
+            if sec_guess:
+                current_section = sec_guess
+                current_section_norm = _normalize(sec_guess) if ' _normalize' in globals() else sec_guess.strip().lower()
+                continue
+
+            # Checkboxes?
+            is_cb = _docx_detect_checkbox(txt)
+
+            # Field candidates from para
+            cand_labels = _docx_field_candidates_from_para(p)
+            for lab in cand_labels:
+                field_norm, label_short = _normalize_and_shorten(lab)
+                key = (page_no, current_section_norm, field_norm)
+                bucket_occ[key] = bucket_occ.get(key, 0) + 1
+                idx = bucket_occ[key]
+                value = None
+                if lookup_rows:
+                    # use your existing resolve_value if present; otherwise do exact label match
+                    try:
+                        v = resolve_value(
+                            lookup_rows, lab,
+                            page=None,
+                            section_norm=current_section_norm,
+                            occurrence_index=idx,
+                            min_field_fuzzy=0.82,
+                            strict_index=True,
+                            require_page_match=False,
+                            require_section_match=True
+                        )
+                        value = v
+                    except Exception:
+                        # fallback: exact match on normalized label
+                        ln = alias_normal(_normalize(lab)) if 'alias_normal' in globals() and '_normalize' in globals() else field_norm
+                        for r in lookup_rows:
+                            if (r.get("field_norm") == ln and
+                                    (not r.get("Page") or int(r.get("Page")) == page_no) and
+                                    (not r.get("section_norm") or r.get("section_norm") == current_section_norm) and
+                                    (not r.get("Index") or int(r.get("Index")) == idx)):
+                                value = r.get("Value")
+                                break
+
+                fields.append({
+                    "page": page_no,
+                    "section": current_section,
+                    "section_norm": current_section_norm,
+                    "label": lab,
+                    "label_short": label_short,
+                    "placement": "checkbox" if is_cb else "text",
+                    "Index": idx,
+                    "Value": value,
+                })
+
+        elif kind == "table":
+            tbl = obj
+            labels = _docx_field_rows_from_table(tbl)
+            for lab in labels:
+                if not lab.strip():
+                    continue
+                is_cb = _docx_detect_checkbox(lab)
+                field_norm, label_short = _normalize_and_shorten(lab)
+                key = (page_no, current_section_norm, field_norm)
+                bucket_occ[key] = bucket_occ.get(key, 0) + 1
+                idx = bucket_occ[key]
+                value = None
+                if lookup_rows:
+                    try:
+                        value = resolve_value(
+                            lookup_rows, lab,
+                            page=None,
+                            section_norm=current_section_norm,
+                            occurrence_index=idx,
+                            min_field_fuzzy=0.82,
+                            strict_index=True,
+                            require_page_match=False,
+                            require_section_match=True
+                        )
+                    except Exception:
+                        ln = alias_normal(_normalize(lab)) if 'alias_normal' in globals() and '_normalize' in globals() else field_norm
+                        for r in lookup_rows:
+                            if (r.get("field_norm") == ln and
+                                    (not r.get("Page") or int(r.get("Page")) == page_no) and
+                                    (not r.get("section_norm") or r.get("section_norm") == current_section_norm) and
+                                    (not r.get("Index") or int(r.get("Index")) == idx)):
+                                value = r.get("Value")
+                                break
+
+                fields.append({
+                    "page": page_no,
+                    "section": current_section,
+                    "section_norm": current_section_norm,
+                    "label": lab,
+                    "label_short": label_short,
+                    "placement": "checkbox" if is_cb else "text",
+                    "Index": idx,
+                    "Value": value,
+                })
+
+    if dry_run:
+        # Mimic your existing dry-run console output style
+        from collections import defaultdict
+        by_page = defaultdict(list)
+        for f in fields:
+            by_page[f["page"]].append(f)
+        for p in sorted(by_page):
+            print(f"p{p}:")
+            secs = [f["section"] for f in by_page[p] if f["section"]]
+            secs_unique = list(dict.fromkeys(secs))
+            if secs_unique:
+                print("  sections found:")
+                for s in secs_unique:
+                    print(f"   - {s}")
+            for f in by_page[p]:
+                nm = f["label"]
+                print(f"   • {('checkbox' if f['placement']=='checkbox' else 'field')} "
+                      f"→ '{nm}' (sec: {f['section'] or ''}) idx={f['Index']}")
+        print("Dry-run complete (DOCX). No file written.")
+
+    return fields
+
+def run_docx_mode(input_docx: str,
+                  lookup_rows: Optional[List[Dict[str, Any]]],
+                  dry_run: bool = True,
+                  export_json: Optional[str] = None):
+    """
+    Parse DOCX and print/list Section / Page / Field / Index / Value.
+    Does NOT modify the DOCX, does NOT convert to PDF.
+    Leaves all PDF logic untouched.
+    """
+    fields = parse_docx_structure(input_docx, lookup_rows=lookup_rows, dry_run=dry_run)
+
+    # Optional: export a JSON (no coordinates) that mirrors your template shape enough for inspection
+    if export_json:
+        out = {"docx": True, "fields": []}
+        for f in fields:
+            out["fields"].append({
+                "page": f["page"],
+                "section": f["section"],
+                "section_norm": f["section_norm"],
+                "label": f["label"],
+                "label_short": f["label_short"],
+                "placement": f["placement"],
+                "Index": f["Index"],
+                # no coordinates for DOCX path
+            })
+        import json
+        with open(export_json, "w", encoding="utf-8") as fp:
+            json.dump(out, fp, ensure_ascii=False, indent=2)
+        print(f"🧩 DOCX parse exported → {export_json}")
+
+    return fields
+
+def export_docx_json(input_path: str, out_json: str, lookup_path: str, dry_run: bool = False):
+    """
+    Build a template JSON for a DOC/DOCX (or PDF) by converting to PDF via _as_pdf
+    and reusing the existing template builder. Works for both Word and PDF inputs.
+    """
+    rows = read_lookup_rows(lookup_path)
+    with _as_pdf(input_path) as _pdf_path:
+        build_pdf_template(_pdf_path, out_json, lookup_rows=rows, dry_run=dry_run)
+    print(f"🧩 DOCX/Word template JSON exported to {out_json}")
 
 
 # ---------------------------
 # CLI
 # ---------------------------
 def main():
-    ap = argparse.ArgumentParser(description="PDF prefill (PyMuPDF) with Section / Page / Index + Yes/No + checkbox squares")
-    ap.add_argument("--input", required=True, help="Input PDF path")
-    ap.add_argument("--output", required=True, help="Output PDF path")
+    ap = argparse.ArgumentParser(description="PDF/DOCX prefill")
+    ap.add_argument("--input", required=True, help="Input PDF or DOCX path")
+    ap.add_argument("--output", required=True, help="Output PDF or DOCX path")
     ap.add_argument("--lookup", default="lookup_table.xlsx", help="Excel/CSV with Field,Value[,Section,Page,Index]")
-    ap.add_argument("--template", default="template_fields.json", help="Template JSON (built if missing)")
+    ap.add_argument("--template", default="template_fields.json", help="Template JSON (PDF overlay only)")
     ap.add_argument("--dry-run", action="store_true", help="Print what would be filled; no write")
-    ap.add_argument("--export-coords", action="store_true", help="Also export pdf_coordinates.csv (debug)")
-    ap.add_argument("--rebuild-template", action="store_true", help="Force rebuild of the template JSON even if it already exists")
+    ap.add_argument("--export-coords", action="store_true", help="(PDF) also export pdf_coordinates.csv (debug)")
+    ap.add_argument("--rebuild-template", action="store_true", help="(PDF) force rebuild of the template JSON")
+    # NEW: export a template JSON for DOCX/PDF without filling
+    ap.add_argument("--export-docx-json", metavar="PATH",
+                    help="Build template JSON from the input (doc/docx/pdf) and save to PATH; then exit")
     args = ap.parse_args()
 
     if args.export_coords:
-        export_pdf_coordinates(args.input)
+        # Only meaningful for PDFs; if input is DOCX, this will convert if needed
+        try:
+            export_pdf_coordinates(args.input)
+        except Exception as e:
+            print(f"⚠️ export-coords skipped: {e}")
 
-    prefill_pdf(
-        input_pdf=args.input,
-        output_pdf=args.output,
+    prefill_any(
+        input_path=args.input,
+        output_path=args.output,
         lookup_path=args.lookup,
         template_json=args.template,
         build_template_if_missing=True,
         dry_run=args.dry_run,
-        rebuild_template=args.rebuild_template,  # <-- pass through
+        rebuild_template=args.rebuild_template,
     )
-
 
 if __name__ == "__main__":
     main()
+
