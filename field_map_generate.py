@@ -6,12 +6,23 @@ import traceback
 import inspect
 import pandas as pd
 
-# Try to find build_pdf_template no matter where you place this helper.
-# 1) Prefer a function already defined in the same module (globals()).
-# 2) Else try to import it from pdf_prefill (common case in your project).
+# Try to find build template no matter where you place this helper.
+# Priority:
+# 1) Local builder defined in this file (globals()).
+# 2) DOCX builder from docx_prefill (if available when input is .docx).
+# 3) PDF builder from pdf_prefill (fallback/default).
 _build_pdf_template_external = None
 _build_pdf_template_import_error = None
 _build_pdf_template_import_tb = None
+
+# Optional DOCX builder import
+_docx_builder = None
+try:
+    from docx_prefill import build_docx_template as _docx_builder  # type: ignore
+except Exception:
+    _docx_builder = None
+
+# Optional PDF builder import (legacy/default)
 try:
     from pdf_prefill import build_pdf_template as _build_pdf_template_external  # type: ignore
 except Exception as _e:
@@ -29,21 +40,52 @@ def _describe_builder(fn) -> str:
         return "<uninspectable builder>"
 
 
-def _get_builder(verbose: bool = False):
-    """Return a callable build_pdf_template or raise a helpful error with root cause."""
-    fn = globals().get("build_pdf_template", None)
-    if callable(fn):
+def _pick_builder_by_input(input_path: str, verbose: bool = False):
+    """
+    Decide which builder to call based on the input file extension.
+      - *.docx -> prefer docx_prefill.build_docx_template if available
+      - otherwise -> pdf_prefill.build_pdf_template
+    Also allows a local `build_pdf_template` or `build_docx_template` to override via globals().
+    """
+    # Local overrides (if user defined directly in this file)
+    local_build_pdf = globals().get("build_pdf_template")
+    local_build_docx = globals().get("build_docx_template")
+
+    ext = (os.path.splitext(input_path)[1] or "").lower()
+
+    if ext == ".docx":
+        # Prefer local DOCX builder, then imported docx_prefill version
+        if callable(local_build_docx):
+            if verbose:
+                print(f"🔧 Using local DOCX builder: {_describe_builder(local_build_docx)}")
+            return local_build_docx, "docx"
+        if callable(_docx_builder):
+            if verbose:
+                print(f"🔧 Using docx builder: {_describe_builder(_docx_builder)}")
+            return _docx_builder, "docx"
+        # Fallback to any local/pdf builder if DOCX not present
+        if callable(local_build_pdf):
+            if verbose:
+                print(f"🔧 Using local PDF builder (fallback for DOCX): {_describe_builder(local_build_pdf)}")
+            return local_build_pdf, "pdf"
+        if callable(_build_pdf_template_external):
+            if verbose:
+                print(f"🔧 Using imported PDF builder (fallback for DOCX): {_describe_builder(_build_pdf_template_external)}")
+            return _build_pdf_template_external, "pdf"
+
+    # Non-DOCX -> default to PDF path
+    if callable(local_build_pdf):
         if verbose:
-            print(f"🔧 Using local build_pdf_template: {_describe_builder(fn)}")
-        return fn
+            print(f"🔧 Using local PDF builder: {_describe_builder(local_build_pdf)}")
+        return local_build_pdf, "pdf"
     if callable(_build_pdf_template_external):
         if verbose:
-            print(f"🔧 Using imported build_pdf_template: {_describe_builder(_build_pdf_template_external)}")
-        return _build_pdf_template_external
+            print(f"🔧 Using imported PDF builder: {_describe_builder(_build_pdf_template_external)}")
+        return _build_pdf_template_external, "pdf"
 
+    # Nothing found; show helpful error with import traceback if any
     detail = ""
     if _build_pdf_template_import_error is not None:
-        # Print full traceback to stderr so the real cause (syntax/indent) is visible immediately.
         sys.stderr.write("----- pdf_prefill import traceback -----\n")
         if _build_pdf_template_import_tb:
             sys.stderr.write(_build_pdf_template_import_tb + "\n")
@@ -54,11 +96,9 @@ def _get_builder(verbose: bool = False):
             f"\n(Import error: {type(_build_pdf_template_import_error).__name__}: "
             f"{_build_pdf_template_import_error})"
         )
-
     raise RuntimeError(
-        "build_pdf_template(...) was not found. "
-        "Define it above this code OR ensure `from pdf_prefill import build_pdf_template` works."
-        + detail
+        "No builder found. Define build_docx_template/build_pdf_template in this file "
+        "OR ensure docx_prefill/pdf_prefill are importable." + detail
     )
 
 
@@ -71,18 +111,24 @@ def _ensure_parent_dir(path: str):
 def _field_title_from_fdef(fdef: dict) -> str:
     """Prefer a concise key when available, otherwise fallback to label."""
     title = (fdef.get("label_short") or fdef.get("label") or "").strip()
+    # If there's a colon, keep the left side *unless* it's extremely short (keep context).
     if ":" in title:
         left = title.split(":", 1)[0].strip()
-        if len(left) >= 10:
+        if len(left) >= 6:
             title = left
-    return title
+    return title or (fdef.get("label_full") or "").strip()
 
 
 def export_lookup_template_from_json(template_json: str,
                                      out_path: str = "lookup_template.xlsx") -> str:
     """
     Produce an Excel (or CSV if path ends with .csv) with columns:
-    Section | Page | Field | Index | Value | Choices (optional)
+    Section | Page | Field | Index | Value | Choices
+
+    Notes:
+    - We NEVER drop fields anymore, even if the label is 'unknown_*'.
+    - Page is left blank if not provided (DOCX layouts typically don't expose page #).
+    - Field will always be non-empty and unique (we synthesize a stable name when needed).
     """
     if not os.path.exists(template_json):
         raise FileNotFoundError(f"Template JSON not found: {template_json}")
@@ -91,46 +137,69 @@ def export_lookup_template_from_json(template_json: str,
         tpl = json.load(f)
 
     rows = []
-    for fdef in tpl.get("fields", []) or []:
-        raw_label = (fdef.get("label") or "").strip()
-        if not raw_label or raw_label.startswith("unknown_"):
-            continue
+    seq = 0  # used to make a stable unique fallback field name when needed
 
+    for fdef in (tpl.get("fields") or []):
+        seq += 1
+
+        # Raw properties from template (if present)
+        raw_label = (fdef.get("label") or "").strip()
         section = (fdef.get("section") or "").strip()
+
+        # Page handling: keep it if it's a real positive int, else leave blank (for DOCX it’s often unknown)
+        page_val = fdef.get("page", None)
         try:
-            page = int(fdef.get("page", 0) or 0)
+            page = int(page_val) if page_val not in (None, "") else ""
+            if isinstance(page, int) and page <= 0:
+                page = ""  # don't render '0' which is meaningless for DOCX
         except Exception:
-            page = 0
+            page = ""
+
+        # Index handling
         try:
             index = int(fdef.get("index", 1) or 1)
         except Exception:
             index = 1
 
-        field = _field_title_from_fdef(fdef)
+        # The human-facing field title: prefer label_short/label; if that’s empty or looks 'unknown', synthesize.
+        title_from_def = _field_title_from_fdef(fdef).strip()
+        looks_unknown = (raw_label.lower().startswith("unknown_") if raw_label else True)
+        if not title_from_def or title_from_def.lower().startswith("unknown_") or looks_unknown:
+            # Synthesize a readable, unique name that still gives context
+            # Example: "Field #7 (Sec: Applicant Details, Idx: 1)"
+            sec_display = section if section else "No Section"
+            title_from_def = f"Field #{seq} (Sec: {sec_display}, Idx: {index})"
 
-        # NEW: include dropdown choices if present so you can pick one later in Excel/CSV
+        # Choices for dropdowns (if any)
         choices = ""
         if (fdef.get("placement") or "").lower() == "acro_choice":
             ch = fdef.get("choices") or []
             if isinstance(ch, list) and ch:
-                # join using ' | ' for readability (won’t break CSV)
                 choices = " | ".join(str(x) for x in ch)
 
         rows.append({
             "Section": section,
-            "Page": page,
-            "Field": field,
+            "Page": page,          # blank when unknown
+            "Field": title_from_def,
             "Index": index,
-            "Value": "",          # you fill this later
-            "Choices": choices,   # optional; blank for non-dropdowns
+            "Value": "",           # you fill this later
+            "Choices": choices,    # optional; blank for non-dropdowns
         })
 
     # Stable ordering for human-friendly editing
-    rows.sort(key=lambda r: (r["Page"], r["Section"].lower(), r["Field"].lower(), r["Index"]))
+    def _sort_key(r):
+        # Treat blank page as +inf so numbered pages appear first
+        page_sort = (999999 if r["Page"] == "" else int(r["Page"]))
+        return (page_sort, r["Section"].lower(), r["Field"].lower(), int(r["Index"]))
+
+    rows.sort(key=_sort_key)
 
     # Ensure the Choices column is present even when empty
     cols = ["Section", "Page", "Field", "Index", "Value", "Choices"]
     df = pd.DataFrame(rows, columns=cols)
+
+    # Ensure NaNs don't show up
+    df = df.fillna("")
 
     _ensure_parent_dir(out_path)
 
@@ -150,35 +219,28 @@ def export_lookup_template_from_json(template_json: str,
     return out_path
 
 
-def _call_builder_with_compat(builder, input_pdf: str, template_json: str):
+
+def _call_builder_with_compat(builder, input_path: str, template_json: str):
     """
-    Call build_pdf_template with broad signature compatibility:
-    - build_pdf_template(path, template_json, lookup_rows=None, dry_run=False)
-    - build_pdf_template(path, template_json=..., lookup_rows=None, dry_run=False)
-    - build_pdf_template(doc_or_path=path, template_json=..., ...)
+    Call a builder with broad signature compatibility:
+    - build_XXX_template(path, template_json, lookup_rows=None, dry_run=False)
+    - build_XXX_template(path, template_json=..., lookup_rows=None, dry_run=False)
+    - build_XXX_template(doc_or_path=path, template_json=..., ...)
     """
     _ensure_parent_dir(template_json)
-
-    # Try the most common positional signature first
     try:
-        return builder(input_pdf, template_json, lookup_rows=None, dry_run=False)
+        return builder(input_path, template_json, lookup_rows=None, dry_run=False)
     except TypeError:
         pass
-
-    # Try keyword style with template_json=
     try:
-        return builder(input_pdf, template_json=template_json, lookup_rows=None, dry_run=False)
+        return builder(input_path, template_json=template_json, lookup_rows=None, dry_run=False)
     except TypeError:
         pass
-
-    # Try fully keyworded with doc_or_path=
     try:
-        return builder(doc_or_path=input_pdf, template_json=template_json, lookup_rows=None, dry_run=False)
+        return builder(doc_or_path=input_path, template_json=template_json, lookup_rows=None, dry_run=False)
     except TypeError:
         pass
-
-    # Last attempt: just pass (path, template_json)
-    return builder(input_pdf, template_json)
+    return builder(input_path, template_json)
 
 
 def _load_template_field_count(template_json: str) -> int:
@@ -190,37 +252,34 @@ def _load_template_field_count(template_json: str) -> int:
         return -1
 
 
-def export_lookup_template_from_pdf(input_pdf: str,
-                                    template_json: str = "template_fields.json",
-                                    out_path: str = "lookup_template.xlsx",
-                                    rebuild_template: bool = False,
-                                    debug_import: bool = False) -> str:
+def export_lookup_template(input_path: str,
+                           template_json: str = "template_fields.json",
+                           out_path: str = "lookup_template.xlsx",
+                           rebuild_template: bool = False,
+                           debug_import: bool = False) -> str:
     """
     Ensures a template JSON exists (building it if needed), then exports the lookup sheet.
     Adds diagnostics so you can see which builder ran and how many fields were detected.
     """
+    builder, kind = _pick_builder_by_input(input_path, verbose=True or debug_import)
+
     must_build = rebuild_template or not os.path.exists(template_json)
     if must_build:
-        builder = _get_builder(verbose=True or debug_import)
         print(f"🧩 Building template → {template_json}")
-        _call_builder_with_compat(builder, input_pdf, template_json)
+        _call_builder_with_compat(builder, input_path, template_json)
         cnt = _load_template_field_count(template_json)
         print(f"🧩 Template saved to {template_json} with {cnt} fields.")
         if cnt == 0:
             print("⚠️  No fields were detected.")
-            print("   • Most common cause: Python imported a DIFFERENT 'pdf_prefill' than your edited file.")
-            print("     → Run:  python -c \"import pdf_prefill,inspect; print(pdf_prefill.__file__)\"")
-            print("       and confirm it points to your project’s pdf_prefill.py.")
-            print("   • If it is the right file, your PDF may be dynamic/XFA or lacks detectable lines/widgets.")
-            print("     → Try flattening the PDF (Print to PDF) and rebuild the template.")
-            print("     → Or run the builder in DRY mode to see detection logs:")
-            print("           python -c \"from pdf_prefill import build_pdf_template; "
-                  "build_pdf_template(r'%s', r'%s', dry_run=True)\"" % (input_pdf, template_json))
-            # We still proceed to export (will produce 0-row sheet) so the command succeeds,
-            # but the diagnostics above should make the root cause obvious.
+            if kind == "pdf":
+                print("   • If using PDF, confirm you imported the correct pdf_prefill.py.")
+                print("     → Run:  python -c \"import pdf_prefill,inspect; print(pdf_prefill.__file__)\"")
+                print("   • If it’s a dynamic/XFA PDF or lacks detectable lines/widgets, try flattening (Print to PDF).")
+                print("   • Or run the builder in DRY mode to see detection logs.")
+            else:
+                print("   • For DOCX, verify the document has tables/boxes/underlines the builder can detect.")
     else:
-        print(f"📄 Using existing template: {template_json} "
-              f"({ _load_template_field_count(template_json) } fields)")
+        print(f"📄 Using existing template: {template_json} ({_load_template_field_count(template_json)} fields)")
 
     return export_lookup_template_from_json(template_json, out_path)
 
@@ -230,10 +289,10 @@ def export_lookup_template_from_pdf(input_pdf: str,
 # ---------------------------
 def main():
     ap = argparse.ArgumentParser(
-        description="Export a blank lookup sheet (Section, Page, Field, Index, Value, Choices) from template_fields.json"
+        description="Export a blank lookup sheet (Section, Page, Field, Index, Value, Choices) from a template JSON"
     )
-    ap.add_argument("--input", required=True, help="Input PDF path")
-    ap.add_argument("--template", default="template_fields.json", help="Template JSON (built if missing)")
+    ap.add_argument("--input", required=True, help="Input file (PDF or DOCX)")
+    ap.add_argument("--template", default="template_fields.json", help="Template JSON (rebuilt if missing or --rebuild-template)")
     ap.add_argument("--make-lookup", metavar="OUT.xlsx",
                     help="Path to write the blank lookup sheet (xlsx or csv).")
     ap.add_argument("--rebuild-template", action="store_true",
@@ -243,8 +302,8 @@ def main():
     args = ap.parse_args()
 
     if args.make_lookup:
-        export_lookup_template_from_pdf(
-            input_pdf=args.input,
+        export_lookup_template(
+            input_path=args.input,
             template_json=args.template,
             out_path=args.make_lookup,
             rebuild_template=args.rebuild_template,

@@ -1094,15 +1094,15 @@ def _is_section_header_relaxed(text: str) -> bool:
     ends_like_colon = (len(t) > 5 and t[-1] in _COLON_CHARS)
     lower_t = t.lower()
     contains_keywords = (
-        "for completion by subscribers" in lower_t
-        or "investor information" in lower_t
-        or "subscription details" in lower_t
-        or "wire information" in lower_t
-        or "beneficiary bank" in lower_t
-        or "intermediary bank" in lower_t
-        or "erisa status" in lower_t
-        or "signature" in lower_t
-        or "for all subscribers" in lower_t
+            "for completion by subscribers" in lower_t
+            or "investor information" in lower_t
+            or "subscription details" in lower_t
+            or "wire information" in lower_t
+            or "beneficiary bank" in lower_t
+            or "intermediary bank" in lower_t
+            or "erisa status" in lower_t
+            or "signature" in lower_t
+            or "for all subscribers" in lower_t
     )
     letters = [c for c in t if c.isalpha()]
     caps_ratio = (sum(1 for c in letters if c.isupper()) / max(1, len(letters))) if letters else 0.0
@@ -1260,11 +1260,11 @@ def _nearby_yes_no_option(page: fitz.Page, x: float, y: float) -> Optional[str]:
 # Drawn underline detection (for non-form PDFs)
 # ---------------------------
 def _line_like_segments(
-    page: fitz.Page,
-    min_len=60,
-    max_len=1200,
-    max_slope=0.02,
-    max_thick=2.5
+        page: fitz.Page,
+        min_len=60,
+        max_len=1200,
+        max_slope=0.02,
+        max_thick=2.5
 ):
     """
     Return horizontal-ish line segments on the page, tolerating variations in how
@@ -1505,18 +1505,18 @@ def _square_checkboxes(page: fitz.Page,
         if dedup:
             m = dedup[-1]
             if (abs(b["x0"] - m["x0"]) < 1.2 and abs(b["y0"] - m["y0"]) < 1.2 and
-                abs(b["x1"] - m["x1"]) < 1.2 and abs(b["y1"] - m["y1"]) < 1.2):
+                    abs(b["x1"] - m["x1"]) < 1.2 and abs(b["y1"] - m["y1"]) < 1.2):
                 continue
         dedup.append(b)
     return dedup
 
 def _dropdown_like_boxes(
-    page: fitz.Page,
-    min_w: float = 90.0,
-    max_w: float = 1600.0,
-    min_h: float = 10.0,
-    max_h: float = 38.0,
-    min_aspect: float = 4.0,
+        page: fitz.Page,
+        min_w: float = 90.0,
+        max_w: float = 1600.0,
+        min_h: float = 10.0,
+        max_h: float = 38.0,
+        min_aspect: float = 4.0,
 ):
     """
     Detect long, shallow rectangles that look like drawn dropdowns (combo boxes)
@@ -1573,7 +1573,7 @@ def _dropdown_like_boxes(
         if dedup:
             m = dedup[-1]
             if (abs(b["x0"] - m["x0"]) < 1.2 and abs(b["y0"] - m["y0"]) < 1.2 and
-                abs(b["x1"] - m["x1"]) < 1.2 and abs(b["y1"] - m["y1"]) < 1.2):
+                    abs(b["x1"] - m["x1"]) < 1.2 and abs(b["y1"] - m["y1"]) < 1.2):
                 continue
         dedup.append(b)
     return dedup
@@ -3434,7 +3434,7 @@ def fill_acroform_with_context(input_pdf: str,
                     occurrence_index=1,
                     return_row=True,
                     strict_index=False,
-                )
+                    )
                 if not picked_row:
                     continue
 
@@ -3470,7 +3470,7 @@ def fill_acroform_with_context(input_pdf: str,
                     section_norm=effective_section,
                     occurrence_index=idx,
                     strict_index=True,
-                )
+                    )
                 if value is None:
                     # 2a) ignore Index
                     value = resolve_value(
@@ -3576,8 +3576,8 @@ def _why_skip(label: str, idx: int, reason: str, page_no: int, dry_run: bool):
         print(f"[DRY][SKIP] p{page_no} '{label}' (idx={idx}) -> {reason}")
 
 def _find_any_widget_overlapping(
-    page: fitz.Page,
-    box: Tuple[float, float, float, float]
+        page: fitz.Page,
+        box: Tuple[float, float, float, float]
 ):
     """
     Return the first widget whose rect intersects `box`.
@@ -3600,8 +3600,8 @@ def _find_any_widget_overlapping(
     for w in widgets:
         try:
             if getattr(w, "field_type", None) in (
-                getattr(fitz, "PDF_WIDGET_TYPE_CHECKBOX", None),
-                getattr(fitz, "PDF_WIDGET_TYPE_RADIOBUTTON", None),
+                    getattr(fitz, "PDF_WIDGET_TYPE_CHECKBOX", None),
+                    getattr(fitz, "PDF_WIDGET_TYPE_RADIOBUTTON", None),
             ):
                 if fitz.Rect(w.rect).intersects(target):
                     return w
