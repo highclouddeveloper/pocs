@@ -1,1065 +1,679 @@
 # docx_prefill.py
-# DOCX prefill: placeholders, checkboxes, section-aware table filling, underline patterns
+import argparse, re, sys
+from pathlib import Path
+from typing import Dict, List, Optional, Tuple
 
-import os, re, math, string, unicodedata
-from typing import List, Dict, Any, Optional, Tuple, Iterable, Set
-from difflib import SequenceMatcher
-from numbers import Number
 import pandas as pd
+from rapidfuzz import fuzz, process
+from docx import Document
+from docx.text.run import Run
+from docx.oxml import OxmlElement
+from docx.oxml.ns import qn
+from lxml import etree  # comes with python-docx
 
-# ---------------------------
-# Config / globals
-# ---------------------------
-PUNCT = str.maketrans("", "", string.punctuation)
+# =========================
+# Patterns & constants
+# =========================
+UNI_BLANK_CLASS = r"\u00A0\u2000-\u200B\t "  # NBSP + EN/EM/thin spaces + tabs + normal space
+VISUAL_BLANK_RE = re.compile(rf"^[{UNI_BLANK_CLASS}]{{3,}}$")
+INLINE_VISUAL_BLANK_RE = re.compile(rf"[{UNI_BLANK_CLASS}]{{3,}}")
+UNDERS_RE = re.compile(r"_{3,}")
+LABEL_COLON_RE = re.compile(r"^\s*(?P<label>[A-Za-z0-9().,/\-\&% ]{2,120})\s*[:;]\s*$")
+LABEL_INLINE_UNDERS_RE = re.compile(r"^\s*(?P<label>[A-Za-z0-9().,/\-\&% ]{2,120})\s*[:;]\s*_{3,}\s*$")
+CHECKBOX_EMPTY = ["□", "☐", "[ ]"]
+CHECKBOX_MARKS = ["☑", "☒", "[x]"]
+YES_WORDS = {"yes","true","y","checked","1"}
+NO_WORDS  = {"no","false","n","unchecked","0"}
+FUZZ_THRESH = 86
 
-SUBSCRIPTION_DEFAULTS = {
-    # "Name of Investor": "John Doe",
+SYNONYMS = {
+    "last name": ["surname", "family name"],
+    "first name": ["given name"],
+    "middle initial": ["middle name", "mi"],
+    "city, st zip": ["city state zip", "city st zip code"],
+    "date of birth": ["dob", "date of birth (dd/mm/yyyy)"],
+    "citizen of": ["citizenship", "country of citizenship"],
+    "country of residence": ["residence country"],
 }
 
-FIELD_ALIASES = {
-    "investor name": "name of investor",
-    "name of investor printed or typed": "name of investor",
-}
+# =========================
+# Normalization helpers
+# =========================
+def norm(s: str) -> str:
+    return re.sub(r"[^a-z0-9]+"," ", str(s).strip().lower()).strip()
 
-# ---------------------------
-# String / matching utils
-# ---------------------------
-def _normalize(s: str) -> str:
-    s = str(s or "")
-    s = unicodedata.normalize("NFKC", s)
-    s = re.sub(r"\(.*?\)", "", s)
-    s = re.sub(r"\s+", " ", s).strip().lower()
-    s = s.translate(PUNCT)
-    return s
+def expand_synonyms(keys: List[str]) -> List[str]:
+    out = set(keys)
+    for k in list(keys):
+        k0 = norm(k)
+        for canon, alts in SYNONYMS.items():
+            if k0 == canon:
+                out.update(alts)
+    return list(out)
 
-def _sim(a: str, b: str) -> float:
-    return SequenceMatcher(None, _normalize(a), _normalize(b)).ratio()
+# =========================
+# SDT/content-control helpers (namespace-agnostic)
+# =========================
+def _iter_sdt_in_cell(cell):
+    # namespace-agnostic
+    return cell._tc.xpath(".//*[local-name()='sdt']")
 
-def _best_match_scored(label: str, candidates: List[str]) -> Tuple[Optional[str], float]:
-    if not candidates:
-        return None, 0.0
-    best, best_score = None, 0.0
-    for c in candidates:
-        score = _sim(label, c)
-        if score > best_score:
-            best, best_score = c, score
-    return best, best_score
+def _first_child_by_localname(parent, name):
+    res = parent.xpath(f".//*[local-name()='{name}']")
+    return res[0] if res else None
 
-def alias_normal(norm_label: str) -> str:
-    return FIELD_ALIASES.get(norm_label, norm_label)
-
-def _truthy(val: str) -> Optional[bool]:
-    s = (str(val or "")).strip().lower()
-    if s in {"y","yes","true","1","x","✓","check","checked"}:
-        return True
-    if s in {"n","no","false","0","uncheck","unchecked"}:
+def _set_sdt_text_inplace(sdt_elem, value: str) -> bool:
+    """
+    Fill the first <w:t> inside <w:sdtContent> *in place* so the control remains.
+    (Do NOT clear sdtContent here.)
+    """
+    content = _first_child_by_localname(sdt_elem, "sdtContent")
+    if content is None:
         return False
-    return None
 
-# ---------------------------
-# Lookup loader (Excel/CSV)
-# ---------------------------
-def to_text_value(v) -> str:
-    try:
-        import pandas as _pd
-        if _pd.isna(v):
-            return ""
-    except Exception:
-        pass
-    if v is None:
-        return ""
-    if isinstance(v, Number):
-        try:
-            if isinstance(v, float) and not math.isfinite(v):
-                return ""
-        except Exception:
-            pass
-        try:
-            if float(v).is_integer():
-                return str(int(v))
-        except Exception:
-            pass
-        s = f"{float(v):.12f}".rstrip("0").rstrip(".")
-        return s or "0"
-    s = str(v).strip()
-    if not s:
-        return ""
-    m = re.fullmatch(r"([+-]?\d+)\.0+\b", s)
-    if m:
-        return m.group(1)
-    m = re.fullmatch(r"([+-]?\d+\.\d*?[1-9])0+\b", s)
-    if m:
-        return m.group(1)
-    return s
+    # 1) Write into an existing <w:t> if present
+    t = _first_child_by_localname(content, "t")
+    if t is not None:
+        t.text = str(value)
+        return True
 
-def read_lookup_rows(path: str) -> List[Dict[str, Any]]:
-    if not os.path.exists(path):
-        print(f"⚠️  Lookup file not found: {path}")
-        return []
-    try:
-        if path.lower().endswith((".xlsx", ".xls")):
-            df = pd.read_excel(path)
-        else:
-            df = pd.read_csv(path)
-    except Exception as e:
-        print(f"⚠️  Could not load {path}: {e}")
-        return []
-    if {"Field", "Value"} - set(df.columns):
-        raise ValueError("Lookup must have columns: Field, Value. Optional: Section, Page, Index")
-    for col in ["Field", "Value", "Section"]:
-        if col in df.columns:
-            df[col] = df[col].astype(str).fillna("").map(lambda x: x.strip())
-    if "Page" in df.columns:
-        df["Page"] = pd.to_numeric(df["Page"], errors="coerce").astype("Int64")
+    # 2) Otherwise append a <w:t> under the first <w:r> to keep rPr formatting
+    r = _first_child_by_localname(content, "r")
+    if r is not None:
+        t = OxmlElement(qn("w:t"))
+        t.text = str(value)
+        r.append(t)
+        return True
+
+    # 3) Last resort: add a new p>r>t
+    p = OxmlElement(qn("w:p"))
+    r = OxmlElement(qn("w:r"))
+    t = OxmlElement(qn("w:t"))
+    t.text = str(value)
+    r.append(t); p.append(r); content.append(p)
+    return True
+
+
+# =========================
+# Table/CSV readers
+# =========================
+def _read_csv_with_fallbacks(path: Path) -> pd.DataFrame:
+    encodings = ["utf-8", "utf-8-sig", "cp1252", "latin1"]
+    last_err = None
+    for enc in encodings:
+        try:
+            return pd.read_csv(path, dtype=str, encoding=enc)
+        except Exception as e:
+            last_err = e
+    raise RuntimeError(f"Failed to read CSV with common encodings. Last error: {last_err}")
+
+def _read_table_any(path: Path, sheet: Optional[str]) -> pd.DataFrame:
+    ext = path.suffix.lower()
+    if ext in [".xlsx", ".xls"]:
+        return pd.read_excel(path, dtype=str, sheet_name=sheet or 0)
+    elif ext == ".csv":
+        return _read_csv_with_fallbacks(path)
+    else:
+        raise RuntimeError(f"Unsupported file extension: {ext}. Use .csv, .xlsx, or .xls")
+
+def _load_structured_df(df: pd.DataFrame) -> Dict:
+    # Expect columns: Section | Page | Field | Index | Value | Choices
+    df = df.fillna("")
     if "Index" in df.columns:
-        idx_series = (
-            df["Index"].astype(str).str.replace(r"[^\d\-]+", "", regex=True).replace({"": None})
-        )
-        df["Index"] = pd.to_numeric(idx_series, errors="coerce").astype("Int64")
+        df["Index"] = df["Index"].apply(lambda x: int(str(x).strip() or "1"))
+    else:
+        df["Index"] = 1
 
-    df = df[(df["Field"].astype(str).str.strip() != "") &
-            (df["Value"].astype(str).str.strip() != "") &
-            (df["Value"].astype(str).str.lower() != "nan")]
+    by_key, by_field, fuzz_keys = {}, {}, []
+    for _, row in df.iterrows():
+        section = str(row.get("Section","")).strip()
+        field   = str(row.get("Field","")).strip()
+        index   = int(row.get("Index", 1))
+        value   = str(row.get("Value",""))
+        choices = str(row.get("Choices",""))
 
-    rows: List[Dict[str, Any]] = []
-    for _, r in df.iterrows():
-        field = str(r.get("Field", "")).strip()
-        value = to_text_value(r.get("Value", ""))
-        section = str(r.get("Section", "")).strip() if "Section" in df.columns else ""
-        page = int(r["Page"]) if ("Page" in df.columns and pd.notna(r["Page"])) else None
-        index = int(r["Index"]) if ("Index" in df.columns and pd.notna(r["Index"])) else None
-        rows.append({
-            "Field": field,
-            "Value": value,
-            "Section": section,
-            "Page": page,
-            "Index": index,
-            "field_norm": alias_normal(_normalize(field)),
-            "section_norm": _normalize(section) if section else "",
-        })
-    for k, v in SUBSCRIPTION_DEFAULTS.items():
-        rows.append({
-            "Field": k,
-            "Value": v,
-            "Section": "",
-            "Page": None,
-            "Index": None,
-            "field_norm": alias_normal(_normalize(k)),
-            "section_norm": "",
-        })
-    return rows
+        sN = norm(section)
+        fN = norm(field)
+        by_key[(sN, fN, index)] = (value, choices)
+        by_field.setdefault(fN, []).append((value, choices))
+        fuzz_keys.append(field)
 
-# ---------------------------
-# Resolver (Field/Page/Section/Index)
-# ---------------------------
-def resolve_value(rows: List[Dict[str, Any]],
-                  field_label: str,
-                  page: Optional[int],
-                  section_norm: str,
-                  occurrence_index: int,
-                  min_field_fuzzy: float = 0.82,
-                  return_row: bool = False,
-                  strict_index: bool = True,
-                  require_page_match: bool = False,
-                  require_section_match: bool = False):
+    return {
+        "schema": "structured",
+        "by_key": by_key,
+        "by_field": by_field,
+        "fuzz_keys": expand_synonyms(fuzz_keys),
+        "raw_fields": fuzz_keys
+    }
 
-    field_norm = alias_normal(_normalize(field_label))
-    field_candidates = [r for r in rows if r["field_norm"] == field_norm]
-    if not field_candidates:
-        all_fields = [r["field_norm"] for r in rows]
-        bm, sc = _best_match_scored(field_norm, all_fields)
-        if bm and sc >= min_field_fuzzy:
-            field_candidates = [r for r in rows if r["field_norm"] == bm]
-        else:
-            return (None, None) if return_row else None
+def _load_simple_df_row(df: pd.DataFrame, row_index: int) -> Dict:
+    if row_index < 0 or row_index >= len(df.index):
+        raise IndexError(f"Row {row_index} is out of range 0..{len(df.index)-1}")
+    row = df.iloc[row_index].to_dict()
+    norm_map = {norm(k): ("" if pd.isna(v) else str(v)) for k, v in row.items()}
+    return {
+        "schema": "simple",
+        "raw_row": {k: ("" if pd.isna(v) else str(v)) for k, v in row.items()},
+        "norm_row": norm_map,
+        "fuzz_keys": expand_synonyms(list(row.keys()))
+    }
 
-    candidates = list(field_candidates)
+def load_table(csv_or_xlsx: Path, sheet: Optional[str], row_index: int) -> Dict:
+    df0 = _read_table_any(csv_or_xlsx, sheet)
+    cols = [str(c).strip().lower() for c in df0.columns.tolist()]
+    structured_cols = {"section","page","field","index","value","choices"}
+    if structured_cols.issubset(set(cols)):
+        return _load_structured_df(df0)
+    else:
+        return _load_simple_df_row(df0, row_index)
 
-    if section_norm:
-        sec_exact = [r for r in candidates if r.get("section_norm") == section_norm]
-        if require_section_match:
-            candidates = sec_exact
-            if not candidates:
-                return (None, None) if return_row else None
-        elif sec_exact:
-            candidates = sec_exact
+# =========================
+# Run/paragraph replacements (preserve formatting)
+# =========================
+def copy_run_format(src_run: Run, dst_run: Run):
+    """Copy run properties (rPr) so highlight/shading stays."""
+    src_rPr = src_run._r.rPr
+    if src_rPr is None:
+        return
+    dst_rPr = dst_run._r.get_or_add_rPr()
+    # clear existing dst props
+    for child in list(dst_rPr):
+        dst_rPr.remove(child)
+    # shallow-copy is fine here
+    for child in src_rPr:
+        dst_rPr.append(child)
 
-    if page is not None:
-        pg_exact = [r for r in candidates if r.get("Page") is not None and int(r["Page"]) == int(page)]
-        if require_page_match:
-            candidates = pg_exact
-            if not candidates:
-                return (None, None) if return_row else None
-        elif pg_exact:
-            candidates = pg_exact
-
-    if strict_index:
-        with_idx = [r for r in candidates if r.get("Index") is not None]
-        if with_idx:
-            exact_idx = [r for r in with_idx if int(r["Index"]) == int(occurrence_index)]
-            if not exact_idx:
-                return (None, None) if return_row else None
-            candidates = exact_idx
-
-    def score_row(r: Dict[str, Any]) -> int:
-        s = 0
-        if r.get("Page") is not None and page is not None and int(r["Page"]) == int(page):
-            s += 8
-        if r.get("section_norm") and section_norm and r["section_norm"] == section_norm:
-            s += 6
-        if r.get("Index") is not None and int(r["Index"]) == int(occurrence_index):
-            s += 3
-        return s
-
-    best = max(candidates, key=score_row, default=None)
-    if return_row:
-        return (best["Value"], best) if best else (None, None)
-    return best["Value"] if best else None
-
-# ---------------------------
-# DOCX helpers & filling
-# ---------------------------
-def _iter_all_paragraphs_and_cells(doc) -> Iterable:
-    for p in doc.paragraphs:
-        yield p
-    for tbl in doc.tables:
-        for row in tbl.rows:
-            for cell in row.cells:
-                for p in cell.paragraphs:
-                    yield p
-
-def _field_value_for_name(lookup_rows, name: str):
-    v = resolve_value(lookup_rows, name, page=None, section_norm="", occurrence_index=1,
-                      min_field_fuzzy=0.82, return_row=False, strict_index=False,
-                      require_page_match=False, require_section_match=False)
-    return v
-
-def _replace_placeholders_in_text(text: str, lookup_rows) -> str:
-    pats = [
-        re.compile(r"\{\{\s*(.*?)\s*\}\}"),
-        re.compile(r"\[\[\s*(.*?)\s*\]\]"),
-        re.compile(r"\$\{\s*(.*?)\s*\}"),
-    ]
-    def _sub(m):
-        key = (m.group(1) or "").strip()
-        val = _field_value_for_name(lookup_rows, key)
-        return str(val) if val is not None else m.group(0)
-    for pat in pats:
-        text = pat.sub(_sub, text)
-    return text
-
-def _set_paragraph_text_keep_simple_format(p, new_text: str):
-    while p.runs:
-        r = p.runs[0]
-        r.clear()
-        r.text = ""
-        r.element.getparent().remove(r.element)
-    p.add_run(new_text)
-
-def _replace_placeholders_everywhere(doc, lookup_rows, dry_run=False):
-    for p in _iter_all_paragraphs_and_cells(doc):
-        old = p.text
-        new = _replace_placeholders_in_text(old, lookup_rows)
-        if new != old:
-            if dry_run:
-                print(f"[DRY][DOCX] placeholder: '{old}' → '{new}'")
-            else:
-                _set_paragraph_text_keep_simple_format(p, new)
-
-def _fill_colon_underscore_lines(doc, lookup_rows, dry_run=False):
-    us_pat = re.compile(r"^(.*?[:：﹕꞉˸፡︓])\s*_+\s*$")
-    for p in _iter_all_paragraphs_and_cells(doc):
-        txt = p.text.strip()
-        if not txt:
-            continue
-        m = us_pat.match(txt)
-        if not m:
-            continue
-        label_full = m.group(1)
-        lab = re.sub(r"[:：﹕꞉˸፡︓]\s*$", "", label_full).strip()
-        if not lab:
-            continue
-        val = _field_value_for_name(lookup_rows, lab)
-        if val is None:
-            continue
-        new_text = f"{label_full} {val}"
-        if dry_run:
-            print(f"[DRY][DOCX] underline: '{lab}' → '{val}'")
-        else:
-            _set_paragraph_text_keep_simple_format(p, new_text)
-
-def _fill_checkboxes(doc, lookup_rows, dry_run=False):
-    box_patterns = [
-        re.compile(r"^\s*[□☐]\s+(.*)$"),
-        re.compile(r"^\s*\[\s?\]\s+(.*)$"),
-        re.compile(r"^\s*\[\s?[xX✓]\s?\]\s+(.*)$"),
-    ]
-    for p in _iter_all_paragraphs_and_cells(doc):
-        t = p.text.strip()
-        if not t:
-            continue
-        for pat in box_patterns:
-            m = pat.match(t)
-            if not m:
-                continue
-            lab = m.group(1).strip()
-            if not lab:
-                break
-            val = _field_value_for_name(lookup_rows, lab)
-            yn = _truthy(val)
-            if yn is None:
-                continue
-            new = (f"☒ {lab}" if yn else f"☐ {lab}")
-            if dry_run:
-                print(f"[DRY][DOCX] checkbox: '{lab}' → {'CHECK' if yn else 'UNCHECK'}")
-            else:
-                _set_paragraph_text_keep_simple_format(p, new)
-            break
-
-# --- DOCX table helpers (section-aware, write “inside the box”) ---
-from docx.table import _Cell, Table
-from docx.text.paragraph import Paragraph
-from docx.oxml.table import CT_Tbl
-from docx.oxml.text.paragraph import CT_P
-
-def _iter_block_items(parent):
-    parent_elm = parent._element
-    for child in parent_elm.body.iterchildren():
-        if isinstance(child, CT_P):
-            yield Paragraph(child, parent)
-        elif isinstance(child, CT_Tbl):
-            yield Table(child, parent)
-
-def _first_cell_text(cell: _Cell) -> str:
-    return " ".join(p.text for p in cell.paragraphs).strip()
-
-def _strip_trailing_paren(s: str) -> str:
-    return re.sub(r"\s*\([^()]*\)\s*$", "", s or "").strip()
-
-def _looks_like_section_title(text: str) -> bool:
-    if not text:
-        return False
-    t = unicodedata.normalize("NFKC", text).strip()
-    if len(t) > 180:
-        return False
-    letters = [c for c in t if c.isalpha()]
-    caps_ratio = (sum(1 for c in letters if c.isupper()) / max(1, len(letters))) if letters else 0.0
-    return t.endswith(":") or (caps_ratio >= 0.45 and len(t.split()) <= 15)
-
-def _norm_key_for_match(s: str) -> str:
-    t = unicodedata.normalize("NFKC", str(s or "")).strip().lower()
-    t = re.sub(r"\s+", " ", t)
-    return t.translate(str.maketrans("", "", string.punctuation))
-
-def _looks_like_placeholder_only(text: str) -> bool:
-    # True when a cell has only lines/dashes/whitespace (no alphanumerics)
-    if not text:
+def replace_blank_segment_in_run(run: Run, value: str) -> bool:
+    """
+    If a run contains a blank/underscore segment, replace JUST that segment,
+    copying formatting to keep inline grey background if present.
+    """
+    t = run.text or ""
+    # whole-run blanks (NBSP clusters / underscores)
+    if VISUAL_BLANK_RE.fullmatch(t) or UNDERS_RE.fullmatch(t):
+        run.text = str(value)
         return True
-    vis = re.sub(r"\s+", "", text)
-    return bool(vis) and not re.search(r"[A-Za-z0-9]", vis)
-
-def _nearest_section_for_table(doc, tbl, known_sections_norm: Set[str]) -> str:
-    # Walk the document blocks to find tbl, then scan upward for the closest paragraph
-    # that either looks like a section title or matches a known section.
-    last_para_text = ""
-    for blk in _iter_block_items(doc):
-        if blk is tbl:
-            break
-        if hasattr(blk, "text"):
-            last_para_text = blk.text or last_para_text
-    # Walk upward again from the table element to previous siblings
-    # (best effort; python-docx doesn't expose easy prev-sibling iteration)
-    # Use the already captured last_para_text as a pragmatic nearest paragraph.
-    cand = (last_para_text or "").strip()
-    cand_norm = _norm_key_for_match(cand)
-    if cand_norm in known_sections_norm:
-        return cand_norm
-    if _looks_like_section_title(cand) and len(cand_norm) >= 4:
-        return cand_norm
-    return ""  # unknown
-
-
-def _set_cell_text(cell: _Cell, text: str):
-    for p in list(cell.paragraphs):
-        p.clear()
-    cell.text = str(text)
-
-def _write_value_inside_box(cell: _Cell, value: str):
-    """
-    Prefer writing into the result text of legacy FORMTEXT fields so the grey box stays.
-    Fallbacks cover placeholder lines, shaded paragraphs, etc.
-    """
-    import re
-    from docx.oxml.shared import OxmlElement, qn
-
-    val = value or ""
-
-    PLACEHOLDER_RE = re.compile(r"[_\-\u2014\.\s\u2002\u2003\u2007\u2009\u00A0]+")
-    ALNUM_RE = re.compile(r"[A-Za-z0-9]")
-
-    def _para_is_shaded(para) -> bool:
-        try:
-            return bool(para._element.xpath('.//w:pPr/w:shd'))
-        except Exception:
-            return False
-
-    def _cell_is_shaded(c) -> bool:
-        try:
-            return bool(c._tc.xpath('.//w:tcPr/w:shd'))
-        except Exception:
-            return False
-
-    def _set_in_para(para, text: str):
-        # add or reuse an empty run without clearing structure
-        empties = [r for r in para.runs if not (r.text or "").strip()]
-        if empties:
-            empties[-1].text = text
-        else:
-            para.add_run(text)
-
-    # ---- 1) Handle legacy FORMTEXT: write into result between 'separate' and 'end' ----
-    for para in cell.paragraphs:
-        p = para._element
-        instr_nodes = p.xpath(".//w:instrText")
-        has_formtext = any(("FORMTEXT" in (n.text or "").upper()) for n in instr_nodes)
-        if not has_formtext:
-            continue
-
-        result_runs = []
-        got_separate = False
-        for r in p.xpath("./w:r"):
-            if r.xpath("./w:fldChar[@w:fldCharType='begin']"):
-                got_separate = False
-                result_runs = []
-                continue
-            if r.xpath("./w:fldChar[@w:fldCharType='separate']"):
-                got_separate = True
-                continue
-            if r.xpath("./w:fldChar[@w:fldCharType='end']"):
-                break
-            if got_separate:
-                result_runs.append(r)
-
-        if result_runs:
-            # clear any existing w:t nodes in the result and set a fresh one on the first run
-            first = result_runs[0]
-            # remove existing text nodes
-            for rr in result_runs:
-                for t in rr.xpath("./w:t"):
-                    t.getparent().remove(t)
-            # add a fresh text node (preserve spaces)
-            t = OxmlElement('w:t')
-            t.set(qn('xml:space'), 'preserve')
-            t.text = val
-            first.append(t)
-            return  # done for this cell
-
-    # ---- 2) Fallbacks (for non-field boxes/placeholders/shading) ----
-
-    def glen(group):
-        return sum(len((r.text or "").replace(" ", "")) for r in group)
-
-    best_group = []
-    shaded_paras = []
-    box_like_paras = []
-
-    for para in cell.paragraphs:
-        if _para_is_shaded(para):
-            shaded_paras.append(para)
-
-        vis = "".join((r.text or "") for r in para.runs)
-        if vis and not ALNUM_RE.search(vis):
-            box_like_paras.append(para)
-
-        cur, best_here = [], []
-        for run in para.runs:
-            t = run.text or ""
-            if t and PLACEHOLDER_RE.fullmatch(t):
-                cur.append(run)
-            else:
-                if glen(cur) > glen(best_here):
-                    best_here = cur[:]
-                cur = []
-        if glen(cur) > glen(best_here):
-            best_here = cur[:]
-        if glen(best_here) > glen(best_group):
-            best_group = best_here
-
-    if best_group:
-        L = max(1, glen(best_group))
-        best_group[0].text = val[:L]
-        for r in best_group[1:]:
-            r.text = ""
-        return
-
-    if shaded_paras:
-        _set_in_para(shaded_paras[0], val)
-        return
-
-    if _cell_is_shaded(cell):
-        p = cell.paragraphs[0] if cell.paragraphs else cell.add_paragraph()
-        _set_in_para(p, val)
-        return
-
-    if box_like_paras:
-        _set_in_para(box_like_paras[0], val)
-        return
-
-    p = cell.paragraphs[-1] if cell.paragraphs else cell.add_paragraph()
-    _set_in_para(p, val)
-
-
-
-def _cell_has_box_target(cell: _Cell) -> bool:
-    try:
-        if cell._tc.xpath('.//w:tcPr/w:shd', namespaces=cell._tc.nsmap):
-            return True
-    except Exception:
-        pass
-    for p in cell.paragraphs:
-        for r in p.runs:
-            if (r.text or "").strip().upper() == "FORMTEXT":
-                return True
-        for r in p.runs:
-            t = r.text or ""
-            if t and re.fullmatch(r"[_\-\u2014\.\s\u2002\u2003\u2007\u2009\u00A0]+", t):
-                return True
-        vis = "".join((r.text or "") for r in p.runs)
-        if vis and not re.search(r"[A-Za-z0-9]", vis):
-            return True
+    # inline blank cluster inside the run
+    m = INLINE_VISUAL_BLANK_RE.search(t) or UNDERS_RE.search(t)
+    if m:
+        left, right = t[:m.start()], t[m.end():]
+        run.text = left  # keep this run and its formatting
+        new_val = run._paragraph.add_run(str(value))
+        copy_run_format(run, new_val)
+        if right:
+            run._paragraph.add_run(right)
+        return True
     return False
 
-def _value_cell_candidates(tbl: Table, ri: int, ci: int) -> List[_Cell]:
-    cands = []
-    ncols = len(tbl.rows[ri].cells)
-    if ci + 1 < ncols:
-        cands.append(tbl.rows[ri].cells[ci + 1])
-    if ri + 1 < len(tbl.rows):
-        c2 = tbl.rows[ri + 1].cells[ci]
-        if _cell_has_box_target(c2):
-            cands.append(c2)
-    if (ri + 1 < len(tbl.rows)) and (ci + 1 < ncols):
-        c3 = tbl.rows[ri + 1].cells[ci + 1]
-        if _cell_has_box_target(c3):
-            cands.append(c3)
-    return sorted(cands, key=lambda c: (0 if _cell_has_box_target(c) else 1))
+def replace_blank_in_paragraph(par, value: str) -> bool:
+    """
+    Replace ONLY blank/underscore segments in the paragraph,
+    preserving any inline shading on the replaced run.
+    """
+    # pass 1: run-by-run targeted replace
+    for r in par.runs:
+        if replace_blank_segment_in_run(r, value):
+            return True
+    # pass 2: rebuild paragraph if there is a paragraph-wide cluster
+    txt = "".join(r.text for r in par.runs)
+    m = INLINE_VISUAL_BLANK_RE.search(txt) or UNDERS_RE.search(txt)
+    if m:
+        left, right = txt[:m.start()], txt[m.end():]
+        for r in par.runs:
+            r.text = ""
+        par.add_run(left)
+        par.add_run(str(value))
+        if right:
+            par.add_run(right)
+        return True
+    return False
 
-def _guess_pair_headers(tbl: Table) -> Dict[int, str]:
-    hdr = {}
-    try:
-        row0 = tbl.rows[0]
-        for ci in range(0, len(row0.cells), 2):
-            hdr[ci] = _first_cell_text(row0.cells[ci]).strip()
-    except Exception:
-        pass
-    return hdr
+def replace_blank_runs_in_cell(cell, value: str) -> bool:
+    """
+    Replace blank/underscore segments INSIDE the cell without clearing the cell,
+    so cell shading (grey box) remains. Prefer replacing an existing blank run.
+    """
+    for p in cell.paragraphs:
+        # try run-level replacement to keep inline shading
+        for r in p.runs:
+            if replace_blank_segment_in_run(r, value):
+                return True
+        # fallback: paragraph-level replacement
+        if replace_blank_in_paragraph(p, value):
+            return True
+    # ultimate fallback: append value as its own run (keeps cell shading)
+    if cell.paragraphs:
+        cell.paragraphs[0].add_run(str(value))
+    else:
+        cell.add_paragraph(str(value))
+    return True
 
-def _scan_up_label(tbl: Table, ri: int, ci: int) -> str:
-    try:
-        hdr = _first_cell_text(tbl.rows[0].cells[ci]).strip()
-        if hdr:
-            return hdr
-    except Exception:
-        pass
-    for rj in range(ri - 1, -1, -1):
-        try:
-            t = _first_cell_text(tbl.rows[rj].cells[ci]).strip()
-        except Exception:
-            t = ""
-        if t:
-            return t
-    return ""
+# =========================
+# Lookups
+# =========================
+def best_lookup_simple(label: str, values: Dict) -> Tuple[str,str]:
+    labN = norm(label)
+    if labN in values["norm_row"]:
+        return (str(values["norm_row"][labN]), "")
+    choice = process.extractOne(label, values["fuzz_keys"], scorer=fuzz.token_set_ratio)
+    if choice and choice[1] >= FUZZ_THRESH:
+        best_hdr = choice[0]
+        for hdr, val in values["raw_row"].items():
+            if fuzz.token_set_ratio(best_hdr, hdr) >= FUZZ_THRESH:
+                return (str(val), "")
+    return ("","")
 
-def _fill_docx_tables_section_aware(doc, lookup_rows, dry_run=False):
-    from collections import defaultdict
-    import re as _re
+def best_lookup_structured(
+        label: str,
+        section_hint: Optional[str],
+        values: Dict,
+        index_counter: Dict[str,int],
+        section_first: bool
+) -> Tuple[str,str]:
+    labelN = norm(label)
+    secN = norm(section_hint or "")
+    idx_key = f"{secN}|{labelN}"
+    index_counter[idx_key] = index_counter.get(idx_key, 0) + 1
+    want_index = index_counter[idx_key]
 
-    def _norm_key(s: str) -> str:
-        t = unicodedata.normalize("NFKC", str(s or "")).strip().lower()
-        t = re.sub(r"\s+", " ", t)
-        return t.translate(str.maketrans("", "", string.punctuation))
+    by_key = values["by_key"]
+    by_field = values["by_field"]
 
-    # Index lookup values three ways
-    values_exact = {}
-    values_by_field = defaultdict(dict)         # fld -> {idx: val} (first-seen per idx)
-    values_sectionless = defaultdict(dict)      # fld (no section) -> {idx: val}
-    known_sections_norm: Set[str] = set()
-    known_fields_norm: Set[str] = set()
+    def try_section():
+        if (secN, labelN, want_index) in by_key:
+            return by_key[(secN, labelN, want_index)]
+        if (secN, labelN, 1) in by_key:
+            return by_key[(secN, labelN, 1)]
+        return ("","")
 
-    def _to_text_value(v):
-        try:
-            if isinstance(v, float):
-                if v.is_integer():
-                    return str(int(v))
-                s = f"{v:.6f}".rstrip("0").rstrip(".")
-                return s if s else "0"
-        except Exception:
-            pass
-        return str(v).strip()
+    # >>> REPLACE THIS FUNCTION <<<
+    def try_field():
+        """Respect want_index when section is unknown."""
+        arr = by_field.get(labelN, [])
+        # try exact occurrence
+        if 1 <= want_index <= len(arr):
+            v, c = arr[want_index - 1]
+            if str(v).strip():
+                return (v, c)
+        # otherwise do NOT fall back to “first non-empty” here,
+        # because that causes duplicates like Street 1 everywhere.
+        return ("","")
+    # <<< END REPLACEMENT >>>
 
-    for r in lookup_rows:
-        sec = _norm_key(r.get("Section", ""))
-        fld = _norm_key(r.get("Field", ""))
-        try:
-            idx = int(r.get("Index") or 1)
-        except Exception:
-            idx = 1
-        val = _to_text_value(r.get("Value", ""))
-        if not fld:
-            continue
-        if sec:
-            known_sections_norm.add(sec)
-        known_fields_norm.add(fld)
+    if section_first:
+        v, c = try_section()
+        if v or c: return (str(v), str(c))
+        v, c = try_field()
+        if v or c: return (str(v), str(c))
+    else:
+        v, c = try_field()
+        if v or c: return (str(v), str(c))
+        v, c = try_section()
+        if v or c: return (str(v), str(c))
 
-        if val != "":
-            values_exact[(sec, fld, idx)] = val
-            if not sec:
-                values_sectionless[fld][idx] = val
-            if idx not in values_by_field[fld]:
-                values_by_field[fld][idx] = val
+    choice = process.extractOne(label, values["fuzz_keys"], scorer=fuzz.token_set_ratio)
+    if choice and choice[1] >= FUZZ_THRESH:
+        labN2 = norm(choice[0])
+        if labN2 in by_field and by_field[labN2]:
+            for v, c in by_field[labN2]:
+                if str(v).strip():
+                    return (str(v), str(c))
+            v, c = by_field[labN2][0]
+            return (str(v), str(c))
+    return ("","")
 
-    # Helper: try to extract a field label from row text when the label cell is blank/placeholder
-    def _extract_row_label_fallback(label_cell_text: str, value_cell_text: str) -> str:
-        # Search for any known field token inside either cell's visible text.
-        blob = f"{label_cell_text} {value_cell_text}".strip()
-        blob_norm = _norm_key(blob)
-        if not blob_norm:
-            return ""
-        # look for best match by longest field name contained in the blob
-        best = ""
-        best_len = 0
-        for fld in known_fields_norm:
-            if fld and fld in blob_norm and len(fld) > best_len:
-                best, best_len = fld, len(fld)
-        return best
+# =========================
+# Checkbox helpers
+# =========================
+def checkbox_line_apply(text: str, value: str, choices: str) -> str:
+    val = str(value).strip()
+    ch  = str(choices).strip()
+    low = val.lower()
 
-    # Precompute the nearest section for each table
-    table_to_section_norm = {}
-    for tbl in doc.tables:
-        table_to_section_norm[tbl] = _nearest_section_for_table(doc, tbl, known_sections_norm)
+    if low in YES_WORDS:
+        for sym in CHECKBOX_EMPTY:
+            if sym in text:
+                return text.replace(sym, "☑", 1)
+        return text
+    if low in NO_WORDS:
+        t = text
+        for mark in CHECKBOX_MARKS:
+            t = t.replace(mark, "□")
+        return t
 
-    for tbl in doc.tables:
-        try:
-            ncols = len(tbl.rows[0].cells)
-        except Exception:
-            continue
-        if ncols < 2:
-            continue
+    target = val or ch
+    if not target:
+        return text
 
-        # If row 0 has headers in the label column, remember them (kept from your original heuristic)
-        pair_headers = {}
-        try:
-            row0 = tbl.rows[0]
-            for ci in range(0, len(row0.cells), 2):
-                pair_headers[ci] = _first_cell_text(row0.cells[ci]).strip()
-        except Exception:
-            pass
+    options = []
+    for m in re.finditer(r"(□|☐)\s*([^\s].*?)(?=(\s{2,}|$))", text):
+        options.append((m.start(), m.group(2)))
+    if not options:
+        return text
+    best = process.extractOne(target, [o[1] for o in options], scorer=fuzz.token_set_ratio)
+    if best and best[1] >= 80:
+        idx = [o[1] for o in options].index(best[0])
+        start = options[idx][0]
+        before, after = text[:start], text[start:]
+        after = after.replace("□","☑",1).replace("☐","☑",1)
+        return before + after
+    return text
 
-        header_has_any = any(_first_cell_text(tbl.rows[0].cells[c]).strip()
-                             for c in range(min(ncols, 2)))
-        start_row = 1 if header_has_any else 0
+# =========================
+# DOCX helpers
+# =========================
+def para_text(par) -> str:
+    return "".join(r.text for r in par.runs)
 
-        # Section guess for this table
-        sec_norm_guess = table_to_section_norm.get(tbl, "") or ""
+def set_par_text(par, text: str):
+    for r in par.runs: r.text = ""
+    par.add_run(text)
 
-        for ri in range(start_row, len(tbl.rows)):
-            row = tbl.rows[ri]
-            for ci in range(0, ncols, 2):
-                try:
-                    label_cell = row.cells[ci]
-                except Exception:
-                    continue
+def is_visual_blank(s: str) -> bool:
+    return bool(VISUAL_BLANK_RE.fullmatch(s)) or bool(UNDERS_RE.fullmatch(s))
 
-                label_text_raw = _first_cell_text(label_cell).strip()
-                label_text = label_text_raw
-                # If the label cell is effectively placeholder-only, try to infer the label from row text.
-                if not label_text or _looks_like_placeholder_only(label_text):
-                    # peek the adjacent value cell text for clues
-                    val_cell_text = ""
-                    if ci + 1 < ncols:
-                        try:
-                            val_cell_text = _first_cell_text(row.cells[ci + 1]).strip()
-                        except Exception:
-                            val_cell_text = ""
-                    inferred = _extract_row_label_fallback(label_text, val_cell_text)
-                    if inferred:
-                        fld_norm = inferred
-                    else:
-                        # last resort: scan upward in same column (original behavior)
-                        label_text = _scan_up_label(tbl, ri, ci).strip()
-                        if not label_text:
-                            continue
-                        fld_norm = _norm_key(label_text)
-                else:
-                    fld_norm = _norm_key(label_text)
+def cell_text(cell) -> str:
+    return "\n".join(p.text for p in cell.paragraphs).strip()
 
-                if not fld_norm:
-                    continue
+def set_cell_text(cell, text: str):
+    for p in cell.paragraphs:
+        for r in p.runs: r.text = ""
+    cell.paragraphs[0].add_run(text)
 
-                # Prefer the nearest section guess for this table;
-                # if not found, keep your original header-based hint as a weak signal
-                sec_display = (pair_headers.get(ci, "") or "").strip()
-                sec_norm = sec_norm_guess or _norm_key(_strip_trailing_paren(sec_display))
+# =========================
+# Fill logic — paragraphs
+# =========================
+def fill_paragraphs(
+        doc: Document,
+        values: Dict,
+        section_first: bool,
+        section_hint: Optional[str]=None,
+        idx_counter: Optional[Dict[str,int]]=None
+) -> bool:
+    changed = False
+    pars = doc.paragraphs
+    idx_counter = idx_counter or {}
 
-                # Index hint from header numbers like "... (1)" etc.
-                pair_index_hint = (ci // 2) + 1
-                m = _re.search(r'(\d+)\b', sec_display)
-                if m:
-                    try:
-                        pair_index_hint = int(m.group(1))
-                    except Exception:
-                        pass
+    def lookup(label: str):
+        if values["schema"] == "structured":
+            return best_lookup_structured(label, section_hint, values, idx_counter, section_first)
+        else:
+            v, c = best_lookup_simple(label, values)
+            return v, c
 
-                # Selection: strict section match first, then sectionless, then any-by-field (same as your order)
-                chosen = ""
-                for idx_try in (pair_index_hint, 1, 2, 3, 4, 5):
-                    if sec_norm:
-                        chosen = values_exact.get((sec_norm, fld_norm, idx_try), "")
-                        if chosen:
-                            break
-                if not chosen:
-                    for idx_try in (pair_index_hint, 1, 2, 3, 4, 5):
-                        chosen = values_sectionless.get(fld_norm, {}).get(idx_try, "")
-                        if chosen:
-                            break
-                if not chosen:
-                    for idx_try in (pair_index_hint, 1, 2, 3, 4, 5):
-                        chosen = values_by_field.get(fld_norm, {}).get(idx_try, "")
-                        if chosen:
-                            break
+    for i, par in enumerate(pars):
+        text = para_text(par)
 
-                if not chosen:
-                    # no value, skip writing
-                    continue
+        # Label : ____ on same line
+        m = LABEL_INLINE_UNDERS_RE.match(text)
+        if m:
+            label = m.group("label").strip()
+            val, _ = lookup(label)
+            if val:
+                set_par_text(par, f"{label}: {val}")
+                changed = True
+                continue
 
-                vcands = _value_cell_candidates(tbl, ri, ci)
-                if not vcands:
-                    continue
-                target_cell = vcands[0]
-                if dry_run:
-                    print(f"[DRY][DOCX] (sec='{sec_norm or 'No Section'}') '{label_text or fld_norm}' → '{chosen}' (row {ri}, col {ci})")
-                else:
-                    _write_value_inside_box(target_cell, chosen)
+        # Label: + next line blank
+        m2 = LABEL_COLON_RE.match(text)
+        if m2 and i + 1 < len(pars):
+            nxt_par = pars[i+1]
+            nxt = para_text(nxt_par)
+            if is_visual_blank(nxt) or INLINE_VISUAL_BLANK_RE.search(nxt):
+                label = m2.group("label").strip()
+                val, _ = lookup(label)
+                if val:
+                    if replace_blank_in_paragraph(nxt_par, str(val)):
+                        changed = True
+                        continue
 
+        # Inline visual blanks (e.g., "City, ST Zip     ")
+        if INLINE_VISUAL_BLANK_RE.search(text):
+            left = text.split(INLINE_VISUAL_BLANK_RE.findall(text)[0])[0]
+            label = left.strip().rstrip(":;")
+            val, _ = lookup(label)
+            if val:
+                new = INLINE_VISUAL_BLANK_RE.sub(str(val), text, count=1)
+                set_par_text(par, new)
+                changed = True
+                continue
 
+        # Underscores without colon/semicolon: "... Name ____"
+        if UNDERS_RE.search(text) and ":" not in text and ";" not in text:
+            left = text.split("_")[0]
+            label_guess = " ".join(left.strip().split()[-5:]).rstrip(":;")
+            val, _ = lookup(label_guess)
+            if val:
+                set_par_text(par, UNDERS_RE.sub(str(val), text, count=1))
+                changed = True
+                continue
 
-def _fill_table_right_cells_simple(doc, lookup_rows, dry_run=False):
-    import re
+        # Checkbox lines
+        if any(ch in text for ch in CHECKBOX_EMPTY + CHECKBOX_MARKS):
+            lbl_m = re.search(r"([A-Za-z0-9 ().,/\-\&%]{2,120})\s*[:;]\s*$", text)
+            label = lbl_m.group(1).strip() if lbl_m else ""
+            val, choices = lookup(label) if label else ("","")
+            if val or choices:
+                new = checkbox_line_apply(text, val, choices)
+                if new != text:
+                    set_par_text(par, new)
+                    changed = True
+
+    return changed
+
+# =========================
+# Fill logic — tables
+# =========================
+def fill_tables(
+        doc: Document,
+        values: Dict,
+        section_first: bool,
+        section_hint: Optional[str] = None,
+        idx_counter: Optional[Dict[str, int]] = None
+) -> bool:
+    changed = False
+    idx_counter = idx_counter or {}
+
+    def lookup(label: str):
+        if values["schema"] == "structured":
+            return best_lookup_structured(label, section_hint, values, idx_counter, section_first)
+        else:
+            v, c = best_lookup_simple(label, values)
+            return v, c
+
     for tbl in doc.tables:
         for row in tbl.rows:
             cells = row.cells
-            if len(cells) < 2:
-                continue
-            lab_raw = _first_cell_text(cells[0])
-            if not lab_raw:
-                continue
-            lab = re.sub(r"[:：﹕꞉˸፡︓]\s*$", "", lab_raw).strip()
-            if not lab or len(lab) > 120:
-                continue
-            val = _field_value_for_name(lookup_rows, lab)
-            if val is None:
-                continue
-            right_cell = cells[1]
-            if dry_run:
-                print(f"[DRY][DOCX] table2col: '{lab}' → '{val}'")
-            else:
-                _write_value_inside_box(right_cell, str(val))
+            for ci, cell in enumerate(cells):
+                # ---- SDT (content control) fill FIRST ----
+                sdt_list = list(_iter_sdt_in_cell(cell))
+                if sdt_list:
+                    # Prefer label from left neighbor; otherwise try this cell's first line
+                    inferred_label = ""
+                    if ci > 0:
+                        inferred_label = cell_text(cells[ci - 1]).strip().rstrip(":;")
+                    if not inferred_label:
+                        raw_txt_without_sdt = "\n".join(p.text for p in cell.paragraphs).strip()
+                        inferred_label = (raw_txt_without_sdt.split("\n")[0] if raw_txt_without_sdt else "").strip().rstrip(":;")
 
-# --- add to docx_prefill.py ---
-# ---------------------------
-# DOCX → template builder
-# ---------------------------
-# --- Template builder for DOCX (backward-compatible) --------------------------
-def build_docs_template(doc_or_path,
-                        template_json: str,
-                        lookup_rows=None,
-                        dry_run: bool = False) -> dict:
-    """
-    Build a template JSON with fields discovered from a DOCX.
+                    if inferred_label:
+                        val, _ = lookup(inferred_label)
+                        if val:
+                            wrote = False
+                            for sdt in sdt_list:
+                                if _set_sdt_text_inplace(sdt, str(val)):
+                                    wrote = True
+                                    break
+                            if wrote:
+                                changed = True
+                                continue  # SDT handled; go next cell
 
-    Backward-compatible promises:
-      • Keep 'page' at 0
-      • Keep placement keys: "table_pair" and "para_underline"
-      • Keep labels as extracted (no aggressive renaming)
-      • If no clear section is found, leave section=""
-      • Indexing is stable, now done per (section, label_short)
+                # From here on, treat as normal cell text
+                txt = cell_text(cell)
 
-    Enhancements:
-      • Detect section headers from table headers and "Section X:" style paragraphs
-      • Assign section to fields that previously had section=""
-      • Avoid cross-section duplicates by indexing within each section
-    """
-    try:
-        from docx import Document
-        from docx.table import Table, _Cell
-        from docx.text.paragraph import Paragraph
-        from docx.oxml.text.paragraph import CT_P
-        from docx.oxml.table import CT_Tbl
-    except Exception as e:
-        raise RuntimeError("python-docx is required. Install with: pip install python-docx") from e
+                # (a) Checkbox in cell
+                if any(ch in txt for ch in CHECKBOX_EMPTY + CHECKBOX_MARKS):
+                    lbl = re.match(r"^\s*([A-Za-z0-9 ().,/\-\&%]{2,120})\s*[:;]", txt)
+                    label = lbl.group(1).strip() if lbl else ""
+                    val, choices = lookup(label) if label else ("", "")
+                    if val or choices:
+                        new = checkbox_line_apply(txt, val, choices)
+                        if new != txt:
+                            set_cell_text(cell, new)
+                            changed = True
+                            continue
 
-    # -------------------- small local helpers (match existing semantics) -------
-    def _iter_block_items(parent):
-        parent_elm = parent._element
-        for child in parent_elm.body.iterchildren():
-            if isinstance(child, CT_P):
-                yield Paragraph(child, parent)
-            elif isinstance(child, CT_Tbl):
-                yield Table(child, parent)
+                # (b) "Label ; ____" or "Label : ____" inside same cell
+                m_inline = LABEL_INLINE_UNDERS_RE.match(txt)
+                if m_inline:
+                    label = m_inline.group("label").strip()
+                    val, _ = lookup(label)
+                    if val:
+                        set_cell_text(cell, f"{label}: {val}")
+                        changed = True
+                        continue
 
-    def _first_cell_text(cell: _Cell) -> str:
-        return " ".join(p.text for p in cell.paragraphs).strip()
+                # (c) Left label (with/without colon) ➜ right cell is blank/underscores
+                if ci + 1 < len(cells):
+                    left_label_raw = txt.strip()
+                    left_label = left_label_raw.rstrip(":;")
+                    right_txt = cell_text(cells[ci + 1])
+                    if left_label and (LABEL_COLON_RE.match(txt) or len(left_label) > 1):
+                        if (not right_txt) or is_visual_blank(right_txt) or UNDERS_RE.search(right_txt) or INLINE_VISUAL_BLANK_RE.search(right_txt):
+                            val, _ = lookup(left_label)
+                            if val:
+                                # try to keep the grey placeholder in the right cell
+                                if not replace_blank_runs_in_cell(cells[ci + 1], str(val)):
+                                    set_cell_text(cells[ci + 1], str(val))  # last resort
+                                changed = True
+                                continue
 
-    def _strip_trailing_paren(s: str) -> str:
-        return re.sub(r"\s*\([^()]*\)\s*$", "", s or "").strip()
+                # (d) Shaded/grey placeholder in this cell ➜ fill from left neighbor label
+                shd = cell._tc.xpath(".//*[local-name()='shd']")
+                if shd and (not txt or is_visual_blank(txt) or UNDERS_RE.search(txt) or INLINE_VISUAL_BLANK_RE.search(txt)):
+                    if ci > 0:
+                        left_label = cell_text(cells[ci - 1]).strip().rstrip(":;")
+                        if left_label:
+                            val, _ = lookup(left_label)
+                            if val:
+                                if replace_blank_runs_in_cell(cell, str(val)):
+                                    changed = True
+                                    continue
 
-    def _looks_like_section_title(text: str) -> bool:
-        if not text:
-            return False
-        t = unicodedata.normalize("NFKC", text).strip()
-        if len(t) > 180:
-            return False
-        # Accept explicit and common header styles
-        if t.lower().startswith("section ") or t.endswith(":"):
-            return True
-        letters = [c for c in t if c.isalpha()]
-        if not letters:
-            return False
-        caps_ratio = sum(1 for c in letters if c.isupper()) / max(1, len(letters))
-        return caps_ratio >= 0.45 and len(t.split()) <= 15
+                # NEW: shaded cell with NO useful left-label → infer label from the nearest non-empty cell ABOVE (same column)
+                if shd and (not txt or is_visual_blank(txt) or UNDERS_RE.search(txt) or INLINE_VISUAL_BLANK_RE.search(txt)):
+                    # try left first (existing behavior)
+                    left_label = ""
+                    if ci > 0:
+                        left_label = cell_text(cells[ci - 1]).strip().rstrip(":;")
 
-    def _is_table_header_row(tbl: Table, ri: int) -> bool:
-        """Header if first row looks merged or shaded with concise text."""
-        try:
-            row = tbl.rows[ri]
-        except Exception:
-            return False
-        merged_like = len(row.cells) == 1
-        shaded_like = False
-        try:
-            for c in row.cells:
-                if c._tc.xpath('.//w:tcPr/w:shd', namespaces=c._tc.nsmap):
-                    shaded_like = True
-                    break
-        except Exception:
-            pass
-        row_text = " | ".join(_first_cell_text(c) for c in row.cells).strip()
-        simple = (":" not in row_text) and (len(row_text) <= 160)
-        return merged_like or (shaded_like and simple)
+                    use_above_header = False
+                    header_label = ""
+                    if not left_label:
+                        # scan upward in the same column for a header/label (first non-empty text)
+                        col_idx = ci
+                        # find our row index (ri) inside this table
+                        try:
+                            ri = next(ridx for ridx, r in enumerate(tbl.rows) if cell in r.cells)
+                        except StopIteration:
+                            ri = None
+                        if ri is not None:
+                            for rj in range(ri - 1, -1, -1):
+                                cand = cell_text(tbl.rows[rj].cells[col_idx]).strip()
+                                if cand:
+                                    header_label = cand.rstrip(":;")
+                                    break
+                        if header_label:
+                            use_above_header = True
 
-    def _table_section_title(tbl: Table) -> str:
-        try:
-            if _is_table_header_row(tbl, 0):
-                return _strip_trailing_paren(_first_cell_text(tbl.rows[0].cells[0]))
-        except Exception:
-            pass
-        return ""
+                    label_to_use = left_label or header_label
+                    if label_to_use:
+                        val, _ = lookup(label_to_use)
+                        if val:
+                            if replace_blank_runs_in_cell(cell, str(val)):
+                                changed = True
+                                continue
 
-    def _label_cols_for_table(tbl: Table) -> list:
-        """Conservative: even columns tend to be labels in label/value grids."""
-        try:
-            ncols = len(tbl.rows[0].cells)
-        except Exception:
-            return [0]
-        if ncols <= 1:
-            return [0]
-        return [c for c in range(0, ncols, 2)]
 
-    underline_pat = re.compile(r"^(.*?[:：﹕꞉˸፡︓])\s*[_\u2014\-.\s]{3,}$")
+                # (e) Inline visual blanks in cell
+                if INLINE_VISUAL_BLANK_RE.search(txt):
+                    left = txt.split(INLINE_VISUAL_BLANK_RE.findall(txt)[0])[0]
+                    label = left.strip().rstrip(":;")
+                    val, _ = lookup(label)
+                    if val:
+                        new = INLINE_VISUAL_BLANK_RE.sub(str(val), txt, count=1)
+                        set_cell_text(cell, new)
+                        changed = True
+                        continue
 
-    # -------------------- open document ----------------------------------------
-    if isinstance(doc_or_path, Document):
-        doc = doc_or_path
-    else:
-        doc = Document(doc_or_path)
+                # (f) Underscores without punctuation
+                if UNDERS_RE.search(txt) and ":" not in txt and ";" not in txt:
+                    left = txt.split("_")[0]
+                    guess = " ".join(left.strip().split()[-5:]).rstrip(":;")
+                    val, _ = lookup(guess)
+                    if val:
+                        set_cell_text(cell, UNDERS_RE.sub(str(val), txt, count=1))
+                        changed = True
+                        continue
 
-    page = 0  # unchanged; python-docx has no pagination
-    current_section = ""  # default section remains empty, like before
+    return changed
 
-    raw_fields = []  # collect first, then re-index by (section, label_short)
+# =========================
+# Pipeline
+# =========================
+def process_docx(doc_path: Path, values: Dict, section_first: bool) -> Document:
+    doc = Document(doc_path)
+    section_hint = None
+    idx_counter: Dict[str,int] = {}
 
-    def _push(label: str, section: str, placement: str):
-        lab = (label or "").strip()
-        if not lab:
-            return
-        sec = (section or "").strip()  # may be ""
-        lab_short = lab.split("\n", 1)[0].strip()
-        raw_fields.append({
-            "label": lab,
-            "label_short": lab_short,
-            "section": sec,   # may be "", preserving old behavior
-            "page": page,     # keep 0
-            "placement": placement,
-        })
+    changed = False
+    changed |= fill_paragraphs(doc, values, section_first, section_hint, idx_counter)
+    changed |= fill_tables(doc, values, section_first, section_hint, idx_counter)
 
-    # -------------------- scan in natural order --------------------------------
-    for block in _iter_block_items(doc):
-        if isinstance(block, Paragraph):
-            txt = (block.text or "").strip()
-            if not txt:
-                continue
-            # Section titles (non-destructive: only updates current_section)
-            if _looks_like_section_title(txt):
-                current_section = _strip_trailing_paren(txt)
-                continue
-
-            # Paragraph underline fields (same as previous behavior)
-            m = underline_pat.match(txt)
-            if m:
-                label = re.sub(r"[:：﹕꞉˸፡︓]\s*$", "", m.group(1)).strip()
+    # Final pass: blank paragraph directly under a label line
+    pars = doc.paragraphs
+    for i, par in enumerate(pars):
+        t = para_text(par)
+        if VISUAL_BLANK_RE.fullmatch(t) or UNDERS_RE.fullmatch(t):
+            if i > 0:
+                prev = para_text(pars[i-1]).strip()
+                m = LABEL_COLON_RE.match(prev)
+                label = m.group("label").strip() if m else prev.rstrip(":;")
                 if label:
-                    _push(label, current_section, "para_underline")
-                continue
+                    if values["schema"] == "structured":
+                        v, _ = best_lookup_structured(label, section_hint, values, idx_counter, section_first)
+                    else:
+                        v, _ = best_lookup_simple(label, values)
+                    if v:
+                        set_par_text(par, str(v))
+                        changed = True
 
-        if isinstance(block, Table):
-            # Prefer a header title if present; otherwise keep current_section
-            table_sec = _table_section_title(block) or current_section
-            if _table_section_title(block):
-                current_section = table_sec  # advance section only on strong header
+    return doc
 
-            start_row = 1 if _is_table_header_row(block, 0) else 0
-            label_cols = _label_cols_for_table(block)
-
-            for ri in range(start_row, len(block.rows)):
-                row = block.rows[ri]
-                for ci in label_cols:
-                    try:
-                        label_cell = row.cells[ci]
-                    except Exception:
-                        continue
-                    label = _first_cell_text(label_cell).strip()
-                    if not label:
-                        continue
-                    label_clean = _strip_trailing_paren(re.sub(r"[:：﹕꞉˸፡︓]\s*$", "", label).strip())
-                    if not label_clean:
-                        continue
-                    _push(label_clean, table_sec, "table_pair")
-
-    # -------------------- stable per-section indexing (backward compatible) ----
-    # Previous behavior: indexing across whole doc; we keep that when section==""
-    # New: when sections are present, we index within each section to avoid clashes.
-    fields = []
-    counters: Dict[Tuple[str, str], int] = {}
-    for f in raw_fields:
-        key = (f["section"].lower(), f["label_short"].lower())
-        counters[key] = counters.get(key, 0) + 1
-        fields.append({
-            **f,
-            "index": counters[key],  # starts at 1, stable in document order
-        })
-
-    tpl = {"fields": fields}
-
-    if dry_run:
-        print(f"[DRY] Detected {len(fields)} fields")
-        for f in fields:
-            sec = f["section"] or "—"
-            print(f"  • {f['label_short']}  | Sec: {sec}  | Idx: {f['index']}  | {f['placement']}")
-        return tpl
-
-    with open(template_json, "w", encoding="utf-8") as f:
-        json.dump(tpl, f, indent=2, ensure_ascii=False)
-    print(f"🧩 Template written → {template_json}  (fields: {len(fields)})")
-    return tpl
-
-
-# Maintain compatibility with callers that expect build_pdf_template(...)
-def build_pdf_template(doc_or_path, template_json: str, lookup_rows=None, dry_run: bool = False):
-    return build_docs_template(doc_or_path, template_json, lookup_rows=lookup_rows, dry_run=dry_run)
-
-
-
-
-
-# ---------------------------
-# Public entry point
-# ---------------------------
-def prefill_docx(input_docx: str,
-                 output_docx: str,
-                 lookup_rows: List[Dict[str, Any]],
-                 dry_run: bool = False):
-    try:
-        from docx import Document
-    except Exception as e:
-        raise RuntimeError("python-docx is required. Install with: pip install python-docx") from e
-
-    # Canonicalize lookup rows
-    def _norm(s: str) -> str:
-        s = unicodedata.normalize("NFKC", str(s or ""))
-        s = re.sub(r"\s+", " ", s).strip().lower()
-        return s.translate(str.maketrans("", "", string.punctuation))
-
-    def _val_to_text(v):
-        if isinstance(v, float):
-            if v.is_integer():
-                return str(int(v))
-            s = f"{v:.6f}".rstrip("0").rstrip(".")
-            return s if s else "0"
-        return str(v).strip()
-
-    rows_in = len(lookup_rows or [])
-    seen, conflicts, rows_use = {}, {}, []
-    for r in (lookup_rows or []):
-        sec_raw = r.get("Section") or r.get("section") or r.get("section_norm") or ""
-        fld_raw = r.get("Field")   or r.get("label")   or r.get("label_norm")   or ""
-        idx_raw = r.get("Index")   or r.get("index")   or 1
-        try:
-            idx = int(idx_raw)
-        except Exception:
-            idx = 1
-        sec_norm = _norm(sec_raw)
-        fld_norm = _norm(fld_raw)
-        if not fld_norm:
-            continue
-        val = _val_to_text(r.get("Value", ""))
-        key = (sec_norm, fld_norm, idx)
-        if key in seen:
-            prior = seen[key]
-            if val and prior and val != prior:
-                conflicts.setdefault(key, set()).update([prior, val])
-            continue
-        seen[key] = val
-        rows_use.append({
-            "Section": sec_raw,
-            "section_norm": sec_norm,
-            "Field":   fld_raw,
-            "field_norm": fld_norm,
-            "Index": idx,
-            "Value": val,
-        })
-    lookup_rows = rows_use
-    print(f"📋 DOCX prefill: rows in -> {rows_in}, kept -> {len(rows_use)}, deduped -> {rows_in - len(rows_use)}")
-    if conflicts:
-        print(f"   • {len(conflicts)} conflicting key(s); first value kept.")
-
-    doc = Document(input_docx)
-
-    _replace_placeholders_everywhere(doc, lookup_rows, dry_run=dry_run)
-    _fill_checkboxes(doc, lookup_rows, dry_run=dry_run)
-    _fill_docx_tables_section_aware(doc, lookup_rows, dry_run=dry_run)
-    _fill_table_right_cells_simple(doc, lookup_rows, dry_run=dry_run)
-    _fill_colon_underscore_lines(doc, lookup_rows, dry_run=dry_run)
-
-    if dry_run:
-        print("Dry-run complete (DOCX). No file written.")
-        return 0
-
-    doc.save(output_docx)
-    print(f"📝 DOCX write complete → {output_docx}")
-    return 1
-
-# ---------------------------
+# =========================
 # CLI
-# ---------------------------
-if __name__ == "__main__":
-    import argparse, sys
-    ap = argparse.ArgumentParser(description="Prefill DOCX from lookup data")
-    ap.add_argument("--input", required=True, help="Input .docx file")
-    ap.add_argument("--output", required=True, help="Output .docx file")
-    ap.add_argument("--lookup", required=True, help="CSV/XLSX with Field,Value[,Section,Page,Index]")
-    ap.add_argument("--dry-run", action="store_true", help="Print actions without writing")
+# =========================
+def main():
+    ap = argparse.ArgumentParser(description="Prefill .docx from CSV/Excel (structured or simple).")
+    ap.add_argument("--doc", "--input", dest="doc", required=True, help="Input DOCX template")
+    ap.add_argument("--csv", required=True, help="CSV/XLSX/XLS with fields")
+    ap.add_argument("--sheet", default=None, help="Worksheet name for Excel files (optional)")
+    ap.add_argument("--row", type=int, default=0, help="Row index for simple CSV (ignored for structured)")
+    ap.add_argument("--out", "--output", dest="out", required=True, help="Output DOCX path")
+    ap.add_argument("--section-first", action="store_true", help="Prioritize Section+Field over Field-only")
     args = ap.parse_args()
 
-    rows = read_lookup_rows(args.lookup)
-    ok = prefill_docx(args.input, args.output, rows, dry_run=args.dry_run)
-    sys.exit(0 if ok else 1)
+    try:
+        values = load_table(Path(args.csv), sheet=args.sheet, row_index=args.row)
+    except Exception as e:
+        print(f"[CSV/Excel] {e}", file=sys.stderr); sys.exit(2)
+
+    try:
+        out_doc = process_docx(Path(args.doc), values, args.section_first)
+        out_doc.save(args.out)
+        print(f"✅ Wrote {args.out}")
+    except Exception as e:
+        print(f"[DOCX] {e}", file=sys.stderr); sys.exit(3)
+
+if __name__ == "__main__":
+    main()

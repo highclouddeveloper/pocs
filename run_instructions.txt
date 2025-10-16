@@ -9,6 +9,7 @@ Setup $env:OPENAI_API_KEY="" #This needs to be with Chatgpt5.0 credentials
 Run the script in order below:
 
 python field_map_generate.py --input input.pdf --template template_fields.json --make-lookup lookup_template.xlsx --rebuild-template #This will generate the Section, Page, Key, index and value
+
 python pdf_prefill.py --input input.pdf --output out.pdf --lookup lookup_template.xlsx #This will take the generated lookup_template.xlsx and run the main python script then generate out.pdf file prefilled
 
 #while passing the word document docx, doc as input to python code use command first in shell
@@ -38,3 +39,6 @@ py -3.13 -m pip install python-docx
 
 #Verify Install
 py -3.13 -c "import docx; print(docx.__version__)"
+
+#Had to install rapidfuzz
+pip install python-docx rapidfuzz pandas
