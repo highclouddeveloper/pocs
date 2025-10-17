@@ -1,0 +1,945 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Agentic DOCX filler:
+- Understand input.docx structure (sections + fields)
+- Read lookup_template.xlsx (Section, Field, Index, Value[, Page])
+- Match & fill values into the correct place
+- Save out.docx
+
+Usage:
+  python agent_docx_fill.py --input input.docx --lookup lookup_template.xlsx --output out.docx --dry-run
+"""
+
+import os, re, math, string, unicodedata, argparse, sys
+from typing import List, Dict, Any, Optional, Tuple, Iterable, Set
+from difflib import SequenceMatcher
+from numbers import Number
+import pandas as pd
+
+# ---------------------------
+# Utilities / shared
+# ---------------------------
+PUNCT = str.maketrans("", "", string.punctuation)
+
+def _normalize(s: str) -> str:
+    s = str(s or "")
+    s = unicodedata.normalize("NFKC", s)
+    s = re.sub(r"\(.*?\)", "", s)              # drop parentheticals for matching (keeps primary meaning)
+    s = re.sub(r"\s+", " ", s).strip().lower()
+    s = s.translate(PUNCT)
+    return s
+
+def _sim(a: str, b: str) -> float:
+    return SequenceMatcher(None, _normalize(a), _normalize(b)).ratio()
+
+def to_text_value(v) -> str:
+    try:
+        import pandas as _pd
+        if _pd.isna(v):
+            return ""
+    except Exception:
+        pass
+    if v is None:
+        return ""
+    if isinstance(v, Number):
+        try:
+            if isinstance(v, float) and not math.isfinite(v):
+                return ""
+        except Exception:
+            pass
+        try:
+            if float(v).is_integer():
+                return str(int(v))
+        except Exception:
+            pass
+        s = f"{float(v):.12f}".rstrip("0").rstrip(".")
+        return s or "0"
+    s = str(v).strip()
+    if not s:
+        return ""
+    m = re.fullmatch(r"([+-]?\d+)\.0+\b", s)
+    if m:
+        return m.group(1)
+    m = re.fullmatch(r"([+-]?\d+\.\d*?[1-9])0+\b", s)
+    if m:
+        return m.group(1)
+    return s
+
+def _truthy(val: str) -> Optional[bool]:
+    s = (str(val or "")).strip().lower()
+    if s in {"y","yes","true","1","x","✓","check","checked"}:
+        return True
+    if s in {"n","no","false","0","uncheck","unchecked"}:
+        return False
+    return None
+
+# ---------------------------
+# Agents
+# ---------------------------
+
+class LookupAgent:
+    """Loads and normalizes lookup rows from Excel/CSV."""
+    def __init__(self, path: str):
+        self.path = path
+        self.rows: List[Dict[str, Any]] = []
+
+    def load(self) -> List[Dict[str, Any]]:
+        if not os.path.exists(self.path):
+            raise FileNotFoundError(f"Lookup file not found: {self.path}")
+
+        if self.path.lower().endswith((".xlsx", ".xls")):
+            df = pd.read_excel(self.path)
+        else:
+            df = pd.read_csv(self.path)
+
+        if {"Field", "Value"} - set(df.columns):
+            raise ValueError("Lookup must have columns: Field, Value. Optional: Section, Page, Index")
+
+        for col in ["Field", "Value", "Section"]:
+            if col in df.columns:
+                df[col] = df[col].astype(str).fillna("").map(lambda x: x.strip())
+
+        if "Page" in df.columns:
+            df["Page"] = pd.to_numeric(df["Page"], errors="coerce").astype("Int64")
+        if "Index" in df.columns:
+            idx_series = df["Index"].astype(str).str.replace(r"[^\d\-]+", "", regex=True).replace({"": None})
+            df["Index"] = pd.to_numeric(idx_series, errors="coerce").astype("Int64")
+
+        # drop empty Field/Value
+        df = df[(df["Field"].astype(str).str.strip() != "") &
+                (df["Value"].astype(str).str.strip() != "") &
+                (df["Value"].astype(str).str.lower() != "nan")]
+
+        rows: List[Dict[str, Any]] = []
+        for _, r in df.iterrows():
+            field = str(r.get("Field", "")).strip()
+            value = to_text_value(r.get("Value", ""))
+            section = str(r.get("Section", "")).strip() if "Section" in df.columns else ""
+            page = int(r["Page"]) if ("Page" in df.columns and pd.notna(r["Page"])) else None
+            index = int(r["Index"]) if ("Index" in df.columns and pd.notna(r["Index"])) else None
+            rows.append({
+                "Field": field,
+                "Value": value,
+                "Section": section,
+                "Page": page,
+                "Index": index,
+                "field_norm": _normalize(field),
+                "section_norm": _normalize(section) if section else "",
+            })
+        self.rows = rows
+        return rows
+
+
+class DocumentUnderstandingAgent:
+    """
+    Scans the DOCX, finds:
+      - Table label/value pairs (by columns 0,2,4,...)
+      - Paragraph underline patterns ("Label: ______")
+      - Section titles from table row-0 headers or "Section X:" paragraphs
+    Produces a list of discovered fields with (section, label_short, index, placement).
+    """
+    def __init__(self, doc):
+        self.doc = doc
+
+    # --- low-level helpers ---
+    @staticmethod
+    def _iter_block_items(doc):
+        from docx.text.paragraph import Paragraph
+        from docx.table import Table
+        from docx.oxml.text.paragraph import CT_P
+        from docx.oxml.table import CT_Tbl
+
+        parent_elm = doc._element
+        for child in parent_elm.body.iterchildren():
+            if isinstance(child, CT_P):
+                yield Paragraph(child, doc)
+            elif isinstance(child, CT_Tbl):
+                yield Table(child, doc)
+
+    @staticmethod
+    def _first_cell_text(cell) -> str:
+        return " ".join(p.text for p in cell.paragraphs).strip()
+
+    @staticmethod
+    def _clean_spaces(s: str) -> str:
+        return re.sub(r"\s+", " ", (s or "").strip())
+
+    @staticmethod
+    def _strip_trailing_paren(s: str) -> str:
+        return re.sub(r"\s*\([^()]*\)\s*$", "", s or "").strip()
+
+    @staticmethod
+    def _dedupe_phrase(s: str) -> str:
+        t = DocumentUnderstandingAgent._clean_spaces(s)
+        if not t:
+            return t
+        parts = t.split()
+        n = len(parts)
+        if n % 2 == 0:
+            mid = n // 2
+            if parts[:mid] == parts[mid:]:
+                return " ".join(parts[:mid])
+        t2 = re.sub(r"(?:\s*\([^)]*\)\s*){2,}$",
+                    lambda m: " " + m.group(0).strip().split(")")[0] + ")", t)
+        return t2
+
+    @staticmethod
+    def _looks_like_section_title(text: str) -> bool:
+        if not text:
+            return False
+        t = unicodedata.normalize("NFKC", text).strip()
+        if len(t) > 180:
+            return False
+        if t.lower().startswith("section ") or t.endswith(":"):
+            return True
+        letters = [c for c in t if c.isalpha()]
+        if not letters:
+            return False
+        caps_ratio = sum(1 for c in letters if c.isupper()) / max(1, len(letters))
+        return caps_ratio >= 0.45 and len(t.split()) <= 15
+
+    @staticmethod
+    def _is_table_header_row(tbl, ri: int) -> bool:
+        try:
+            row = tbl.rows[ri]
+        except Exception:
+            return False
+        merged_like = len(row.cells) == 1
+        shaded_like = False
+        try:
+            for c in row.cells:
+                if c._tc.xpath('.//w:tcPr/w:shd', namespaces=c._tc.nsmap):
+                    shaded_like = True
+                    break
+        except Exception:
+            pass
+        row_text = " | ".join(DocumentUnderstandingAgent._first_cell_text(c) for c in row.cells).strip()
+        simple = (":" not in row_text) and (len(row_text) <= 160)
+        return merged_like or (shaded_like and simple)
+
+    @staticmethod
+    def _label_cols_for_table(tbl) -> list:
+        try:
+            ncols = len(tbl.rows[0].cells)
+        except Exception:
+            return [0]
+        if ncols <= 1:
+            return [0]
+        return [c for c in range(0, ncols, 2)]
+
+    def build_template(self, dry_run=False) -> List[Dict[str, Any]]:
+        from docx.text.paragraph import Paragraph
+        from docx.table import Table
+
+        underline_pat = re.compile(r"^(.*?[:：﹕꞉˸፡︓])\s*[_\u2014\-.\s]{3,}$")
+
+        page = 0                      # python-docx doesn't have pagination
+        current_section = ""          # default section
+        raw_fields: List[Dict[str, Any]] = []
+
+        def _push(label: str, section: str, placement: str):
+            lab = (label or "").strip()
+            if not lab:
+                return
+            sec = (section or "").strip()
+            lab_short = lab.split("\n", 1)[0].strip()
+            raw_fields.append({
+                "label": lab,
+                "label_short": lab_short,
+                "section": sec,
+                "page": page,
+                "placement": placement,
+            })
+
+        def _row0_mode_and_sections(tbl):
+            """("single", caption,"") or ("percol","",{ci->hdr}) or ("none","",{})"""
+            # Clean row-0 texts (strip trailing colon/paren)
+            texts = []
+            try:
+                row0 = tbl.rows[0]
+            except Exception:
+                return ("none", "", {})
+            for ci in range(len(row0.cells)):
+                t = self._first_cell_text(row0.cells[ci]).strip()
+                if t:
+                    t = re.sub(r"[:：﹕꞉˸]\s*$", "", t).strip()
+                    t = self._strip_trailing_paren(t)
+                    t = self._clean_spaces(t)
+                texts.append(t)
+
+            nonempty = [t for t in texts if t]
+            if not nonempty:
+                return ("none", "", {})
+
+            # Short multi-column headers => percol (e.g., Contact 1..4)
+            short_cells = [t for t in nonempty if len(t.split()) <= 4]
+            if len(nonempty) >= 2 and len(short_cells) >= max(2, int(0.6 * len(nonempty))) and len(set(short_cells)) >= 2:
+                col_map, last = {}, ""
+                for ci, t in enumerate(texts):
+                    if t:
+                        last = t
+                    col_map[ci] = last
+                for k, v in list(col_map.items()):
+                    col_map[k] = self._dedupe_phrase(v) if v else v
+                return ("percol", "", col_map)
+
+            # Otherwise join all as a caption
+            joined = self._clean_spaces(" ".join(nonempty))
+            joined = self._dedupe_phrase(joined)
+            return ("single", joined, {})
+
+        # ---- scan document ----
+        for block in self._iter_block_items(self.doc):
+            if isinstance(block, Paragraph):
+                txt = (block.text or "").strip()
+                if not txt:
+                    continue
+                if self._looks_like_section_title(txt):
+                    current_section = self._strip_trailing_paren(txt)
+                    continue
+                m = underline_pat.match(txt)
+                if m:
+                    label = re.sub(r"[:：﹕꞉˸፡︓]\s*$", "", m.group(1)).strip()
+                    if label:
+                        _push(label, current_section, "para_underline")
+                    continue
+
+            if isinstance(block, Table):
+                header_present = self._is_table_header_row(block, 0)
+                mode, joined_caption, col_sections = _row0_mode_and_sections(block) if header_present else ("none", "", {})
+
+                if mode == "single" and joined_caption:
+                    table_sec = joined_caption
+                    current_section = table_sec
+                elif mode == "percol":
+                    table_sec = current_section
+                else:
+                    table_sec = current_section
+
+                start_row = 1 if header_present else 0
+                label_cols = self._label_cols_for_table(block)
+                for ri in range(start_row, len(block.rows)):
+                    row = block.rows[ri]
+                    for ci in label_cols:
+                        try:
+                            label_cell = row.cells[ci]
+                        except Exception:
+                            continue
+                        label = self._first_cell_text(label_cell).strip()
+                        if not label:
+                            continue
+                        label_clean = self._clean_spaces(re.sub(r"[:：﹕꞉˸፡︓]\s*$", "", label).strip())
+                        label_clean = self._strip_trailing_paren(label_clean)
+                        if not label_clean:
+                            continue
+                        if mode == "percol":
+                            sec_for_pair = self._clean_spaces(col_sections.get(ci) or table_sec or "")
+                        else:
+                            sec_for_pair = table_sec or ""
+                        _push(label_clean, sec_for_pair, "table_pair")
+
+        # per-section indexing
+        fields = []
+        counters: Dict[Tuple[str, str], int] = {}
+        for f in raw_fields:
+            key = (f["section"].lower(), f["label_short"].lower())
+            counters[key] = counters.get(key, 0) + 1
+            fields.append({**f, "index": counters[key]})
+
+        if dry_run:
+            print(f"[DRY] Discovered fields: {len(fields)}")
+            for f in fields:
+                sec = f["section"] or "—"
+                print(f"  • {f['label_short']} | Sec: {sec} | Idx: {f['index']} | {f['placement']}")
+        return fields
+
+
+class MatchingAgent:
+    """Resolves best value for a (section,label,index) against lookup rows."""
+    def __init__(self, rows: List[Dict[str, Any]]):
+        self.rows = rows
+
+    def resolve(self, label: str, section: str, index: int,
+                page: Optional[int] = None,
+                min_fuzzy: float = 0.82,
+                strict_index: bool = True) -> Optional[str]:
+        field_norm = _normalize(label)
+        section_norm = _normalize(section) if section else ""
+
+        # exact field candidates (by normalized field)
+        field_candidates = [r for r in self.rows if r["field_norm"] == field_norm]
+        if not field_candidates:
+            # fuzzy fallback
+            all_fields = list({r["field_norm"] for r in self.rows})
+            if not all_fields:
+                return None
+            best = max(all_fields, key=lambda x: _sim(field_norm, x))
+            if _sim(field_norm, best) >= min_fuzzy:
+                field_candidates = [r for r in self.rows if r["field_norm"] == best]
+            else:
+                return None
+
+        candidates = list(field_candidates)
+
+        # section preference / requirement (if provided)
+        if section_norm:
+            same_sec = [r for r in candidates if r.get("section_norm") == section_norm]
+            if same_sec:
+                candidates = same_sec
+
+        # page hint (if provided)
+        if page is not None:
+            same_pg = [r for r in candidates if r.get("Page") is not None and int(r["Page"]) == int(page)]
+            if same_pg:
+                candidates = same_pg
+
+        # index strictness (if lookup rows provide Index)
+        if strict_index:
+            with_idx = [r for r in candidates if r.get("Index") is not None]
+            if with_idx:
+                exact_idx = [r for r in with_idx if int(r["Index"]) == int(index)]
+                if exact_idx:
+                    candidates = exact_idx
+                else:
+                    return None
+
+        def score(r):
+            s = 0
+            if section_norm and r.get("section_norm") == section_norm:
+                s += 6
+            if r.get("Index") is not None and int(r["Index"]) == int(index):
+                s += 3
+            return s
+
+        best = max(candidates, key=score, default=None)
+        return best["Value"] if best else None
+
+
+class FillingAgent:
+    """Writes matches into the DOCX (placeholders, checkboxes, tables, underlines)."""
+    def __init__(self, doc, matcher: MatchingAgent):
+        self.doc = doc
+        self.matcher = matcher
+
+    # --- shared doc iteration ---
+    def _iter_all_paragraphs_and_cells(self) -> Iterable:
+        for p in self.doc.paragraphs:
+            yield p
+        for tbl in self.doc.tables:
+            for row in tbl.rows:
+                for cell in row.cells:
+                    for p in cell.paragraphs:
+                        yield p
+
+    # --- helpers for writing ---
+    @staticmethod
+    def _set_paragraph_text_keep_simple_format(p, new_text: str):
+        while p.runs:
+            r = p.runs[0]
+            r.clear()
+            r.text = ""
+            r.element.getparent().remove(r.element)
+        p.add_run(new_text)
+
+    @staticmethod
+    def _first_cell_text(cell) -> str:
+        return " ".join(p.text for p in cell.paragraphs).strip()
+
+    @staticmethod
+    def _cell_has_box_target(cell) -> bool:
+        try:
+            if cell._tc.xpath('.//w:tcPr/w:shd', namespaces=cell._tc.nsmap):
+                return True
+        except Exception:
+            pass
+        for p in cell.paragraphs:
+            for r in p.runs:
+                if (r.text or "").strip().upper() == "FORMTEXT":
+                    return True
+            vis = "".join((r.text or "") for r in p.runs)
+            if vis and not re.search(r"[A-Za-z0-9]", vis):
+                return True
+        return False
+
+    @staticmethod
+    def _write_value_inside_box(cell, value: str):
+        """Prefer writing inside legacy FORMTEXT result or placeholder/empty spots."""
+        import re
+        from docx.oxml.shared import OxmlElement, qn
+
+        val = value or ""
+        PLACEHOLDER_RE = re.compile(r"[_\-\u2014\.\s\u2002\u2003\u2007\u2009\u00A0]+")
+        ALNUM_RE = re.compile(r"[A-Za-z0-9]")
+
+        # 1) legacy formtext
+        for para in cell.paragraphs:
+            p = para._element
+            instr_nodes = p.xpath(".//w:instrText")
+            has_formtext = any(("FORMTEXT" in (n.text or "").upper()) for n in instr_nodes)
+            if not has_formtext:
+                continue
+
+            result_runs = []
+            got_separate = False
+            for r in p.xpath("./w:r"):
+                if r.xpath("./w:fldChar[@w:fldCharType='begin']"):
+                    got_separate = False
+                    result_runs = []
+                    continue
+                if r.xpath("./w:fldChar[@w:fldCharType='separate']"):
+                    got_separate = True
+                    continue
+                if r.xpath("./w:fldChar[@w:fldCharType='end']"):
+                    break
+                if got_separate:
+                    result_runs.append(r)
+
+            if result_runs:
+                first = result_runs[0]
+                for rr in result_runs:
+                    for t in rr.xpath("./w:t"):
+                        t.getparent().remove(t)
+                t = OxmlElement('w:t')
+                t.set(qn('xml:space'), 'preserve')
+                t.text = val
+                first.append(t)
+                return
+
+        # 2) underline/placeholder group
+        def glen(group):
+            return sum(len((r.text or "").replace(" ", "")) for r in group)
+
+        best_group = []
+        shaded_paras = []
+        box_like_paras = []
+
+        def _para_is_shaded(para) -> bool:
+            try:
+                return bool(para._element.xpath('.//w:pPr/w:shd'))
+            except Exception:
+                return False
+
+        for para in cell.paragraphs:
+            if _para_is_shaded(para):
+                shaded_paras.append(para)
+            vis = "".join((r.text or "") for r in para.runs)
+            if vis and not ALNUM_RE.search(vis):
+                box_like_paras.append(para)
+
+            cur, best_here = [], []
+            for run in para.runs:
+                t = run.text or ""
+                if t and PLACEHOLDER_RE.fullmatch(t):
+                    cur.append(run)
+                else:
+                    if glen(cur) > glen(best_here):
+                        best_here = cur[:]
+                    cur = []
+            if glen(cur) > glen(best_here):
+                best_here = cur[:]
+            if glen(best_here) > glen(best_group):
+                best_group = best_here
+
+        if best_group:
+            L = max(1, glen(best_group))
+            best_group[0].text = val[:L]
+            for r in best_group[1:]:
+                r.text = ""
+            return
+
+        if shaded_paras:
+            # just append text in shaded para
+            empties = [r for r in shaded_paras[0].runs if not (r.text or "").strip()]
+            if empties:
+                empties[-1].text = val
+            else:
+                shaded_paras[0].add_run(val)
+            return
+
+        if FillingAgent._cell_has_box_target(cell):
+            p = cell.paragraphs[0] if cell.paragraphs else cell.add_paragraph()
+            p.add_run(val)
+            return
+
+        p = cell.paragraphs[-1] if cell.paragraphs else cell.add_paragraph()
+        p.add_run(val)
+
+    # --- actions ---
+    def replace_placeholders(self, dry_run=False):
+        pats = [
+            re.compile(r"\{\{\s*(.*?)\s*\}\}"),
+            re.compile(r"\[\[\s*(.*?)\s*\]\]"),
+            re.compile(r"\$\{\s*(.*?)\s*\}"),
+        ]
+        def _sub_key(key: str) -> Optional[str]:
+            # placeholder has no section/index context -> use fuzzy across all rows
+            # Try as-is first
+            return self.matcher.resolve(label=key, section="", index=1, page=None,
+                                        min_fuzzy=0.82, strict_index=False)
+
+        for p in self._iter_all_paragraphs_and_cells():
+            old = p.text
+            new = old
+            for pat in pats:
+                def _sub(m):
+                    k = (m.group(1) or "").strip()
+                    v = _sub_key(k)
+                    return str(v) if v is not None else m.group(0)
+                new = pat.sub(_sub, new)
+            if new != old:
+                if dry_run:
+                    print(f"[DRY][DOCX] placeholder: '{old}' → '{new}'")
+                else:
+                    self._set_paragraph_text_keep_simple_format(p, new)
+
+    def fill_checkboxes(self, dry_run=False):
+        box_patterns = [
+            re.compile(r"^\s*[□☐]\s+(.*)$"),
+            re.compile(r"^\s*\[\s?\]\s+(.*)$"),
+            re.compile(r"^\s*\[\s?[xX✓]\s?\]\s+(.*)$"),
+        ]
+        for p in self._iter_all_paragraphs_and_cells():
+            t = p.text.strip()
+            if not t:
+                continue
+            for pat in box_patterns:
+                m = pat.match(t)
+                if not m:
+                    continue
+                lab = m.group(1).strip()
+                if not lab:
+                    break
+                val = self.matcher.resolve(label=lab, section="", index=1, page=None,
+                                           min_fuzzy=0.82, strict_index=False)
+                yn = _truthy(val)
+                if yn is None:
+                    continue
+                new = (f"☒ {lab}" if yn else f"☐ {lab}")
+                if dry_run:
+                    print(f"[DRY][DOCX] checkbox: '{lab}' → {'CHECK' if yn else 'UNCHECK'}")
+                else:
+                    self._set_paragraph_text_keep_simple_format(p, new)
+                break
+
+    def fill_underline_lines(self, dry_run=False):
+        us_pat = re.compile(r"^(.*?[:：﹕꞉˸፡︓])\s*_+\s*$")
+        for p in self._iter_all_paragraphs_and_cells():
+            txt = p.text.strip()
+            if not txt:
+                continue
+            m = us_pat.match(txt)
+            if not m:
+                continue
+            label_full = m.group(1)
+            lab = re.sub(r"[:：﹕꞉˸፡︓]\s*$", "", label_full).strip()
+            if not lab:
+                continue
+            val = self.matcher.resolve(label=lab, section="", index=1, page=None,
+                                       min_fuzzy=0.82, strict_index=False)
+            if val is None:
+                continue
+            new_text = f"{label_full} {val}"
+            if dry_run:
+                print(f"[DRY][DOCX] underline: '{lab}' → '{val}'")
+            else:
+                self._set_paragraph_text_keep_simple_format(p, new_text)
+
+    def fill_tables(self, dry_run=False):
+        """
+        Smart table filling:
+          • Normal tables: write to right/below/diagonal (preferring box-like cells).
+          • Per-column-header tables (e.g. 'Contact 1', 'Contact 2', ... in row 0):
+            write into the SAME CELL for each column (because there is no dedicated
+            value cell to the right for that column).
+        """
+        from docx.table import Table
+
+        def _row0_texts(tbl):
+            if not tbl.rows:
+                return []
+            t = []
+            for c in tbl.rows[0].cells:
+                s = self._first_cell_text(c).strip()
+                s = re.sub(r"[:：﹕꞉˸]\s*$", "", s).strip()
+                s = re.sub(r"\s+", " ", s)
+                t.append(s)
+            return t
+
+        def _looks_per_column_headers(texts):
+            """Heuristic: >=2 short, distinct headers in row 0 means per-column layout."""
+            nonempty = [x for x in texts if x]
+            if len(nonempty) < 2:
+                return False
+            short = [x for x in nonempty if len(x.split()) <= 3]
+            if len(short) < max(2, int(0.6 * len(nonempty))):
+                return False
+            return len(set(short)) >= 2
+
+        for tbl in self.doc.tables:
+            nrows = len(tbl.rows)
+            if nrows == 0:
+                continue
+
+            row0_texts = _row0_texts(tbl)
+            is_percol = _looks_per_column_headers(row0_texts)
+
+            for ri, row in enumerate(tbl.rows):
+                cells = row.cells
+                if len(cells) < 1:
+                    continue
+
+                # For normal label→value tables we scan 0,2,4,...
+                # For per-column tables every column is its own "pair" and we should
+                # NOT write into the cell on the right (it belongs to the next column/Contact).
+                col_iter = range(0, len(cells), 1 if is_percol else 2)
+
+                for ci in col_iter:
+                    label_cell = cells[ci]
+                    lab_raw = self._first_cell_text(label_cell).strip()
+                    if not lab_raw:
+                        continue
+
+                    # In per-column layout the label often includes just the field name
+                    # ('Attn', 'Firm', etc.). Strip trailing colon-like characters.
+                    lab = re.sub(r"[:：﹕꞉˸፡︓]\s*$", "", lab_raw).strip()
+                    if not lab or len(lab) > 160:
+                        continue
+
+                    # Column-index-based index hint: 1-based per logical pair/column
+                    idx_guess = (ci // (1 if is_percol else 2)) + 1
+
+                    val = self.matcher.resolve(
+                        label=lab,
+                        section="",            # sectionless for now; your lookups drive it
+                        index=idx_guess,
+                        page=None,
+                        min_fuzzy=0.82,
+                        strict_index=False
+                    )
+                    if val is None:
+                        continue
+
+                    # ---------- TARGET SELECTION ----------
+                    # If we detected a per-column header table, write IN-PLACE (same cell).
+                    if is_percol:
+                        target = label_cell
+                        if dry_run:
+                            print(f"[DRY][DOCX] table-percol (same-cell col {ci}): '{lab}' → '{val}'")
+                        else:
+                            self._write_value_inside_box(target, str(val))
+                        continue
+
+                    # Otherwise, use classic right/below/diagonal preference.
+                    candidates = []
+                    # right
+                    if ci + 1 < len(cells):
+                        candidates.append(cells[ci + 1])
+                    # below
+                    if ri + 1 < nrows:
+                        candidates.append(tbl.rows[ri + 1].cells[ci])
+                        # diagonal
+                        if ci + 1 < len(tbl.rows[ri + 1].cells):
+                            candidates.append(tbl.rows[ri + 1].cells[ci + 1])
+
+                    if not candidates:
+                        continue
+
+                    # Prefer “box-like/empty” targets; keep order otherwise.
+                    candidates.sort(key=lambda c: 0 if self._cell_has_box_target(c) else 1)
+                    target = candidates[0]
+
+                    if dry_run:
+                        print(f"[DRY][DOCX] table-smart: '{lab}' → '{val}'")
+                    else:
+                        self._write_value_inside_box(target, str(val))
+
+
+from docx.opc.constants import RELATIONSHIP_TYPE as RT
+
+def _unprotect_document(doc):
+    """Remove document protection so the whole doc is editable."""
+    try:
+        settings_part = doc._part.part_related_by(RT.SETTINGS)
+    except KeyError:
+        return
+    elm = settings_part.element
+    prot_nodes = elm.xpath('//w:documentProtection', namespaces=elm.nsmap)
+    for n in prot_nodes:
+        n.getparent().remove(n)
+
+def _unwrap_all_content_controls(doc):
+    """
+    Replace each <w:sdt> (content control) with its <w:sdtContent> children.
+    This removes the control while keeping visible text.
+    """
+    # Work paragraph-level, table-cell-level, and body-level
+    roots = [doc._element]
+    for t in doc.tables:
+        for r in t.rows:
+            for c in r.cells:
+                roots.append(c._tc)
+
+    for root in roots:
+        sdt_nodes = root.xpath('.//w:sdt', namespaces=root.nsmap)
+        for sdt in sdt_nodes:
+            # find content
+            content = sdt.xpath('./w:sdtContent', namespaces=root.nsmap)
+            if not content:
+                # No content wrapper—just remove the sdt
+                parent = sdt.getparent()
+                if parent is not None:
+                    parent.remove(sdt)
+                continue
+            content = content[0]
+            parent = sdt.getparent()
+            if parent is None:
+                continue
+            # move all children of sdtContent before sdt
+            insert_idx = parent.index(sdt)
+            for child in list(content):
+                parent.insert(insert_idx, child)
+                insert_idx += 1
+            parent.remove(sdt)
+
+def _flatten_legacy_fields(doc):
+    """
+    Convert legacy fields (FORMTEXT etc.) to plain text by removing field code runs
+    and keeping the 'result' runs (between SEPARATE and END).
+    """
+    # paragraphs in body
+    paragraphs = list(doc.paragraphs)
+    # paragraphs in tables
+    for tbl in doc.tables:
+        for row in tbl.rows:
+            for cell in row.cells:
+                paragraphs.extend(cell.paragraphs)
+
+    for p in paragraphs:
+        r_elems = list(p._element.xpath('./w:r', namespaces=p._element.nsmap))
+        if not r_elems:
+            continue
+
+        # Pass 1: detect any field chars
+        has_field = any(
+            r.xpath('./w:fldChar', namespaces=p._element.nsmap) or
+            r.xpath('./w:instrText', namespaces=p._element.nsmap)
+            for r in r_elems
+        )
+        if not has_field:
+            # Also flatten <w:fldSimple>
+            fld_simple_nodes = p._element.xpath('.//w:fldSimple', namespaces=p._element.nsmap)
+            for fs in fld_simple_nodes:
+                # Replace fldSimple with its text nodes
+                parent = fs.getparent()
+                if parent is None:
+                    continue
+                # Gather all descendant w:t texts
+                ts = fs.xpath('.//w:t', namespaces=p._element.nsmap)
+                new_text = ''.join((t.text or '') for t in ts)
+                # Replace fldSimple with a normal run + text
+                from docx.oxml.shared import OxmlElement, qn
+                new_run = OxmlElement('w:r')
+                new_t = OxmlElement('w:t')
+                new_t.set(qn('xml:space'), 'preserve')
+                new_t.text = new_text
+                new_run.append(new_t)
+                parent.insert(parent.index(fs), new_run)
+                parent.remove(fs)
+            continue
+
+        # Pass 2: keep only result runs (between SEPARATE and END)
+        keep = []
+        in_result = False
+        for r in r_elems:
+            if r.xpath("./w:fldChar[@w:fldCharType='begin']", namespaces=p._element.nsmap):
+                in_result = False
+                continue
+            if r.xpath("./w:fldChar[@w:fldCharType='separate']", namespaces=p._element.nsmap):
+                in_result = True
+                continue
+            if r.xpath("./w:fldChar[@w:fldCharType='end']", namespaces=p._element.nsmap):
+                in_result = False
+                continue
+            # skip instruction runs
+            if r.xpath('./w:instrText', namespaces=p._element.nsmap):
+                continue
+            if in_result:
+                keep.append(r)
+
+        # If we found result runs, replace paragraph runs with just those
+        if keep:
+            # remove all existing runs
+            for r in list(p._element.xpath('./w:r', namespaces=p._element.nsmap)):
+                r.getparent().remove(r)
+            # append kept in order
+            for r in keep:
+                p._element.append(r)
+
+def make_document_fully_editable(doc):
+    """
+    One-call helper to:
+      1) remove protection
+      2) unwrap content controls
+      3) flatten legacy fields
+    """
+    _unprotect_document(doc)
+    _unwrap_all_content_controls(doc)
+    _flatten_legacy_fields(doc)
+
+
+# ---------------------------
+# Orchestrator
+# ---------------------------
+def run_agentic_fill(input_docx: str, lookup_path: str, output_docx: str, dry_run: bool = False) -> int:
+    try:
+        from docx import Document
+    except Exception as e:
+        raise RuntimeError("python-docx is required. Install with: pip install python-docx") from e
+
+    # 1) Load lookup
+    lookup = LookupAgent(lookup_path)
+    rows = lookup.load()
+    print(f"🔎 Lookup rows loaded: {len(rows)}")
+
+    # 2) Understand document structure
+    doc = Document(input_docx)
+    dua = DocumentUnderstandingAgent(doc)
+    fields = dua.build_template(dry_run=dry_run)
+    print(f"🧭 Discovered fields: {len(fields)}")
+
+    # 3) Match / resolve
+    matcher = MatchingAgent(rows)
+
+    # 4) Fill
+    filler = FillingAgent(doc, matcher)
+    filler.replace_placeholders(dry_run=dry_run)
+    filler.fill_checkboxes(dry_run=dry_run)
+    filler.fill_underline_lines(dry_run=dry_run)
+    filler.fill_tables(dry_run=dry_run)
+
+    if dry_run:
+        print("Dry-run complete. No file written.")
+        return 0
+
+    doc.save(output_docx)
+    print(f"✅ Wrote: {output_docx}")
+    return 1
+
+
+# ---------------------------
+# CLI
+# ---------------------------
+def main():
+    ap = argparse.ArgumentParser(description="Agentic DOCX filler")
+    ap.add_argument("--input", required=True, help="Input .docx file")
+    ap.add_argument("--lookup", required=True, help="Excel/CSV with Field,Value[,Section,Page,Index]")
+    ap.add_argument("--output", required=True, help="Output .docx file")
+    ap.add_argument("--dry-run", action="store_true", help="Analyze + print actions without writing file")
+    args = ap.parse_args()
+
+    ok = run_agentic_fill(args.input, args.lookup, args.output, dry_run=args.dry_run)
+    sys.exit(0 if ok else 1)
+
+if __name__ == "__main__":
+    main()
