@@ -622,6 +622,258 @@ class FillingAgent:
                     self._set_paragraph_text_keep_simple_format(p, new)
                 break
 
+    def fill_checkbox_option_groups(self, dry_run=False):
+        """
+        Detect rows that look like a horizontal checkbox option group:
+          [Option A] [Option B] [Option C]
+        followed by a row of empty/placeholder cells underneath.
+        Then tick the cell under the selected option.
+
+        Matching rules:
+          • Prefer boolean rows for each option label:
+                Field = 'Initial Subscription'  Value = yes/no
+                Field = 'Additional Subscription'  Value = yes/no
+          • Otherwise, try a single-choice row for the group:
+                Field = <group name>  Value = one of the option labels
+            Group name is taken as the nearest non-empty text to the LEFT
+            of the first option in the same row (or the whole row’s combined text).
+        """
+        import re
+
+        TRAIL_COLON_RE = re.compile(r"[:：﹕꞉˸፡︓]\s*$")
+        LETTER_RE = re.compile(r"[A-Za-z]")
+
+        def _cell_text(cell) -> str:
+            return " ".join(p.text for p in cell.paragraphs).strip()
+
+        def _is_short_label(t: str) -> bool:
+            if not t:
+                return False
+            # strip trailing colon and compress spaces
+            t = TRAIL_COLON_RE.sub("", t).strip()
+            # short-ish label (≤ 4 words) and contains letters
+            return len(t.split()) <= 4 and bool(LETTER_RE.search(t))
+
+        def _is_placeholder_like(text: str) -> bool:
+            if not text:
+                return True
+            t = re.sub(r"\s+", "", text)
+            # treat as placeholder if it has no letters (digits allowed)
+            return not LETTER_RE.search(t)
+
+        def _resolve_bool_for_option(option_label: str, idx: int) -> Optional[bool]:
+            v = self.matcher.resolve(label=option_label, section="", index=idx,
+                                     page=None, min_fuzzy=0.82, strict_index=False)
+            if v is None:
+                return None
+            s = (str(v).strip().lower())
+            if s in {"y","yes","true","1","x","✓","check","checked"}:
+                return True
+            if s in {"n","no","false","0","uncheck","unchecked"}:
+                return False
+            return None
+
+        def _resolve_choice_for_group(group_label: str, idx: int) -> Optional[str]:
+            v = self.matcher.resolve(label=group_label, section="", index=idx,
+                                     page=None, min_fuzzy=0.82, strict_index=False)
+            if v is None:
+                return None
+            return str(v).strip()
+
+        for tbl in self.doc.tables:
+            if len(tbl.rows) < 2:
+                continue
+
+            # scan each pair of consecutive rows
+            for ri in range(0, len(tbl.rows) - 1):
+                row_labels = tbl.rows[ri]
+                row_boxes  = tbl.rows[ri + 1]
+
+                # gather contiguous short labels on the label row
+                labels: list[tuple[int, str]] = []
+                for ci, c in enumerate(row_labels.cells):
+                    t = _cell_text(c)
+                    if t:
+                        t = TRAIL_COLON_RE.sub("", t).strip()
+                    if _is_short_label(t):
+                        labels.append((ci, t))
+
+                # need at least two options to qualify as a group
+                if len(labels) < 2:
+                    continue
+
+                # the row below should have placeholder-like cells at those columns
+                # (don't overwrite if user typed something)
+                if any(ci >= len(row_boxes.cells) or not _is_placeholder_like(_cell_text(row_boxes.cells[ci]))
+                       for ci, _ in labels):
+                    continue
+
+                # choose an index hint: try to take the first numeric content to the LEFT
+                # of the group in either labels or boxes row; fallback to 1
+                idx_hint = 1
+                left_ci  = min(ci for ci, _ in labels)
+                for probe_ci in range(left_ci - 1, -1, -1):
+                    t1 = _cell_text(row_labels.cells[probe_ci]) if probe_ci < len(row_labels.cells) else ""
+                    t2 = _cell_text(row_boxes.cells[probe_ci]) if probe_ci < len(row_boxes.cells) else ""
+                    m = re.search(r"\b(\d+)\b", t1 or t2)
+                    if m:
+                        try:
+                            idx_hint = int(m.group(1))
+                            break
+                        except Exception:
+                            pass
+
+                # a "group label" for single-choice fallback: take the closest non-empty
+                # text to the LEFT of the first option in the same label row; if none,
+                # fall back to the whole label row text
+                group_label = ""
+                for probe_ci in range(left_ci - 1, -1, -1):
+                    t = _cell_text(row_labels.cells[probe_ci])
+                    if t:
+                        group_label = TRAIL_COLON_RE.sub("", t).strip()
+                        if group_label:
+                            break
+                if not group_label:
+                    group_label = TRAIL_COLON_RE.sub("", " ".join(_cell_text(c) for c in row_labels.cells)).strip()
+
+                # Evaluate/tick per option
+                for ci, option in labels:
+                    # 1) per-option boolean
+                    yn = _resolve_bool_for_option(option, idx_hint)
+
+                    # 2) single-choice field fallback
+                    if yn is None and group_label:
+                        chosen = _resolve_choice_for_group(group_label, idx_hint)
+                        if chosen:
+                            yn = (option.lower() == chosen.strip().lower())
+
+                    if yn is None:
+                        continue
+
+                    target = row_boxes.cells[ci]
+                    mark = "☒" if yn else "☐"
+                    if dry_run:
+                        print(f"[DRY][DOCX] checkbox-group: row {ri+1} idx={idx_hint} option='{option}' → {mark}")
+                    else:
+                        # write the mark into the box row cell without touching the label row
+                        existing = _cell_text(target)
+                        if existing and "☐" in existing:
+                            # replace the first ☐ with ☒/☐
+                            new = existing.replace("☐", mark, 1)
+                            self._set_paragraph_text_keep_simple_format(target.paragraphs[0], new)
+                        else:
+                            self._write_value_inside_box(target, mark)
+
+
+    def fill_inline_checkbox_groups(self, dry_run=False):
+        """
+        Detect and tick inline checkbox groups like:
+            "Initial Subscription    Additional Subscription"
+        inside one paragraph/cell (with or without existing box glyphs).
+
+        Rules:
+          • Split a line into 2–6 short options (<= 4 words each) separated by
+            2+ spaces, tabs, or "  OR  ".
+          • If a Field matching an option exists in lookup and is truthy → ☒ that option.
+          • If no per-option fields, but a single Field matching the entire line exists,
+            and its Value equals one of the options → ☒ that option.
+          • Non-selected options get ☐ (only within that same line).
+        """
+        SEP_RE = re.compile(r"(?:\t+|\s{2,}|(?:\s+OR\s+))", re.IGNORECASE)
+        # treat these as existing box glyphs that we won't duplicate
+        BOX_RE = re.compile(r"^\s*[□☐☒\[\]\(\)]\s*")
+
+        def split_options(text: str) -> list:
+            # remove leading box if present on the whole line
+            t = text.strip()
+            t = re.sub(r"^\s*(?:[□☐☒]\s*|\[\s?[xX✓]?\s?\]\s*)", "", t)
+            parts = [p.strip() for p in SEP_RE.split(t) if p.strip()]
+            # keep only "shortish" items to avoid splitting normal sentences
+            parts = [p for p in parts if len(p.split()) <= 4]
+            # need at least 2 distinct short parts to count as a group
+            if len(parts) >= 2 and len(set(parts)) >= 2 and len(parts) <= 6:
+                return parts
+            return []
+
+        def truthy_val_for(label: str) -> Optional[bool]:
+            v = self.matcher.resolve(label=label, section="", index=1,
+                                     page=None, min_fuzzy=0.82, strict_index=False)
+            return _truthy(v)
+
+        def chosen_by_group_value(full_line: str, options: list) -> Optional[str]:
+            """
+            Fallback: if the group text itself is a Field and its Value equals
+            one of the option labels, select that option.
+            """
+            v = self.matcher.resolve(label=full_line, section="", index=1,
+                                     page=None, min_fuzzy=0.82, strict_index=False)
+            if not v:
+                return None
+            v_norm = re.sub(r"\s+", " ", str(v).strip()).lower()
+            for opt in options:
+                if re.sub(r"\s+", " ", opt.lower()) == v_norm:
+                    return opt
+            return None
+
+        def render_group(options: list, selected: Optional[set], original: str) -> str:
+            # If the original already has explicit boxes per option, replace the
+            # first token per option with ☒/☐ while preserving spacing as much as possible.
+            # Otherwise, prefix each option with a box and join with two spaces.
+            if BOX_RE.search(original):
+                # We’ll rebuild cleanly to avoid run/spacing headaches.
+                items = []
+                for o in options:
+                    box = "☒" if (selected and o in selected) else "☐"
+                    items.append(f"{box} {o}")
+                return "  ".join(items)
+            else:
+                items = []
+                for o in options:
+                    box = "☒" if (selected and o in selected) else "☐"
+                    items.append(f"{box} {o}")
+                return "  ".join(items)
+
+        # Iterate every paragraph (body + table cells)
+        for p in self._iter_all_paragraphs_and_cells():
+            raw = p.text or ""
+            line = raw.strip()
+            if not line:
+                continue
+
+            options = split_options(line)
+            if not options:
+                continue  # not an inline group
+
+            # 1) Try per-option fields
+            selected = set()
+            any_info = False
+            for opt in options:
+                yn = truthy_val_for(opt)
+                if yn is not None:
+                    any_info = True
+                if yn is True:
+                    selected.add(opt)
+
+            # 2) Fallback to a single group field whose value equals an option label
+            if not selected and not any_info:
+                chosen = chosen_by_group_value(line, options)
+                if chosen:
+                    selected = {chosen}
+                    any_info = True
+
+            # Only touch the paragraph if we actually learned something
+            if not any_info:
+                continue
+
+            new_text = render_group(options, selected, raw)
+            if new_text != raw:
+                if dry_run:
+                    sel_str = ", ".join(sorted(selected)) if selected else "∅"
+                    print(f"[DRY][DOCX] inline-checkbox: '{line}' → [{sel_str}]")
+                else:
+                    self._set_paragraph_text_keep_simple_format(p, new_text)
+
+
     def fill_underline_lines(self, dry_run=False):
         us_pat = re.compile(r"^(.*?[:：﹕꞉˸፡︓])\s*_+\s*$")
         for p in self._iter_all_paragraphs_and_cells():
@@ -644,6 +896,83 @@ class FillingAgent:
                 print(f"[DRY][DOCX] underline: '{lab}' → '{val}'")
             else:
                 self._set_paragraph_text_keep_simple_format(p, new_text)
+
+    def fill_grid_tables(self, dry_run=False):
+        """
+        Fill multi-column 'grid' tables where the first row is headers and subsequent rows are values.
+        Column j's header text is used as the field name; row i (1-based below header) is the Index.
+        Writes only into empty/placeholder-like cells (never overwrites typed text).
+        """
+        import re
+        LETTER_RE = re.compile(r"[A-Za-z]")
+        DIGIT_RE = re.compile(r"\d")
+        TRAIL_COLON_RE = re.compile(r"[:：﹕꞉˸፡︓]\s*$")
+
+        def _cell_text(cell) -> str:
+            return " ".join(p.text for p in cell.paragraphs).strip()
+
+        def _is_placeholder_like(text: str) -> bool:
+            """
+            True if the text looks empty/placeholder (no letters),
+            e.g., underscores, spaces, dots, non-breaking spaces, etc.
+            Allows digits so date/number templates don't block filling.
+            """
+            if not text:
+                return True
+            t = re.sub(r"\s+", "", text)
+            # If there are letters already, treat as filled (don't overwrite).
+            return not LETTER_RE.search(t)
+
+        for tbl in self.doc.tables:
+            if not tbl.rows or len(tbl.rows) < 2:
+                continue
+
+            # Header row detection: we require at least 2 non-empty header cells
+            header = tbl.rows[0]
+            headers = []
+            nonempty_count = 0
+            for ci, c in enumerate(header.cells):
+                h = _cell_text(c)
+                if h:
+                    h = TRAIL_COLON_RE.sub("", h).strip()
+                headers.append(h)
+                if h:
+                    nonempty_count += 1
+            if nonempty_count < max(2, int(0.6 * len(headers))):  # not a real grid header
+                continue
+
+            # Body rows: 1..N-1; Index is row number in the body (1-based)
+            for ri in range(1, len(tbl.rows)):
+                row = tbl.rows[ri]
+                row_index = ri  # 1-based index expected by lookup
+
+                for ci in range(min(len(headers), len(row.cells))):
+                    field_label = headers[ci]
+                    if not field_label:
+                        continue  # no header -> no field mapping
+
+                    target_cell = row.cells[ci]
+                    existing = _cell_text(target_cell)
+
+                    # only fill if target looks empty/placeholder-like
+                    if not _is_placeholder_like(existing):
+                        continue
+
+                    val = self.matcher.resolve(
+                        label=field_label,
+                        section="",          # no section constraint for grids
+                        index=row_index,     # body row number
+                        page=None,
+                        min_fuzzy=0.82,
+                        strict_index=False,  # allow flexible matching if Index column wasn't provided
+                    )
+                    if val is None:
+                        continue
+
+                    if dry_run:
+                        print(f"[DRY][DOCX] grid: r{row_index} c{ci} '{field_label}' → '{val}'")
+                    else:
+                        self._write_value_inside_box(target_cell, str(val))
 
     def fill_tables(self, dry_run=False):
         """
@@ -755,138 +1084,6 @@ class FillingAgent:
                         self._write_value_inside_box(target, str(val))
 
 
-from docx.opc.constants import RELATIONSHIP_TYPE as RT
-
-def _unprotect_document(doc):
-    """Remove document protection so the whole doc is editable."""
-    try:
-        settings_part = doc._part.part_related_by(RT.SETTINGS)
-    except KeyError:
-        return
-    elm = settings_part.element
-    prot_nodes = elm.xpath('//w:documentProtection', namespaces=elm.nsmap)
-    for n in prot_nodes:
-        n.getparent().remove(n)
-
-def _unwrap_all_content_controls(doc):
-    """
-    Replace each <w:sdt> (content control) with its <w:sdtContent> children.
-    This removes the control while keeping visible text.
-    """
-    # Work paragraph-level, table-cell-level, and body-level
-    roots = [doc._element]
-    for t in doc.tables:
-        for r in t.rows:
-            for c in r.cells:
-                roots.append(c._tc)
-
-    for root in roots:
-        sdt_nodes = root.xpath('.//w:sdt', namespaces=root.nsmap)
-        for sdt in sdt_nodes:
-            # find content
-            content = sdt.xpath('./w:sdtContent', namespaces=root.nsmap)
-            if not content:
-                # No content wrapper—just remove the sdt
-                parent = sdt.getparent()
-                if parent is not None:
-                    parent.remove(sdt)
-                continue
-            content = content[0]
-            parent = sdt.getparent()
-            if parent is None:
-                continue
-            # move all children of sdtContent before sdt
-            insert_idx = parent.index(sdt)
-            for child in list(content):
-                parent.insert(insert_idx, child)
-                insert_idx += 1
-            parent.remove(sdt)
-
-def _flatten_legacy_fields(doc):
-    """
-    Convert legacy fields (FORMTEXT etc.) to plain text by removing field code runs
-    and keeping the 'result' runs (between SEPARATE and END).
-    """
-    # paragraphs in body
-    paragraphs = list(doc.paragraphs)
-    # paragraphs in tables
-    for tbl in doc.tables:
-        for row in tbl.rows:
-            for cell in row.cells:
-                paragraphs.extend(cell.paragraphs)
-
-    for p in paragraphs:
-        r_elems = list(p._element.xpath('./w:r', namespaces=p._element.nsmap))
-        if not r_elems:
-            continue
-
-        # Pass 1: detect any field chars
-        has_field = any(
-            r.xpath('./w:fldChar', namespaces=p._element.nsmap) or
-            r.xpath('./w:instrText', namespaces=p._element.nsmap)
-            for r in r_elems
-        )
-        if not has_field:
-            # Also flatten <w:fldSimple>
-            fld_simple_nodes = p._element.xpath('.//w:fldSimple', namespaces=p._element.nsmap)
-            for fs in fld_simple_nodes:
-                # Replace fldSimple with its text nodes
-                parent = fs.getparent()
-                if parent is None:
-                    continue
-                # Gather all descendant w:t texts
-                ts = fs.xpath('.//w:t', namespaces=p._element.nsmap)
-                new_text = ''.join((t.text or '') for t in ts)
-                # Replace fldSimple with a normal run + text
-                from docx.oxml.shared import OxmlElement, qn
-                new_run = OxmlElement('w:r')
-                new_t = OxmlElement('w:t')
-                new_t.set(qn('xml:space'), 'preserve')
-                new_t.text = new_text
-                new_run.append(new_t)
-                parent.insert(parent.index(fs), new_run)
-                parent.remove(fs)
-            continue
-
-        # Pass 2: keep only result runs (between SEPARATE and END)
-        keep = []
-        in_result = False
-        for r in r_elems:
-            if r.xpath("./w:fldChar[@w:fldCharType='begin']", namespaces=p._element.nsmap):
-                in_result = False
-                continue
-            if r.xpath("./w:fldChar[@w:fldCharType='separate']", namespaces=p._element.nsmap):
-                in_result = True
-                continue
-            if r.xpath("./w:fldChar[@w:fldCharType='end']", namespaces=p._element.nsmap):
-                in_result = False
-                continue
-            # skip instruction runs
-            if r.xpath('./w:instrText', namespaces=p._element.nsmap):
-                continue
-            if in_result:
-                keep.append(r)
-
-        # If we found result runs, replace paragraph runs with just those
-        if keep:
-            # remove all existing runs
-            for r in list(p._element.xpath('./w:r', namespaces=p._element.nsmap)):
-                r.getparent().remove(r)
-            # append kept in order
-            for r in keep:
-                p._element.append(r)
-
-def make_document_fully_editable(doc):
-    """
-    One-call helper to:
-      1) remove protection
-      2) unwrap content controls
-      3) flatten legacy fields
-    """
-    _unprotect_document(doc)
-    _unwrap_all_content_controls(doc)
-    _flatten_legacy_fields(doc)
-
 
 # ---------------------------
 # Orchestrator
@@ -914,8 +1111,12 @@ def run_agentic_fill(input_docx: str, lookup_path: str, output_docx: str, dry_ru
     # 4) Fill
     filler = FillingAgent(doc, matcher)
     filler.replace_placeholders(dry_run=dry_run)
+    filler.fill_inline_checkbox_groups(dry_run=dry_run)  # ← NEW: handle inline groups
     filler.fill_checkboxes(dry_run=dry_run)
     filler.fill_underline_lines(dry_run=dry_run)
+    # NEW: checkbox option groups laid out horizontally
+    filler.fill_checkbox_option_groups(dry_run=dry_run)
+    filler.fill_grid_tables(dry_run=dry_run)
     filler.fill_tables(dry_run=dry_run)
 
     if dry_run:
