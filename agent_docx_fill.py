@@ -16,6 +16,62 @@ from typing import List, Dict, Any, Optional, Tuple, Iterable, Set
 from difflib import SequenceMatcher
 from numbers import Number
 import pandas as pd
+import string  # (make sure these imports exist once at file top)
+
+def _split_two_labels_no_glyphs(text: str):
+    """
+    Fallback splitter when there's no checkbox glyph, e.g.:
+      'Initial Subscription                      Additional Subscription'
+    Returns ['Initial Subscription', 'Additional Subscription'] or None.
+    Very conservative: only two short title-case chunks.
+    """
+    if not text:
+        return None
+    t = unicodedata.normalize("NFKC", text).strip()
+    t = re.sub(r"\s+", " ", t)
+
+    # 1) Try splitting by BIG gaps that usually separate options
+    #    (we look in the *original* text for >=3 spaces to preserve where the visual gap was)
+    parts_gap = [p.strip(" -:") for p in re.split(r"\s{3,}", text) if p.strip()]
+    parts_gap = [p for p in parts_gap if 1 <= len(p.split()) <= 4]
+    if len(parts_gap) == 2 and parts_gap[0].lower() != parts_gap[1].lower():
+        # ensure both parts are reasonably title-case
+        def _titleish(s):
+            ws = s.split();
+            return ws and sum(1 for w in ws if w[:1].isupper()) >= max(1, int(0.6*len(ws)))
+        if _titleish(parts_gap[0]) and _titleish(parts_gap[1]):
+            return parts_gap
+
+    # 2) Title-case boundary fallback (no big gaps)
+    words = t.split()
+    if not (3 <= len(words) <= 8):
+        return None
+
+    def _is_titleish_word(w: str):
+        return (w[:1].isupper() and (w[1:].islower() or w[1:] == "")) or w.isupper()
+
+    if not all(_is_titleish_word(w) for w in words):
+        return None
+
+    # try equal halves first
+    if len(words) % 2 == 0:
+        mid = len(words) // 2
+        left = " ".join(words[:mid]).strip(" -:")
+        right = " ".join(words[mid:]).strip(" -:")
+        if (1 <= len(left.split()) <= 4 and 1 <= len(right.split()) <= 4
+                and left.lower() != right.lower()):
+            return [left, right]
+
+    # else find a sensible boundary at a capitalized word
+    for i in range(2, len(words)-1):
+        if words[i][0].isupper():
+            left = " ".join(words[:i]).strip(" -:")
+            right = " ".join(words[i:]).strip(" -:")
+            if (1 <= len(left.split()) <= 4 and 1 <= len(right.split()) <= 4
+                    and left.lower() != right.lower()):
+                return [left, right]
+
+    return None
 
 # ---------------------------
 # Utilities / shared
@@ -593,34 +649,146 @@ class FillingAgent:
                 else:
                     self._set_paragraph_text_keep_simple_format(p, new)
 
-    def fill_checkboxes(self, dry_run=False):
-        box_patterns = [
-            re.compile(r"^\s*[□☐]\s+(.*)$"),
-            re.compile(r"^\s*\[\s?\]\s+(.*)$"),
-            re.compile(r"^\s*\[\s?[xX✓]\s?\]\s+(.*)$"),
-        ]
+    def fill_checkboxes(self, dry_run: bool = False):
+        """
+        Toggle one or more checkbox tokens in a paragraph based on lookup values.
+
+        Handles both orders and multiples per line:
+          - '☐ Label' / '[ ] Label'   (token → label)
+          - 'Label ☐' / 'Label [ ]'   (label → token)
+          - Repeated in one paragraph: '☐ A    ☐ B    ☐ C'  or  'A ☐    B ☐'
+        Skips filler like 'OR'.
+        """
+
+        import re, unicodedata, string
+
+        # token matcher (keeps text form, e.g. '[ ]' vs '☐')
+        BOX_RE = re.compile(r'(?:\[\s*[xX✓]?\s*\]|[□☐☑☒])')
+
+        def _norm(s: str) -> str:
+            s = unicodedata.normalize("NFKC", str(s or "")).strip()
+            return re.sub(r"\s+", " ", s)
+
+        def _norm_key(s: str) -> str:
+            t = _norm(s).lower()
+            return t.translate(str.maketrans("", "", string.punctuation))
+
+        def _truthy(val: str):
+            if val is None: return None
+            s = (str(val).strip().lower())
+            if s in {"y","yes","true","1","x","✓","check","checked"}:   return True
+            if s in {"n","no","false","0","uncheck","unchecked"}:       return False
+            return None
+
+        # Replace the nth checkbox token in a paragraph, preserving other text.
+        # Replace the nth checkbox token in a paragraph safely by rebuilding the text.
+        def _replace_nth_token_in_paragraph(p, nth: int, make_checked: bool) -> bool:
+            # Flatten the paragraph text once
+            full = "".join(r.text or "" for r in p.runs)
+            matches = list(BOX_RE.finditer(full))
+            if nth >= len(matches):
+                return False
+
+            m = matches[nth]
+            tok_text = full[m.start():m.end()]
+
+            # Preserve bracket style if the original token used [ ]
+            if tok_text.strip().startswith("["):
+                repl = "[x]" if make_checked else "[ ]"
+            else:
+                repl = "☒" if make_checked else "☐"
+
+            # Build the new paragraph text and write it back in one shot
+            new_text = full[:m.start()] + repl + full[m.end():]
+            self._set_paragraph_text_keep_simple_format(p, new_text)
+            return True
+
+
+        # Build pairs (token, label) for an entire paragraph
+        def _pairs_from_paragraph_text(text: str):
+            text = _norm(text)
+            if not text:
+                return []
+
+            # split while keeping tokens
+            tokens = list(BOX_RE.finditer(text))
+            if not tokens:
+                return []
+
+            parts = BOX_RE.split(text)           # [pre, tok, between, tok, between, ...]
+            toks  = BOX_RE.findall(text)         # exact token strings
+
+            pairs = []
+            # Two layouts:
+            #  A) token-first:  ''/sep, TOK, label, TOK, label, ...
+            #  B) label-first:  label, TOK, label, TOK, ...
+            token_first = (_norm(parts[0]) == "")
+
+            if token_first:
+                # expect: ["" , tok0, label0, tok1, label1, ...]
+                idx_tok = 0
+                for i in range(1, len(parts), 2):
+                    if idx_tok >= len(toks): break
+                    label = (parts[i] if i < len(parts) else "").strip(" \t-:•–")
+                    if label:
+                        pairs.append((idx_tok, label))
+                    idx_tok += 1
+            else:
+                # expect: [label0, tok0, label1, tok1, label2 ...]
+                idx_tok = 0
+                for i in range(1, len(parts), 2):
+                    if idx_tok >= len(toks): break
+                    label = (parts[i-1] if i-1 >= 0 else "").strip(" \t-:•–")
+                    if label:
+                        pairs.append((idx_tok, label))
+                    idx_tok += 1
+
+            return pairs
+
+        # Iterate paragraphs and toggle each checkbox found
         for p in self._iter_all_paragraphs_and_cells():
-            t = p.text.strip()
-            if not t:
+            raw = p.text or ""
+            if not raw.strip():
                 continue
-            for pat in box_patterns:
-                m = pat.match(t)
-                if not m:
+            if not BOX_RE.search(raw):
+                continue
+
+            pairs = _pairs_from_paragraph_text(raw)
+            if not pairs:
+                continue
+
+            # filter out fillers like "OR" and labels that look non-optiony
+            cleaned = []
+            for nth, lbl in pairs:
+                key = _norm_key(lbl)
+                if key in {"or"}:          # ignore pure "OR"
                     continue
-                lab = m.group(1).strip()
-                if not lab:
-                    break
-                val = self.matcher.resolve(label=lab, section="", index=1, page=None,
-                                           min_fuzzy=0.82, strict_index=False)
+                if ":" in lbl or len(lbl) > 80:
+                    continue
+                cleaned.append((nth, lbl))
+            if not cleaned:
+                continue
+
+            # decide per-label
+            for nth, label in cleaned:
+                val = self.matcher.resolve(label=label,
+                                           section="",
+                                           index=1,
+                                           page=None,
+                                           min_fuzzy=0.82,
+                                           strict_index=False)
                 yn = _truthy(val)
                 if yn is None:
+                    if dry_run:
+                        print(f"[DRY][DOCX] checkbox: '{label}' → (no match; leave as-is)")
                     continue
-                new = (f"☒ {lab}" if yn else f"☐ {lab}")
+
                 if dry_run:
-                    print(f"[DRY][DOCX] checkbox: '{lab}' → {'CHECK' if yn else 'UNCHECK'}")
+                    print(f"[DRY][DOCX] checkbox: '{label}' → {'CHECK' if yn else 'UNCHECK'}")
                 else:
-                    self._set_paragraph_text_keep_simple_format(p, new)
-                break
+                    _replace_nth_token_in_paragraph(p, nth, make_checked=yn)
+
+
 
     def fill_checkbox_option_groups(self, dry_run=False):
         """
@@ -791,8 +959,13 @@ class FillingAgent:
             # keep only "shortish" items to avoid splitting normal sentences
             parts = [p for p in parts if len(p.split()) <= 4]
             # need at least 2 distinct short parts to count as a group
-            if len(parts) >= 2 and len(set(parts)) >= 2 and len(parts) <= 6:
+            if 2 <= len(parts) <= 6 and len(set(parts)) >= 2:
                 return parts
+            # NEW: fallback when there are no glyphs and no clear separators,
+            # e.g., "Initial Subscription                      Additional Subscription"
+            alt = _split_two_labels_no_glyphs(text)
+            if alt and len(alt) >= 2:
+                return alt
             return []
 
         def truthy_val_for(label: str) -> Optional[bool]:
@@ -816,22 +989,13 @@ class FillingAgent:
             return None
 
         def render_group(options: list, selected: Optional[set], original: str) -> str:
-            # If the original already has explicit boxes per option, replace the
-            # first token per option with ☒/☐ while preserving spacing as much as possible.
-            # Otherwise, prefix each option with a box and join with two spaces.
-            if BOX_RE.search(original):
-                # We’ll rebuild cleanly to avoid run/spacing headaches.
-                items = []
-                for o in options:
-                    box = "☒" if (selected and o in selected) else "☐"
-                    items.append(f"{box} {o}")
-                return "  ".join(items)
-            else:
-                items = []
-                for o in options:
-                    box = "☒" if (selected and o in selected) else "☐"
-                    items.append(f"{box} {o}")
-                return "  ".join(items)
+            # If the original already has explicit boxes per option, rebuild cleanly
+            # to avoid run/spacing issues. Otherwise, prefix each option with a box.
+            items = []
+            for o in options:
+                box = "☒" if (selected and o in selected) else "☐"
+                items.append(f"{box} {o}")
+            return "  ".join(items)
 
         # Iterate every paragraph (body + table cells)
         for p in self._iter_all_paragraphs_and_cells():
@@ -872,6 +1036,7 @@ class FillingAgent:
                     print(f"[DRY][DOCX] inline-checkbox: '{line}' → [{sel_str}]")
                 else:
                     self._set_paragraph_text_keep_simple_format(p, new_text)
+
 
 
     def fill_underline_lines(self, dry_run=False):
@@ -1083,6 +1248,88 @@ class FillingAgent:
                     else:
                         self._write_value_inside_box(target, str(val))
 
+    def fill_matrix_tables(self, dry_run=False):
+        """
+        Handle 'matrix' tables where the header row (row 0) contains field labels across
+        columns, and each subsequent row is a new Index for those same fields.
+
+        For a table like:
+
+            | Class/Series | Currency | Cash Amount | Cash Amount in words | Subscription Day |
+            | ------------ | -------- | ----------- | -------------------- | ---------------- |
+            | [box]        | [box]    | [box]       | [box]                 | [box]           |
+            | [box]        | [box]    | [box]       | [box]                 | [box]           |
+            ...
+
+        We fill row r (starting at 1) using Index=r, field labels from row 0.
+        """
+        from docx.table import Table
+
+        def _clean_label(s: str) -> str:
+            s = (s or "").strip()
+            # strip trailing colon-like chars
+            s = re.sub(r"[:：﹕꞉˸]\s*$", "", s).strip()
+            return s
+
+        def _is_boxlike(cell) -> bool:
+            # True if cell looks empty or has only placeholders (no visible alphanumerics)
+            txt = "".join(p.text or "" for p in cell.paragraphs).strip()
+            if not txt:
+                return True
+            # remove spaces and common placeholder glyphs; if nothing 'alnum' remains, treat as box-like
+            vis = re.sub(r"[\s_\-\u2014\.\u2002\u2003\u2007\u2009\u00A0]+", "", txt)
+            return not re.search(r"[A-Za-z0-9]", vis)
+
+        for tbl in self.doc.tables:
+            if not tbl.rows:
+                continue
+            header = tbl.rows[0]
+            ncols = len(header.cells)
+            if ncols < 2:
+                continue
+
+            # collect header labels
+            headers = [ _clean_label(self._first_cell_text(c)) for c in header.cells ]
+            nonempty_count = sum(1 for h in headers if h)
+
+            # Heuristic: treat as matrix if 2+ headers are non-empty and the first data row looks like boxes.
+            if nonempty_count < 2 or len(tbl.rows) < 2:
+                continue
+
+            # If the majority of data-row cells in row 1 are boxlike, we consider it a matrix table.
+            row1 = tbl.rows[1]
+            data_boxlike = sum(1 for c in row1.cells if _is_boxlike(c))
+            if data_boxlike < max(2, int(0.6 * ncols)):
+                continue  # not a matrix grid; skip
+
+            # OK, treat as matrix table.
+            # For each data row r>=1, Index = r
+            for r in range(1, len(tbl.rows)):
+                data_row = tbl.rows[r]
+                row_index = r  # 1-based index for first data row
+                for c in range(ncols):
+                    field_label = headers[c]
+                    if not field_label:
+                        continue  # ignore blank header columns
+                    target_cell = data_row.cells[c]
+
+                    # Don't overwrite header text in row 0; only write into box-like cells
+                    if not _is_boxlike(target_cell):
+                        continue
+
+                    # resolve with strict index by default; if no exact, try non-strict
+                    val = self.matcher.resolve(label=field_label, section="", index=row_index,
+                                               page=None, min_fuzzy=0.82, strict_index=True)
+                    if val is None:
+                        val = self.matcher.resolve(label=field_label, section="", index=row_index,
+                                                   page=None, min_fuzzy=0.82, strict_index=False)
+                    if val is None:
+                        continue
+
+                    if dry_run:
+                        print(f"[DRY][DOCX] table-matrix: Row {row_index}, Col {c}, '{field_label}' → '{val}'")
+                    else:
+                        self._write_value_inside_box(target_cell, str(val))
 
 
 # ---------------------------
@@ -1118,6 +1365,8 @@ def run_agentic_fill(input_docx: str, lookup_path: str, output_docx: str, dry_ru
     filler.fill_checkbox_option_groups(dry_run=dry_run)
     filler.fill_grid_tables(dry_run=dry_run)
     filler.fill_tables(dry_run=dry_run)
+    # NEW: matrix tables (header-as-labels across columns; row index = Index)
+    filler.fill_matrix_tables(dry_run=dry_run)
 
     if dry_run:
         print("Dry-run complete. No file written.")
