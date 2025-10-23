@@ -42,3 +42,8 @@ py -3.13 -c "import docx; print(docx.__version__)"
 
 #Had to install rapidfuzz
 pip install python-docx rapidfuzz pandas
+
+#Most stable version could the agent_prefill.py file.  To run it use below command
+python field_map_generate.py --input input.docx --template template_docs.json --make-lookup lookup_template_docx.xlsx --rebuild-template
+python agent_docx_fill.py --input input.docx --lookup lookup_template_docx.xlsx --output out.docx --dry-run
+python agent_docx_fill.py --input input.docx --lookup lookup_template_docx.xlsx --output out.docx

@@ -18,6 +18,26 @@ from numbers import Number
 import pandas as pd
 import string  # (make sure these imports exist once at file top)
 
+_GENERIC_STOPWORDS = {
+    "the","a","an","and","or","of","for","to","in","on","by","with","at","as",
+    "no","number","only","existing","shareholders","shareholder","details","form",
+    "applicant","application","name","class","series","currency","cash","amount",
+    "words","subscription","day","first","last","middle","initial","hid","id",
+    "existing","shareholders","only"
+}
+
+def _sig_words(s: str) -> set[str]:
+    """Lowercased significant words (>=3 letters) with generics removed."""
+    import re
+    words = re.findall(r"[A-Za-z]+", (s or "").lower())
+    return {w for w in words if len(w) >= 3 and w not in _GENERIC_STOPWORDS}
+
+def _has_meaningful_overlap(a: str, b: str) -> bool:
+    aw = _sig_words(a)
+    bw = _sig_words(b)
+    # require at least one shared significant token
+    return len(aw & bw) >= 1
+
 def _split_two_labels_no_glyphs(text: str):
     """
     Fallback splitter when there's no checkbox glyph, e.g.:
@@ -78,13 +98,45 @@ def _split_two_labels_no_glyphs(text: str):
 # ---------------------------
 PUNCT = str.maketrans("", "", string.punctuation)
 
-def _normalize(s: str) -> str:
-    s = str(s or "")
-    s = unicodedata.normalize("NFKC", s)
-    s = re.sub(r"\(.*?\)", "", s)              # drop parentheticals for matching (keeps primary meaning)
-    s = re.sub(r"\s+", " ", s).strip().lower()
-    s = s.translate(PUNCT)
-    return s
+# --- Normalization helpers (strict vs loose) ---
+PUNCT_NO_PARENS = str.maketrans("", "", (string.punctuation.replace("(", "").replace(")", "")))
+
+
+def _normalize_strict(s: str) -> str:
+    """
+    Strict canonical form:
+      - NFKC
+      - collapse whitespace
+      - lower-case
+      - keep parentheses (so 'Applicant Name (Entity)' != 'Applicant Name')
+      - strip trailing colon-like chars
+    """
+    t = unicodedata.normalize("NFKC", str(s or ""))
+    t = re.sub(r"[:：﹕꞉˸፡︓]\s*$", "", t)
+    t = re.sub(r"\s+", " ", t).strip().lower()
+    return t
+
+def _normalize_loose(s: str) -> str:
+    """
+    Loose canonical form for fuzzy fallback:
+      - NFKC
+      - drop parentheticals completely
+      - remove punctuation (incl. parentheses after removal)
+      - collapse whitespace & lower-case
+    """
+    t = unicodedata.normalize("NFKC", str(s or ""))
+    t = re.sub(r"\(.*?\)", "", t)                   # <-- drop parentheses content
+    t = re.sub(r"[:：﹕꞉˸፡︓]\s*$", "", t)
+    t = re.sub(r"\s+", " ", t).strip().lower()
+    t = t.translate(str.maketrans("", "", string.punctuation))
+    return t
+
+def _wordset_loose(s: str) -> set:
+    """Word set used to guard fuzzy matches."""
+    t = _normalize_loose(s)
+    return {w for w in t.split() if len(w) >= 3}
+
+
 
 def _sim(a: str, b: str) -> float:
     return SequenceMatcher(None, _normalize(a), _normalize(b)).ratio()
@@ -180,9 +232,13 @@ class LookupAgent:
                 "Section": section,
                 "Page": page,
                 "Index": index,
-                "field_norm": _normalize(field),
-                "section_norm": _normalize(section) if section else "",
+                "field_norm_strict": _normalize_strict(field),
+                "field_norm_loose": _normalize_loose(field),
+                "section_norm_strict": _normalize_strict(section) if section else "",
+                "section_norm_loose": _normalize_loose(section) if section else "",
+                "field_words_loose": _wordset_loose(field),
             })
+
         self.rows = rows
         return rows
 
@@ -413,44 +469,148 @@ class DocumentUnderstandingAgent:
 
 class MatchingAgent:
     """Resolves best value for a (section,label,index) against lookup rows."""
+    STOPWORDS = {
+        "name", "number", "no", "date", "day", "month", "year", "address",
+        "phone", "email", "applicant", "the", "and", "or", "of"
+    }
+
     def __init__(self, rows: List[Dict[str, Any]]):
-        self.rows = rows
+        self.rows = rows or []
+        # Ensure normalization keys exist (robust to older LookupAgent output)
+        for r in self.rows:
+            f = r.get("Field", "")
+            s = r.get("Section", "")
+            r.setdefault("field_norm", self._normalize_strict(f))
+            r.setdefault("section_norm", self._normalize_strict(s) if s else "")
+            r.setdefault("_field_norm_loose", self._normalize_loose(f))
+            r.setdefault("_section_norm_loose", self._normalize_loose(s) if s else "")
 
-    def resolve(self, label: str, section: str, index: int,
-                page: Optional[int] = None,
-                min_fuzzy: float = 0.82,
-                strict_index: bool = True) -> Optional[str]:
-        field_norm = _normalize(label)
-        section_norm = _normalize(section) if section else ""
+    # ---------- normalization helpers ----------
+    @staticmethod
+    def _normalize_strict(s: str) -> str:
+        import unicodedata, re
+        s = unicodedata.normalize("NFKC", str(s or ""))
+        s = re.sub(r"\(.*?\)", "", s)
+        s = re.sub(r"[:：﹕꞉˸፡︓]\s*$", "", s)
+        s = re.sub(r"\s+", " ", s).strip().lower()
+        return s
 
-        # exact field candidates (by normalized field)
-        field_candidates = [r for r in self.rows if r["field_norm"] == field_norm]
-        if not field_candidates:
-            # fuzzy fallback
-            all_fields = list({r["field_norm"] for r in self.rows})
-            if not all_fields:
-                return None
-            best = max(all_fields, key=lambda x: _sim(field_norm, x))
-            if _sim(field_norm, best) >= min_fuzzy:
-                field_candidates = [r for r in self.rows if r["field_norm"] == best]
-            else:
-                return None
+    @staticmethod
+    def _normalize_loose(s: str) -> str:
+        import unicodedata, re, string
+        s = unicodedata.normalize("NFKC", str(s or ""))
+        s = re.sub(r"\(.*?\)", "", s)
+        s = re.sub(r"[:：﹕꞉˸፡︓]\s*$", "", s)
+        s = re.sub(r"\s+", " ", s).strip().lower()
+        s = s.translate(str.maketrans("", "", string.punctuation))
+        return s
 
-        candidates = list(field_candidates)
+    @classmethod
+    def _wordset(cls, s: str) -> set:
+        import re
+        words = {w for w in re.split(r"\W+", str(s).lower()) if len(w) >= 3}
+        return {w for w in words if w not in cls.STOPWORDS}
 
-        # section preference / requirement (if provided)
-        if section_norm:
-            same_sec = [r for r in candidates if r.get("section_norm") == section_norm]
+    @staticmethod
+    def _sim_loose(a: str, b: str) -> float:
+        from difflib import SequenceMatcher
+        return SequenceMatcher(None, a, b).ratio()
+
+    # ---------- resolver ----------
+    def resolve(
+            self,
+            label: str,
+            section: str,
+            index: int,
+            page: Optional[int] = None,
+            *,
+            min_fuzzy: float = 0.82,
+            strict_index: bool = True,
+            exact_only: bool = False,
+            require_token_overlap: bool = True,
+    ) -> Optional[str]:
+        """
+        - exact_only=True disables fuzzy fallback entirely.
+        - require_token_overlap=True demands at least one **non-stopword** token match.
+        """
+        label_strict = self._normalize_strict(label)
+        section_strict = self._normalize_strict(section) if section else ""
+        label_loose = self._normalize_loose(label)
+        section_loose = self._normalize_loose(section) if section else ""
+
+        # ---- Step 1: strict exact field match ----
+        candidates = [r for r in self.rows if r.get("field_norm") == label_strict]
+        if not candidates:
+            # sometimes authoring introduced slightly different strict norms; try loose
+            candidates = [r for r in self.rows if r.get("field_norm") == label_loose]
+
+        if candidates:
+            # prefer same section if provided
+            if section_strict:
+                same_sec = [r for r in candidates if r.get("section_norm") == section_strict]
+                if same_sec:
+                    candidates = same_sec
+
+            # prefer same page if provided
+            if page is not None:
+                same_pg = [r for r in candidates if r.get("Page") is not None and int(r["Page"]) == int(page)]
+                if same_pg:
+                    candidates = same_pg
+
+            # index strictness
+            if strict_index:
+                with_idx = [r for r in candidates if r.get("Index") is not None]
+                if with_idx:
+                    exact_idx = [r for r in with_idx if int(r["Index"]) == int(index)]
+                    if exact_idx:
+                        candidates = exact_idx
+                    else:
+                        return None
+
+            def score(r):
+                s = 0
+                if section_strict and r.get("section_norm") == section_strict:
+                    s += 6
+                if r.get("Index") is not None and int(r["Index"]) == int(index):
+                    s += 3
+                return s
+
+            best = max(candidates, key=score, default=None)
+            return best["Value"] if best else None
+
+        # ---- Step 2: fuzzy disabled? ----
+        if exact_only:
+            return None
+
+        # ---- Step 3: fuzzy fallback (loose norms) ----
+        field_pool = list({r.get("_field_norm_loose") for r in self.rows})
+        field_pool = [x for x in field_pool if x]
+        if not field_pool:
+            return None
+
+        best_norm = None
+        best_sim = -1.0
+        for x in field_pool:
+            sim = self._sim_loose(label_loose, x)
+            if sim > best_sim:
+                best_sim, best_norm = sim, x
+
+        if best_norm is None or best_sim < min_fuzzy:
+            return None
+
+        # token overlap with stopwords removed — prevents 'First name' → 'Applicant Name (Entity)'
+        if require_token_overlap and not (self._wordset(label_loose) & self._wordset(best_norm)):
+            return None
+
+        candidates = [r for r in self.rows if r.get("_field_norm_loose") == best_norm]
+
+        # section preference on loose norm
+        if section_loose:
+            same_sec = [r for r in candidates if r.get("_section_norm_loose") == section_loose]
             if same_sec:
                 candidates = same_sec
 
-        # page hint (if provided)
-        if page is not None:
-            same_pg = [r for r in candidates if r.get("Page") is not None and int(r["Page"]) == int(page)]
-            if same_pg:
-                candidates = same_pg
-
-        # index strictness (if lookup rows provide Index)
+        # index strictness again
         if strict_index:
             with_idx = [r for r in candidates if r.get("Index") is not None]
             if with_idx:
@@ -460,16 +620,20 @@ class MatchingAgent:
                 else:
                     return None
 
-        def score(r):
-            s = 0
-            if section_norm and r.get("section_norm") == section_norm:
-                s += 6
-            if r.get("Index") is not None and int(r["Index"]) == int(index):
-                s += 3
-            return s
-
-        best = max(candidates, key=score, default=None)
+        best = max(
+            candidates,
+            key=lambda r: (
+                1 if (r.get("Index") is not None and int(r["Index"]) == int(index)) else 0,
+                1 if (section_loose and r.get("_section_norm_loose") == section_loose) else 0,
+            ),
+            default=None,
+        )
         return best["Value"] if best else None
+
+
+
+
+
 
 
 class FillingAgent:
@@ -657,12 +821,13 @@ class FillingAgent:
           - '☐ Label' / '[ ] Label'   (token → label)
           - 'Label ☐' / 'Label [ ]'   (label → token)
           - Repeated in one paragraph: '☐ A    ☐ B    ☐ C'  or  'A ☐    B ☐'
-        Skips filler like 'OR'.
-        """
 
+        NEW: If no token is present but the line looks like a checkbox sentence
+        (like the “benefit plan investor … (tick if applicable)” rows), resolve
+        the whole sentence and prefix with ☒/☐ accordingly.
+        """
         import re, unicodedata, string
 
-        # token matcher (keeps text form, e.g. '[ ]' vs '☐')
         BOX_RE = re.compile(r'(?:\[\s*[xX✓]?\s*\]|[□☐☑☒])')
 
         def _norm(s: str) -> str:
@@ -673,120 +838,290 @@ class FillingAgent:
             t = _norm(s).lower()
             return t.translate(str.maketrans("", "", string.punctuation))
 
-        def _truthy(val: str):
+        def _truthy(val):
             if val is None: return None
             s = (str(val).strip().lower())
             if s in {"y","yes","true","1","x","✓","check","checked"}:   return True
             if s in {"n","no","false","0","uncheck","unchecked"}:       return False
             return None
 
-        # Replace the nth checkbox token in a paragraph, preserving other text.
-        # Replace the nth checkbox token in a paragraph safely by rebuilding the text.
+        # Rebuild the paragraph text once instead of touching runs piecemeal.
         def _replace_nth_token_in_paragraph(p, nth: int, make_checked: bool) -> bool:
-            # Flatten the paragraph text once
             full = "".join(r.text or "" for r in p.runs)
             matches = list(BOX_RE.finditer(full))
             if nth >= len(matches):
                 return False
-
             m = matches[nth]
             tok_text = full[m.start():m.end()]
-
-            # Preserve bracket style if the original token used [ ]
             if tok_text.strip().startswith("["):
                 repl = "[x]" if make_checked else "[ ]"
             else:
                 repl = "☒" if make_checked else "☐"
-
-            # Build the new paragraph text and write it back in one shot
             new_text = full[:m.start()] + repl + full[m.end():]
             self._set_paragraph_text_keep_simple_format(p, new_text)
             return True
 
-
-        # Build pairs (token, label) for an entire paragraph
+        # Build (token_index, label) pairs for a paragraph.
         def _pairs_from_paragraph_text(text: str):
-            text = _norm(text)
-            if not text:
-                return []
-
-            # split while keeping tokens
             tokens = list(BOX_RE.finditer(text))
             if not tokens:
                 return []
-
-            parts = BOX_RE.split(text)           # [pre, tok, between, tok, between, ...]
-            toks  = BOX_RE.findall(text)         # exact token strings
-
             pairs = []
-            # Two layouts:
-            #  A) token-first:  ''/sep, TOK, label, TOK, label, ...
-            #  B) label-first:  label, TOK, label, TOK, ...
-            token_first = (_norm(parts[0]) == "")
-
+            token_first = tokens[0].start() <= len(re.match(r"^\s*", text).group(0))
             if token_first:
-                # expect: ["" , tok0, label0, tok1, label1, ...]
-                idx_tok = 0
-                for i in range(1, len(parts), 2):
-                    if idx_tok >= len(toks): break
-                    label = (parts[i] if i < len(parts) else "").strip(" \t-:•–")
+                for i, m in enumerate(tokens):
+                    start = m.end()
+                    end = tokens[i + 1].start() if i + 1 < len(tokens) else len(text)
+                    label = text[start:end].strip(" \t-:•–")
                     if label:
-                        pairs.append((idx_tok, label))
-                    idx_tok += 1
+                        pairs.append((i, label))
             else:
-                # expect: [label0, tok0, label1, tok1, label2 ...]
-                idx_tok = 0
-                for i in range(1, len(parts), 2):
-                    if idx_tok >= len(toks): break
-                    label = (parts[i-1] if i-1 >= 0 else "").strip(" \t-:•–")
+                prev_end = 0
+                for i, m in enumerate(tokens):
+                    label = text[prev_end:m.start()].strip(" \t-:•–")
                     if label:
-                        pairs.append((idx_tok, label))
-                    idx_tok += 1
-
+                        pairs.append((i, label))
+                    prev_end = m.end()
             return pairs
 
-        # Iterate paragraphs and toggle each checkbox found
+        # Tidy long option labels (drop list markers / trailing helpers).
+        def _tidy_option_label(s: str) -> str:
+            t = s.strip()
+            t = re.sub(r'^\s*(?:[\(\[]?[ivxlcdmIVXLCDM0-9a-zA-Z]+[\)\].:-]|\-|•)\s+', '', t)
+            t = re.sub(r'\s*\([^()]*\)\s*$', '', t).strip()
+            t = re.sub(r'\s+', ' ', t)
+            return t
+
+        # Heuristic: a full paragraph that *looks* like a checkbox sentence.
+        TRAIL_COLON_RE = re.compile(r"[:：﹕꞉˸፡︓]\s*$")
+        def _looks_checkbox_sentence(s: str) -> bool:
+            t = _norm(s)
+            if TRAIL_COLON_RE.search(t):
+                return False
+            if len(t) < 24 and len(t.split()) < 6:
+                return False
+            if re.match(r"^\([a-z]\)\s", t):   # (a) / (b) …
+                return True
+            KW = ("tick if applicable", "benefit plan investor", "plan investor", "tick if")
+            tl = t.lower()
+            return any(k in tl for k in KW)
+
         for p in self._iter_all_paragraphs_and_cells():
             raw = p.text or ""
             if not raw.strip():
                 continue
-            if not BOX_RE.search(raw):
-                continue
 
-            pairs = _pairs_from_paragraph_text(raw)
-            if not pairs:
-                continue
-
-            # filter out fillers like "OR" and labels that look non-optiony
-            cleaned = []
-            for nth, lbl in pairs:
-                key = _norm_key(lbl)
-                if key in {"or"}:          # ignore pure "OR"
+            # ---------- Primary path: explicit tokens present ----------
+            if BOX_RE.search(raw):
+                pairs = _pairs_from_paragraph_text(raw)
+                if not pairs:
                     continue
-                if ":" in lbl or len(lbl) > 80:
-                    continue
-                cleaned.append((nth, lbl))
-            if not cleaned:
-                continue
 
-            # decide per-label
-            for nth, label in cleaned:
-                val = self.matcher.resolve(label=label,
-                                           section="",
-                                           index=1,
-                                           page=None,
-                                           min_fuzzy=0.82,
-                                           strict_index=False)
-                yn = _truthy(val)
-                if yn is None:
+                cleaned = []
+                for nth, lbl in pairs:
+                    key = _norm_key(lbl)
+                    if key in {"or"}:
+                        continue
+                    if ":" in lbl:
+                        continue
+                    lbl2 = _tidy_option_label(lbl)
+                    if len(re.sub(r'[^A-Za-z]', '', lbl2)) < 4:
+                        continue
+                    if len(lbl2) > 200:
+                        continue
+                    cleaned.append((nth, lbl2))
+
+                if not cleaned:
+                    continue
+
+                for nth, label in cleaned:
+                    val = self.matcher.resolve(label=label,
+                                               section="",
+                                               index=1,
+                                               page=None,
+                                               min_fuzzy=0.78,
+                                               strict_index=False)
+                    yn = _truthy(val)
+                    if yn is None:
+                        if dry_run:
+                            print(f"[DRY][DOCX] checkbox: '{label}' → (no match; leave as-is)")
+                        continue
                     if dry_run:
-                        print(f"[DRY][DOCX] checkbox: '{label}' → (no match; leave as-is)")
+                        print(f"[DRY][DOCX] checkbox: '{label}' → {'CHECK' if yn else 'UNCHECK'}")
+                    else:
+                        _replace_nth_token_in_paragraph(p, nth, make_checked=yn)
+                continue  # done with this paragraph
+
+            # ---------- Fallback path: no token, but line looks like a checkbox sentence ----------
+            line = raw.strip()
+            if not _looks_checkbox_sentence(line):
+                continue
+
+            label_for_lookup = _tidy_option_label(line)
+            val = self.matcher.resolve(label=label_for_lookup,
+                                       section="",
+                                       index=1,
+                                       page=None,
+                                       min_fuzzy=0.80,
+                                       strict_index=False)
+            yn = _truthy(val)
+            if yn is None:
+                # also try the un-tidied text once
+                val2 = self.matcher.resolve(label=line,
+                                            section="",
+                                            index=1,
+                                            page=None,
+                                            min_fuzzy=0.80,
+                                            strict_index=False)
+                yn = _truthy(val2)
+
+            if yn is None:
+                if dry_run:
+                    print(f"[DRY][DOCX] checkbox (no-token; no match): '{label_for_lookup[:72]}'")
+                continue
+
+            new_text = f"{'☒' if yn else '☐'} {label_for_lookup}"
+            if dry_run:
+                print(f"[DRY][DOCX] checkbox (no-token): '{label_for_lookup[:72]}' → {'CHECK' if yn else 'UNCHECK'}")
+            else:
+                self._set_paragraph_text_keep_simple_format(p, new_text)
+
+
+
+
+    def fill_two_column_checkbox_rows(self, dry_run: bool = False):
+        """
+        Tick checkboxes where a table row has a short 'box-like' cell adjacent
+        to a long label cell. Works for either order: [box][label] or [label][box].
+        Will insert ☒/☐ when no token exists.
+
+        Notes:
+          • Truly empty cells are not 'box-like' unless the adjacent cell clearly
+            looks like a checkbox sentence (fallback below).
+          • This keeps the HID row excluded and picks up the p3/p4 sentences.
+        """
+        import re, unicodedata, string
+
+        BOX_RE         = re.compile(r'(?:\[\s*[xX✓]?\s*\]|[□☐☑☒])')
+        LETTER_RE      = re.compile(r"[A-Za-z]")
+        FILLER_SHORTRE = re.compile(r"^[-_.—–·•\u00A0\s]{1,6}$")           # short, non-empty filler
+        TRAIL_COLON_RE = re.compile(r"[:：﹕꞉˸፡︓]\s*$")
+
+        def _cell_text(cell) -> str:
+            return " ".join(p.text for p in cell.paragraphs).strip()
+
+        def _norm_inline(s: str) -> str:
+            s = unicodedata.normalize("NFKC", str(s or "")).strip()
+            s = (s.replace("“", '"').replace("”", '"')
+                 .replace("‘", "'").replace("’", "'")
+                 .replace("–", "-").replace("—", "-"))
+            return re.sub(r"\s+", " ", s)
+
+        def _truthy_local(val: str):
+            if val is None: return None
+            ss = (str(val).strip().lower())
+            if ss in {"y","yes","true","1","x","✓","check","checked"}:   return True
+            if ss in {"n","no","false","0","uncheck","unchecked"}:       return False
+            return None
+
+        # Box-like only if explicit token OR short non-empty filler.
+        def _looks_box_cell(txt: str) -> bool:
+            if BOX_RE.search(txt or ""):
+                return True
+            if not txt:
+                return False                          # empty ≠ box-like
+            compact = re.sub(r"\s+", "", txt)
+            if not compact:
+                return False
+            return bool(FILLER_SHORTRE.match(txt))
+
+        # Checkbox-sentence detector for fallback when the box cell is an empty shape.
+        def _looks_checkbox_sentence(s: str) -> bool:
+            t = _norm_inline(s).lower()
+            if TRAIL_COLON_RE.search(t):
+                return False                           # "Label:" → not a checkbox sentence
+            if len(t) < 24 and len(t.split()) < 6:
+                return False
+            if re.match(r"^\([a-z]\)\s", t):           # (a) (b) (c) ...
+                return True
+            KW = ("tick if applicable", "benefit plan investor", "plan investor", "tick if")
+            return any(k in t for k in KW)
+
+        def _set_token_in_cell(cell, make_checked: bool) -> bool:
+            if not cell.paragraphs:
+                p = cell.add_paragraph()
+            else:
+                p = cell.paragraphs[0]
+            full = "".join(r.text or "" for r in p.runs)
+            m = BOX_RE.search(full)
+            if m:
+                tok_text = full[m.start():m.end()]
+                repl = "[x]" if tok_text.strip().startswith("[") else "☒"
+                if not make_checked:
+                    repl = "[ ]" if tok_text.strip().startswith("[") else "☐"
+                new_text = full[:m.start()] + repl + full[m.end():]
+                self._set_paragraph_text_keep_simple_format(p, new_text)
+                return True
+            self._set_paragraph_text_keep_simple_format(p, ("☒" if make_checked else "☐"))
+            return True
+
+        for tbl in self.doc.tables:
+            for row in tbl.rows:
+                cells = row.cells
+                if len(cells) < 2:
                     continue
 
-                if dry_run:
-                    print(f"[DRY][DOCX] checkbox: '{label}' → {'CHECK' if yn else 'UNCHECK'}")
-                else:
-                    _replace_nth_token_in_paragraph(p, nth, make_checked=yn)
+                for ci in range(len(cells) - 1):
+                    left_txt  = _cell_text(cells[ci])
+                    right_txt = _cell_text(cells[ci + 1])
+
+                    pair = None
+                    # explicit token + long-ish label
+                    if BOX_RE.search(left_txt or "") and _looks_checkbox_sentence(right_txt):
+                        pair = (cells[ci], right_txt)
+                    elif BOX_RE.search(right_txt or "") and _looks_checkbox_sentence(left_txt):
+                        pair = (cells[ci + 1], left_txt)
+
+                    # short non-empty filler + long checkbox sentence
+                    if pair is None:
+                        left_is_box  = _looks_box_cell(left_txt)
+                        right_is_box = _looks_box_cell(right_txt)
+                        if left_is_box and _looks_checkbox_sentence(right_txt):
+                            pair = (cells[ci], right_txt)
+                        elif right_is_box and _looks_checkbox_sentence(left_txt):
+                            pair = (cells[ci + 1], left_txt)
+
+                    # NEW fallback: empty cell (likely a drawn box) + checkbox-like sentence on the other side
+                    if pair is None:
+                        if (not left_txt or not LETTER_RE.search(left_txt)) and _looks_checkbox_sentence(right_txt):
+                            pair = (cells[ci], right_txt)
+                        elif (not right_txt or not LETTER_RE.search(right_txt)) and _looks_checkbox_sentence(left_txt):
+                            pair = (cells[ci + 1], left_txt)
+
+                    if not pair:
+                        continue
+
+                    token_cell, label_text = pair
+                    label_for_lookup = _norm_inline(TRAIL_COLON_RE.sub("", label_text).strip())
+                    val = self.matcher.resolve(
+                        label=label_for_lookup,
+                        section="",
+                        index=1,
+                        page=None,
+                        min_fuzzy=0.82,
+                        strict_index=False
+                    )
+                    yn = _truthy_local(val)
+                    if yn is None:
+                        if dry_run:
+                            print(f"[DRY][DOCX] checkbox-2col (no match): '{label_for_lookup[:72]}'")
+                        continue
+
+                    if dry_run:
+                        print(f"[DRY][DOCX] checkbox-2col: '{label_for_lookup[:72]}' → {'CHECK' if yn else 'UNCHECK'}")
+                    else:
+                        _set_token_in_cell(token_cell, yn)
+
 
 
 
@@ -1052,8 +1387,17 @@ class FillingAgent:
             lab = re.sub(r"[:：﹕꞉˸፡︓]\s*$", "", label_full).strip()
             if not lab:
                 continue
-            val = self.matcher.resolve(label=lab, section="", index=1, page=None,
-                                       min_fuzzy=0.82, strict_index=False)
+            val = self.matcher.resolve(
+                label=lab,
+                section="",
+                index=1,
+                page=None,
+                min_fuzzy=1.1,          # ← exact-only
+                strict_index=False
+            )
+
+
+
             if val is None:
                 continue
             new_text = f"{label_full} {val}"
@@ -1125,12 +1469,16 @@ class FillingAgent:
 
                     val = self.matcher.resolve(
                         label=field_label,
-                        section="",          # no section constraint for grids
-                        index=row_index,     # body row number
+                        section="",
+                        index=row_index,
                         page=None,
-                        min_fuzzy=0.82,
-                        strict_index=False,  # allow flexible matching if Index column wasn't provided
+                        min_fuzzy=1.1,          # ← exact-only
+                        strict_index=True,
+                        exact_only=True,
                     )
+
+
+
                     if val is None:
                         continue
 
@@ -1205,12 +1553,16 @@ class FillingAgent:
 
                     val = self.matcher.resolve(
                         label=lab,
-                        section="",            # sectionless for now; your lookups drive it
+                        section="",
                         index=idx_guess,
                         page=None,
-                        min_fuzzy=0.82,
-                        strict_index=False
+                        min_fuzzy=1.1,          # ← force exact-only (no fuzzy fallback)
+                        strict_index=False,
+                        exact_only=True,
                     )
+
+
+
                     if val is None:
                         continue
 
@@ -1318,11 +1670,30 @@ class FillingAgent:
                         continue
 
                     # resolve with strict index by default; if no exact, try non-strict
-                    val = self.matcher.resolve(label=field_label, section="", index=row_index,
-                                               page=None, min_fuzzy=0.82, strict_index=True)
+                    val = self.matcher.resolve(
+                        label=field_label,
+                        section="",
+                        index=row_index,
+                        page=None,
+                        min_fuzzy=1.1,          # ← exact-only
+                        strict_index=True,
+                        exact_only=True
+                    )
+
+
                     if val is None:
-                        val = self.matcher.resolve(label=field_label, section="", index=row_index,
-                                                   page=None, min_fuzzy=0.82, strict_index=False)
+                        val = self.matcher.resolve(
+                            label=field_label,
+                            section="",
+                            index=row_index,
+                            page=None,
+                            min_fuzzy=1.1,          # ← exact-only
+                            strict_index=True,
+                            exact_only=True
+                        )
+
+
+
                     if val is None:
                         continue
 
@@ -1360,6 +1731,7 @@ def run_agentic_fill(input_docx: str, lookup_path: str, output_docx: str, dry_ru
     filler.replace_placeholders(dry_run=dry_run)
     filler.fill_inline_checkbox_groups(dry_run=dry_run)  # ← NEW: handle inline groups
     filler.fill_checkboxes(dry_run=dry_run)
+    filler.fill_two_column_checkbox_rows(dry_run=dry_run)
     filler.fill_underline_lines(dry_run=dry_run)
     # NEW: checkbox option groups laid out horizontally
     filler.fill_checkbox_option_groups(dry_run=dry_run)
