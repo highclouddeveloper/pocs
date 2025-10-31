@@ -22,6 +22,157 @@ from contextlib import contextmanager
 # --- DOCX support ---
 from typing import Iterable
 from numbers import Number
+
+
+CHECKBOX_TOKEN_RE = re.compile(r"(?:\[\s*\]|\[\s*[xX✓]\s*\]|[□☐☑☒])")
+
+def _norm_space(s: str) -> str:
+    return re.sub(r"\s+", " ", (s or "").strip())
+
+def _truthy(v) -> bool | None:
+    if v is None:
+        return None
+    s = str(v).strip().lower()
+    if s in {"y", "yes", "true", "1", "x", "✓", "check", "checked"}:
+        return True
+    if s in {"n", "no", "false", "0", "uncheck", "unchecked"}:
+        return False
+    return None
+
+# ---------- helpers used to tick / draw checkboxes ----------
+
+def _gather_text_spans(page: fitz.Page):
+    spans = []
+    d = page.get_text("dict")
+    for b in d.get("blocks", []):
+        for ln in b.get("lines", []):
+            for sp in ln.get("spans", []):
+                txt = _norm_space(sp.get("text", ""))
+                if not txt:
+                    continue
+                spans.append({"text": txt, "bbox": fitz.Rect(sp["bbox"])})
+    spans.sort(key=lambda s: (s["bbox"].y0, s["bbox"].x0))
+    return spans
+
+def _overlaps_y(a: fitz.Rect, b: fitz.Rect, slack: float = 2.0) -> bool:
+    return not (a.y1 + slack < b.y0 or b.y1 + slack < a.y0)
+
+def _find_drawn_boxes(page: fitz.Page):
+    """Return list of drawn square-ish rectangles that are likely checkboxes."""
+    boxes = []
+    def _box_like(r: fitz.Rect):
+        w, h = r.width, r.height
+        return 6 <= min(w, h) <= 18 and 6 <= max(w, h) <= 26 and abs(w - h) <= 6
+    def _rect_from_line(payload):
+        if isinstance(payload, (list, tuple)) and len(payload) == 2 and all(isinstance(p, (list, tuple)) and len(p) == 2 for p in payload):
+            (x0, y0), (x1, y1) = payload
+            return fitz.Rect(min(x0, x1), min(y0, y1), max(x0, x1), max(y0, y1))
+        if isinstance(payload, (list, tuple)) and len(payload) == 4 and all(isinstance(v, (int, float)) for v in payload):
+            x0, y0, x1, y1 = payload
+            return fitz.Rect(min(x0, x1), min(y0, y1), max(x0, x1), max(y0, y1))
+        return None
+    def _rect_from_re(payload):
+        try:
+            return fitz.Rect(payload)
+        except Exception:
+            pass
+        if isinstance(payload, (list, tuple)) and len(payload) == 4 and all(isinstance(v, (int, float)) for v in payload):
+            x0, y0, a, b = payload
+            if a >= 0 and b >= 0:  # w,h
+                return fitz.Rect(x0, y0, x0 + a, y0 + b)
+            return fitz.Rect(min(x0, a), min(y0, b), max(x0, a), max(y0, b))
+        return None
+
+    for item in page.get_drawings():
+        for cmd in item.get("items", []):
+            kind, payload = cmd[0], cmd[1]
+            if kind == "re":
+                r = _rect_from_re(payload)
+                if r and _box_like(r):
+                    boxes.append(r)
+            elif kind == "l":
+                r = _rect_from_line(payload)
+                # ignore plain lines for checkbox detection
+    return sorted(boxes, key=lambda r: (r.y0, r.x0))
+
+def _nearest_box_left(spans, boxes, label_rect: fitz.Rect, max_dx=260):
+    """Pick the nearest square to the LEFT of a label that overlaps vertically."""
+    cand = []
+    for b in boxes:
+        if b.x1 <= label_rect.x0 and (label_rect.x0 - b.x1) <= max_dx and _overlaps_y(b, label_rect, 3.0):
+            cand.append((label_rect.x0 - b.x1, b))
+    if not cand:
+        return None
+    cand.sort(key=lambda t: t[0])
+    return cand[0][1]
+
+def _mark_X(page: fitz.Page, rect: fitz.Rect, scale=0.65, width=1.2):
+    """Draw a clear X inside a given box rect."""
+    # shrink a little so strokes stay inside the box
+    cx, cy = rect.x0 + rect.width / 2, rect.y0 + rect.height / 2
+    hw = rect.width * scale / 2
+    hh = rect.height * scale / 2
+    a = fitz.Point(cx - hw, cy - hh)
+    b = fitz.Point(cx + hw, cy + hh)
+    c = fitz.Point(cx - hw, cy + hh)
+    d = fitz.Point(cx + hw, cy - hh)
+    page.draw_line(a, b, width=width)
+    page.draw_line(c, d, width=width)
+
+# ---------- main checkbox writer ----------
+
+def tick_checkbox_on_page(page: fitz.Page, label_text: str, yes: bool):
+    """
+    Try to tick an AcroForm checkbox next to the given label text; if no widget is there,
+    draw an X into the closest drawn square to the left of the label.
+    """
+    if not yes:
+        return
+
+    spans = _gather_text_spans(page)
+    # 1) find label occurrences
+    hits = page.search_for(label_text, hit_max=50) or []
+    # small heuristic: if none, try a looser version removing quotes / extra spaces
+    if not hits and ("“" in label_text or "”" in label_text):
+        hits = page.search_for(label_text.replace("“", '"').replace("”", '"'), hit_max=50) or []
+
+    # widgets present?
+    widgets = list(page.widgets() or [])
+
+    for lab_rect in hits:
+        # (a) try a nearby checkbox widget first
+        if widgets:
+            for w in widgets:
+                try:
+                    if (w.field_type or "").lower() != "checkbox":
+                        continue
+                except Exception:
+                    # PyMuPDF older versions
+                    t = (getattr(w, "field_type_string", "") or "").lower()
+                    if "check" not in t:
+                        continue
+                # a widget near the label?
+                wrect = w.rect
+                if _overlaps_y(wrect, lab_rect, 5.0) and wrect.x0 < lab_rect.x0 and (lab_rect.x0 - wrect.x1) <= 260:
+                    # set the on-state / value
+                    try:
+                        # modern PyMuPDF
+                        w.set_checked(True)
+                        w.update()
+                    except Exception:
+                        try:
+                            # fallback: set explicit value "Yes"
+                            w.set_value("Yes")
+                            w.update()
+                        except Exception:
+                            pass
+        # (b) if there was no widget: draw an X in the nearest drawn box
+        boxes = _find_drawn_boxes(page)
+        if boxes:
+            br = _nearest_box_left(spans, boxes, lab_rect, max_dx=260)
+            if br:
+                _mark_X(page, br)
+
 @contextmanager
 def _as_pdf(input_path: str):
     """
@@ -648,6 +799,154 @@ def sanitize_lookup_for_docx(lookup_rows: List[Dict[str, Any]]):
     return sanitized_rows, report
 
 
+_RECIP_HEAD_RE = re.compile(r"^\s*RECIPIENT\s*(\d+)\s*:?\s*$", re.IGNORECASE)
+_RECIP_ITEM_RE = re.compile(r"^\s*RECIPIENT\s*(\d+)\s*[\u2013-]\s*item\s*(\d+)\s*$", re.IGNORECASE)
+
+def fill_recipient_checkboxes_by_index(pdf: fitz.Document, lookup_rows):
+    """
+    lookup_rows: iterable of dicts with keys Section, Field, Page (optional), Value.
+    Ticks boxes for rows like:
+        Section="RECIPIENT 2", Field="RECIPIENT 2 – item 3", Value="yes"
+    """
+    # group decisions: {(page_no, recip_n): {k -> True/False}}
+    want = {}
+    for r in lookup_rows:
+        sec = str(r.get("Section","")).strip()
+        fld = str(r.get("Field","")).strip()
+        val = r.get("Value","")
+        m = _RECIP_ITEM_RE.match(fld)
+        if not m:  # also allow Field-less form when Section is RECIPIENT N and Field is just "item k"
+            # fallback: try to derive N from Section when Field is "item k"
+            ms = _RECIP_HEAD_RE.match(sec)
+            if ms:
+                try:
+                    n = int(ms.group(1))
+                except:
+                    continue
+                mk = re.search(r"item\s*(\d+)", fld, re.IGNORECASE)
+                if not mk:
+                    continue
+                k = int(mk.group(1))
+                want.setdefault((None, n), {})[k] = _truthy(val)
+            continue
+
+        n = int(m.group(1)); k = int(m.group(2))
+        # Optional page hint (string or int)
+        pg = r.get("Page", None)
+        try:
+            pg = int(pg) if pg not in ("", None) else None
+        except Exception:
+            pg = None
+        want.setdefault((pg, n), {})[k] = _truthy(val)
+
+    if not want:
+        return
+
+    # walk pages; only pages that actually contain "RECIPIENT" blocks
+    for pno in range(pdf.page_count):
+        page = pdf.load_page(pno)
+        lines = _gather_text_lines(page)
+        heads = [(rect, int(m.group(1))) for rect,txt in lines
+                 if (m:=_RECIP_HEAD_RE.match(txt))]
+        if not heads:
+            continue
+
+        # sort heads by vertical position
+        heads.sort(key=lambda t: t[0].y0)
+        # compute recipient vertical bands
+        bands = []
+        for i,(rect,n) in enumerate(heads):
+            y0 = rect.y0
+            y1 = lines[-1][0].y1 if i == len(heads)-1 else heads[i+1][0].y0
+            bands.append((n, fitz.Rect(page.rect.x0, y0, page.rect.x1, y1)))
+
+        # collect checkboxes and assign to bands
+        all_boxes = _get_drawn_boxes(page)
+        recip_boxes = {n: [] for n,_ in [(n, b) for (n,b) in bands]}
+        for rbox in all_boxes:
+            for n, band in bands:
+                if rbox.y0 >= band.y0 and rbox.y1 <= band.y1:
+                    recip_boxes.setdefault(n, []).append(rbox)
+                    break
+
+        # order within each recipient: left→right, then top→bottom
+        for n in recip_boxes:
+            recip_boxes[n].sort(key=lambda r: (r.x0, r.y0))  # left column first
+            # BUT ensure “top then bottom” in each column:
+            # refine ordering by splitting into two columns by page mid X
+            midx = page.rect.x0 + (page.rect.width/2.0)
+            left = [r for r in recip_boxes[n] if r.x1 <= midx]
+            right = [r for r in recip_boxes[n] if r.x0 > midx]
+            left.sort(key=lambda r: r.y0)
+            right.sort(key=lambda r: r.y0)
+            recip_boxes[n] = left + right  # [1: Purchase, 2: Account, 3: Performance, 4: Annual]
+
+        # apply wants for this page and for page-agnostic rows
+        for (pg_hint, recip_n), items in list(want.items()):
+            if pg_hint not in (None, pno+1):
+                continue
+            boxes = recip_boxes.get(recip_n, [])
+            if not boxes:
+                continue
+            for k, checked in items.items():
+                if 1 <= k <= len(boxes) and checked:
+                    box = boxes[k-1]
+                    # draw a simple “X” inside the box
+                    with page.new_shape() as sh:
+                        sh.draw_line(box.x0+1, box.y0+1, box.x1-1, box.y1-1)
+                        sh.draw_line(box.x0+1, box.y1-1, box.x1-1, box.y0+1)
+                        sh.finish(color=(0,0,0), width=1.2)
+                    # optional: fill the box lightly to make it obvious
+                    # with page.new_shape() as sh:
+                    #     sh.draw_rect(box); sh.finish(fill=(0,0,0), stroke=None, fill_opacity=0.06)
+
+def _box_like_rect(r: fitz.Rect) -> bool:
+    w = r.width; h = r.height
+    if w <= 0 or h <= 0: return False
+    mn, mx = min(w,h), max(w,h)
+    # 6–18pt squares (± a bit) and roughly square
+    return 6 <= mn <= 18 and 6 <= mx <= 26 and abs(w-h) <= 6
+
+def _gather_text_lines(page: fitz.Page):
+    """Return [(bbox:Rect, text:str)] in reading order."""
+    out = []
+    d = page.get_text("dict")
+    for b in d.get("blocks", []):
+        for ln in b.get("lines", []):
+            spans = ln.get("spans", [])
+            if not spans: continue
+            txt = " ".join(s.get("text","") for s in spans).strip()
+            if not txt: continue
+            xs = [s["bbox"][0] for s in spans] + [s["bbox"][2] for s in spans]
+            ys = [s["bbox"][1] for s in spans] + [s["bbox"][3] for s in spans]
+            out.append((fitz.Rect(min(xs),min(ys),max(xs),max(ys)), txt))
+    out.sort(key=lambda t: (t[0].y0, t[0].x0))
+    return out
+
+def _get_drawn_boxes(page: fitz.Page):
+    boxes = []
+    for item in page.get_drawings():
+        for cmd in item.get("items", []):
+            if not cmd: continue
+            op, payload = cmd[0], cmd[1] if len(cmd) > 1 else None
+            r = None
+            if op == "re":
+                try:
+                    r = fitz.Rect(payload)
+                except Exception:
+                    if isinstance(payload, (list,tuple)) and len(payload) == 4:
+                        x,y,w,h = payload
+                        r = fitz.Rect(x, y, x+w, y+h)
+            elif op == "l":
+                if isinstance(payload, (list,tuple)) and len(payload) == 2:
+                    (x0,y0),(x1,y1) = payload
+                    r = fitz.Rect(min(x0,x1),min(y0,y1),max(x0,x1),max(y0,y1))
+            if r and _box_like_rect(r):
+                boxes.append(r)
+    boxes.sort(key=lambda r: (r.y0, r.x0))
+    return boxes
+
+
 def prefill_docx(input_docx: str,
                  output_docx: str,
                  lookup_rows: List[Dict[str, Any]],
@@ -739,6 +1038,14 @@ def prefill_docx(input_docx: str,
     _fill_table_right_cells(doc, lookup_rows, dry_run=dry_run)
     # 3) colon + underscores
     _fill_colon_underscore_lines(doc, lookup_rows, dry_run=dry_run)
+    # after you've opened the PDF (doc = fitz.open(...)) and
+    # loaded your lookup rows into a list of dicts called `rows`:
+
+    fill_recipient_checkboxes_by_index(doc, rows)
+
+    # ...then proceed with the rest of your existing fill logic...
+    # finally: doc.save(output_path, ...)
+
     # 4) checkboxes
     _fill_checkboxes(doc, lookup_rows, dry_run=dry_run)
 

@@ -13,6 +13,76 @@ _INLINE_SEP_RE = re.compile(r'(?:\t+|\s{2,}|\s+/\s+|\s+\|\s+|\s+OR\s+)', re.IGNO
 # Strict checkbox detection: only mark checkboxes when a real checkbox control is found in the DOCX.
 STRICT_CHECKBOX_DETECTION = True
 
+# ---------- PDF row emission helpers (new) ----------
+
+_RECIP_SEC_RE = re.compile(r"\brecipient\s*(\d+)\b", re.IGNORECASE)
+
+def _norm(s: str) -> str:
+    return re.sub(r"\s+", " ", str(s or "").strip())
+
+def _short_label_like(s: str, max_words=10, max_len=140) -> bool:
+    t = _norm(s)
+    if not t or len(t) > max_len:
+        return False
+    # avoid giant sentences with punctuation
+    if t.count(".") >= 2:
+        return False
+    return len(t.split()) <= max_words
+
+def _token_len(s: str) -> int:
+    return len(re.findall(r"[A-Za-z0-9]", s or ""))
+
+def _infer_recipient_index(section: str, field: str, index: int) -> int:
+    """
+    Prefer index inferred from 'Recipient N' in Section or Field.
+    """
+    for src in (section, field):
+        m = _RECIP_SEC_RE.search(src or "")
+        if m:
+            try:
+                n = int(m.group(1))
+                return max(1, min(4, n))
+            except Exception:
+                pass
+    return index or 1
+
+def _is_pdf_fillable_fdef(fdef: dict) -> tuple[bool, str]:
+    """
+    Return (should_emit, type_tag) where type_tag ∈ {'checkbox','underline','table','dropdown','text',''}
+    Uses fdef['type'], fdef['field_type'], fdef['placement'], fdef['choices'].
+    """
+    placement = _norm(fdef.get("placement", "")).lower()
+    kind      = _norm(fdef.get("type", "") or fdef.get("field_type", "")).lower()
+    label     = _norm(fdef.get("label_short") or fdef.get("label") or fdef.get("label_full") or "")
+
+    # Widgets
+    if "check" in kind or "acro_check" in placement or "acro-checkbox" in placement:
+        return True, "checkbox"
+    if "choice" in kind or "combo" in kind or "list" in kind or "acro_choice" in placement:
+        return True, "dropdown"
+    if ("text" in kind and "check" not in kind) or "acro_text" in placement:
+        return (_short_label_like(label), "text")
+
+    # Inline/visual checkbox hints
+    if fdef.get("choices"):
+        return True, "checkbox"
+    if re.search(r"(?:\[\s*\]|\[\s*[xX✓]\s*\]|[□☐☑☒])", label):
+        return True, "checkbox"
+
+    # Underlines / blanks / rules
+    if any(k in placement for k in ("underline", "line_rule", "line", "blank", "rule")):
+        return (_short_label_like(label), "underline")
+
+    # Table/grids
+    if any(k in placement for k in ("grid_header", "table_header", "grid", "table")):
+        return (_short_label_like(label, max_words=6, max_len=60), "table")
+
+    # Rect boxes near labels → treat as text if label is short-ish
+    if any(k in placement for k in ("rect_box", "box", "square")) and _short_label_like(label, 8, 80):
+        return True, "text"
+
+    return False, ""
+
 
 def _final_split_compound_checkbox_fields(df_in: pd.DataFrame) -> pd.DataFrame:
     """
@@ -295,7 +365,6 @@ def _field_title_from_fdef(fdef: dict) -> str:
             title = left
     return title or (fdef.get("label_full") or "").strip()
 
-
 # --- NEW: helpers to detect inline checkbox groups (no hard-coding of names)
 _INLINE_SPLIT_RE = re.compile(r"(?:\t+|\s{2,}|(?:\s+OR\s+))", re.IGNORECASE)
 _BOX_PREFIX_RE = re.compile(r"^\s*(?:[□☐☒]\s*|\[\s?[xX✓]?\s?\]\s*)")
@@ -316,6 +385,12 @@ def _split_inline_checkbox_options(display_text: str):
         return parts
     return None
 
+from collections import defaultdict
+_RECIP_RE = re.compile(r"\brecipient\s*\d+\b", re.IGNORECASE)
+
+# running item counter PER section (so each RECIPIENT N gets item 1..K)
+_section_item_counter = defaultdict(int)
+
 
 def export_lookup_template_from_json(
         template_json: str,
@@ -334,11 +409,55 @@ def export_lookup_template_from_json(
     if not os.path.exists(template_json):
         raise FileNotFoundError(f"Template JSON not found: {template_json}")
 
+    import json
+    import pandas as pd
+    import re
+    from collections import OrderedDict, defaultdict
+
     with open(template_json, "r", encoding="utf-8") as f:
         tpl = json.load(f)
 
     rows = []
     seq = 0  # used to make a stable unique fallback field name when needed
+
+    # --- NEW (scoped to this function): helpers for recipients & inline options
+    _RECIP_RE = re.compile(r"\brecipient\s*(\d+)\b", re.IGNORECASE)
+
+    # rely on your global _INLINE_SPLIT_RE if present; else provide a conservative default
+    _INLINE_SPLIT_DEFAULT = re.compile(r"(?:\t+|\s{2,}|\s+\bOR\b\s+|[;•/])", re.IGNORECASE)
+    try:
+        _INLINE_SPLIT_RE  # noqa: F401
+    except NameError:    # fallback only if it's not defined elsewhere
+        _INLINE_SPLIT_RE = _INLINE_SPLIT_DEFAULT  # type: ignore
+
+    def _recipient_index_from(section: str, default_idx: int) -> int:
+        m = _RECIP_RE.search(section or "")
+        if not m:
+            return default_idx
+        try:
+            return int(m.group(1))
+        except Exception:
+            return default_idx
+
+    def _split_inline_options_text(s: str) -> list[str]:
+        t = (s or "").strip()
+        if not t:
+            return []
+        parts = [p.strip(" -:") for p in _INLINE_SPLIT_RE.split(t) if p.strip()]
+        # keep only short-ish items (≤ 8 words; ≥ 3 token chars)
+        def _tok_len(x: str) -> int:
+            return len(re.findall(r"[A-Za-z0-9]", x))
+        parts = [p for p in parts if 1 <= len(p.split()) <= 8 and _tok_len(p) >= 3]
+        # require at least 2 distinct parts to treat it as a group
+        seen, out = set(), []
+        for p in parts:
+            k = p.lower()
+            if k not in seen:
+                seen.add(k)
+                out.append(p)
+        if len(out) >= 2 and len(out) <= 10:
+            return out
+        return []
 
     for fdef in (tpl.get("fields") or []):
         seq += 1
@@ -365,24 +484,180 @@ def export_lookup_template_from_json(
             sec_display = section if section else "No Section"
             title_from_def = f"Field #{seq} (Sec: {sec_display}, Idx: {index})"
 
-        choices = ""
+        # Existing behavior: only pre-fill the "Choices" cell for AcroForm choice fields.
+        choices_cell = ""
         if (fdef.get("placement") or "").lower() == "acro_choice":
             ch = fdef.get("choices") or []
             if isinstance(ch, list) and ch:
-                choices = " | ".join(str(x) for x in ch)
+                choices_cell = " | ".join(str(x) for x in ch)
 
+        # ---- NEW: Expand checkbox-like choice groups into separate rows for recipients & general checkboxes
+        # 1) If this is a real choice list (AcroForm), expand to one row per option.
+        if (fdef.get("placement") or "").lower() == "acro_choice":
+            choice_list = fdef.get("choices") or []
+            if isinstance(choice_list, list) and choice_list:
+                if _RECIP_RE.search(section or ""):
+                    # RECIPIENT N → use actual option labels and Index=N
+                    recip_idx = _recipient_index_from(section, index)
+                    for opt in choice_list:
+                        opt_label = str(opt).strip()
+                        if not opt_label:
+                            continue
+                        rows.append({
+                            "Section": section,
+                            "Page": page,
+                            "Field": opt_label,   # ← actual label, not "item k"
+                            "Index": recip_idx,   # ← recipient number
+                            "Value": "",
+                            "Choices": "checkbox",
+                        })
+                else:
+                    # Non-recipient: keep each option as its own checkbox row
+                    for opt in choice_list:
+                        opt_label = str(opt).strip()
+                        if not opt_label:
+                            continue
+                        rows.append({
+                            "Section": section,
+                            "Page": page,
+                            "Field": opt_label,
+                            "Index": 1,
+                            "Value": "",
+                            "Choices": "checkbox",
+                        })
+                continue  # skip the default single-row append
+
+
+        # 2) If no explicit choices, try to split inline compact options in the label text.
+        if not choices_cell:
+            split_source = (fdef.get("label_full") or fdef.get("label") or title_from_def or "").strip()
+            if not split_source.endswith(":"):
+                opts = _split_inline_options_text(split_source)
+                if opts:
+                    if _RECIP_RE.search(section or ""):
+                        # RECIPIENT N → use actual option labels and Index=N
+                        recip_idx = _recipient_index_from(section, index)
+                        for opt in opts:
+                            opt_label = str(opt).strip()
+                            if not opt_label:
+                                continue
+                            rows.append({
+                                "Section": section,
+                                "Page": page,
+                                "Field": opt_label,   # ← actual label, not "item k"
+                                "Index": recip_idx,   # ← recipient number
+                                "Value": "",
+                                "Choices": "checkbox",
+                            })
+                    else:
+                        for opt in opts:
+                            opt_label = str(opt).strip()
+                            if not opt_label:
+                                continue
+                            rows.append({
+                                "Section": section,
+                                "Page": page,
+                                "Field": opt_label,
+                                "Index": 1,
+                                "Value": "",
+                                "Choices": "checkbox",
+                            })
+                    continue  # expanded; skip default
+
+
+        # Default: original single-row emission (text/underline/table/etc.)
         rows.append({
             "Section": section,
             "Page": page,
             "Field": title_from_def,
             "Index": index,
             "Value": "",
-            "Choices": choices,
+            "Choices": choices_cell,
         })
 
     # Build initial DF
     cols = ["Section", "Page", "Field", "Index", "Value", "Choices"]
     df = pd.DataFrame(rows, columns=cols).fillna("")
+
+    # --- Cleanup: drop obvious non-fillable narrative lines on PDF pages ---
+    # Keep checkbox rows and short labels; drop long sentences / page boilerplate.
+    def _too_narrative(row) -> bool:
+        if str(row.get("Choices","")).strip().lower() == "checkbox":
+            return False  # keep checkboxes
+        field = str(row.get("Field","")).strip()
+        if not field:
+            return True
+        # very long or too many words → likely narrative
+        if len(field) > 120 or len(field.split()) > 20:
+            return True
+        # boilerplate fragments that slipped in as "fields"
+        bad_snippets = (
+            "subscription agreement", "page ", "the investor may also contact",
+            "copy documents for any particular recipient", "attach additional pages if needed"
+        )
+        f_low = field.lower()
+        if any(s in f_low for s in bad_snippets):
+            return True
+        return False
+
+    df = df[~df.apply(_too_narrative, axis=1)].reset_index(drop=True)
+
+
+    # --- NEW: normalize Recipient N short items into numbered checkbox rows (safety net)
+    # If a RECIPIENT section still has multiple short, label-like rows (e.g., “Performance Indications”),
+    # collapse them into standardized:
+    #   RECIPIENT N – item 1..K   (Index = N, Choices = checkbox)
+    # --- NEW: normalize Recipient N short items into numbered checkbox rows (safety net)
+    # If a RECIPIENT section still has multiple short, label-like rows (e.g., “Performance Indications”),
+    # collapse them into standardized:
+    #   RECIPIENT N – item 1..K   (Index = N, Choices = checkbox)
+    def _is_short_option(label: str) -> bool:
+        t = (label or "").strip()
+        if not t or t.endswith(":"):
+            return False
+        # accept the long "Annual (audited)/quarterly (unaudited) financial statements" style explicitly
+        if re.search(r"\bannual\s*\(audited\)\s*/\s*quarterly\s*\(unaudited\)\s*financial\s*statements\b",
+                     t, flags=re.IGNORECASE):
+            return True
+        # be more permissive in general so 4th item is kept
+        if len(t) > 140:
+            return False
+        if len(t.split()) > 16:
+            return False
+        lower = t.lower()
+        # avoid obvious data-entry fields
+        if lower in {"name", "e-mail", "email", "telephone", "facsimile", "fax", "address"}:
+            return False
+        return True
+
+
+    new_rows = []
+    drop_idx = []
+    for (sec, pg), grp in df.groupby(["Section", "Page"], dropna=False):
+        if not _RECIP_RE.search(sec or ""):
+            continue
+        recip_idx = _recipient_index_from(sec or "", 1)
+        # collect short options in original order
+        candidates = []
+        for i, r in grp.iterrows():
+            fld = str(r["Field"]).strip()
+            if _is_short_option(fld):
+                candidates.append((i, fld))
+        if len(candidates) >= 2:
+            for k, (irow, _label) in enumerate(candidates, start=1):
+                drop_idx.append(irow)
+                new_rows.append({
+                    "Section": sec,
+                    "Page": pg,
+                    "Field": f"{sec} – item {k}",
+                    "Index": recip_idx,
+                    "Value": "",
+                    "Choices": "checkbox",
+                })
+
+    if new_rows:
+        df = df.drop(index=drop_idx).reset_index(drop=True)
+        df = pd.concat([df, pd.DataFrame(new_rows, columns=df.columns)], ignore_index=True)
 
     # ---------- OPTIONAL: expand matrix tables by scanning the DOCX ----------
     def _clean_label(s: str) -> str:
@@ -467,9 +742,7 @@ def export_lookup_template_from_json(
             return df_out
         return df_in
 
-
-
-    # ---- Checkbox splitting that relies on true glyphs in the DOCX ----
+    # ---- Checkbox splitting that relies on true glyphs in the DOCX (unchanged) ----
     def _split_inline_checkboxes_with_docx(df_in: pd.DataFrame, docx_file: str) -> pd.DataFrame:
         """
         Split a single combined Field into one row per option when the DOCX shows:
@@ -493,7 +766,6 @@ def export_lookup_template_from_json(
 
         doc = Document(docx_file)
 
-        # ---------- helpers ----------
         def _norm(s: str) -> str:
             s = _ud.normalize("NFKC", str(s or "")).strip()
             s = _re.sub(r"\s+", " ", s)
@@ -519,13 +791,17 @@ def export_lookup_template_from_json(
             words = s.split()
             return 1 <= len(words) <= max_words
 
-        # ---------- 1) glyph-based groups ----------
         BOX_TOKEN = r"(?:\[\s*[xX✓]?\s*\]|[□☐☑☒])"
-        LABEL = r"([A-Z][\w\.\-/&()' ]{0,40}?)(?<!:)"  # short, not ending with colon
+        LABEL = r"([A-Z][\w\.\-/&()' ]{0,40}?)(?<!:)"
         LABEL_BOX_RE = _re.compile(LABEL + r"\s*" + BOX_TOKEN)
+        TICK_TRIGGER_RE = _re.compile(r"\bplease\s+tick\s+one\b", _re.IGNORECASE)
+        ENUM_BUL_RE     = _re.compile(r"^\s*(?:\((?:[a-eA-E]|i{1,3}|iv|v)\)|[-–•])\s+(.*)$")
+        OR_SPLIT_RE     = _re.compile(r"\s+\bOR\b\s+", _re.IGNORECASE)
 
-        glyph_groups: list[list[str]] = []
-        for p in _iter_all_paragraphs(doc):
+        glyph_groups, ctx_groups = [], []
+        paras = [p for p in _iter_all_paragraphs(doc)]
+
+        for p in paras:
             txt = _norm(p.text)
             if not txt:
                 continue
@@ -534,13 +810,6 @@ def export_lookup_template_from_json(
             if len(labels_here) >= 2:
                 glyph_groups.append(labels_here)
 
-        # ---------- 2) contextual '(please tick one)' groups (no glyphs) ----------
-        TICK_TRIGGER_RE = _re.compile(r"\bplease\s+tick\s+one\b", _re.IGNORECASE)
-        ENUM_BUL_RE     = _re.compile(r"^\s*(?:\((?:[a-eA-E]|i{1,3}|iv|v)\)|[-–•])\s+(.*)$")
-        OR_SPLIT_RE     = _re.compile(r"\s+\bOR\b\s+", _re.IGNORECASE)
-
-        ctx_groups: list[list[str]] = []
-        paras = [p for p in _iter_all_paragraphs(doc)]
         for i, p in enumerate(paras):
             line = _norm(p.text)
             if not line:
@@ -548,7 +817,6 @@ def export_lookup_template_from_json(
             if TICK_TRIGGER_RE.search(line):
                 opts: list[str] = []
                 j = i + 1
-                # scan forward for a limited window to collect enumerated options
                 while j < len(paras) and len(opts) < 6:
                     t = _norm(paras[j].text)
                     if not t:
@@ -563,7 +831,6 @@ def export_lookup_template_from_json(
                             if _looks_short_label(part, max_words=24, max_len=140):
                                 opts.append(part)
                     else:
-                        # also accept a plain short line right after trigger as an option
                         parts = [s.strip() for s in OR_SPLIT_RE.split(t) if s.strip()]
                         for part in parts:
                             if _looks_short_label(part, max_words=24, max_len=140):
@@ -572,7 +839,6 @@ def export_lookup_template_from_json(
                         break
                     j += 1
 
-                # de-dup, keep order
                 uniq, seen = [], set()
                 for o in opts:
                     k = _norm_key(o)
@@ -585,7 +851,6 @@ def export_lookup_template_from_json(
         df = df_in.copy()
 
         def _apply_split_by_labels(df0: pd.DataFrame, labels: list[str]) -> tuple[pd.DataFrame, bool]:
-            """Split any DF row whose Field contains these labels in order; return (df, did_split)."""
             combined = _norm_key(" ".join(labels))
             hit_idx = []
             for idx, r in df0.iterrows():
@@ -594,7 +859,6 @@ def export_lookup_template_from_json(
                 if f_key == combined:
                     hit_idx.append(idx)
                     continue
-                # in-order containment
                 pos, ok = 0, True
                 for lb in labels:
                     lk = _norm_key(lb)
@@ -625,7 +889,6 @@ def export_lookup_template_from_json(
             out = pd.concat([out, pd.DataFrame(new_rows, columns=df0.columns)], ignore_index=True)
             return out, True
 
-        # First apply glyph groups; then the contextual groups
         did_any_split = False
         for g in glyph_groups:
             df, did = _apply_split_by_labels(df, g)
@@ -635,12 +898,9 @@ def export_lookup_template_from_json(
             df, did = _apply_split_by_labels(df, g)
             did_any_split = did_any_split or did
 
-            # Fallback: if we detected a '(please tick one)' group but couldn't split any existing row,
-            # append rows so they appear in the lookup (Section/Page left blank).
             if not did:
                 pending = []
                 for lb in g:
-                    # avoid duplicates if a row with exactly this Field already exists
                     exists = (df["Field"].str.strip().str.lower() == lb.strip().lower()).any()
                     if not exists:
                         pending.append({
@@ -656,21 +916,19 @@ def export_lookup_template_from_json(
 
         return df
 
-
-
-
-
-
-
-
     def _mark_checkbox_rows(df_in: pd.DataFrame) -> pd.DataFrame:
         """
         When STRICT_CHECKBOX_DETECTION is True, do NOT guess checkboxes from text alone.
         Only rows produced by the real-checkbox splitter will carry Choices='checkbox'.
         """
-        if STRICT_CHECKBOX_DETECTION:
-            return df_in  # no guessing, no extra tagging
-        # ---- (optional legacy heuristic, only used if you set the flag False) ----
+        try:
+            STRICT_CHECKBOX = bool(globals().get("STRICT_CHECKBOX_DETECTION", False))
+        except Exception:
+            STRICT_CHECKBOX = False
+
+        if STRICT_CHECKBOX:
+            return df_in
+
         df = df_in.copy()
         def _is_checkboxish(s: str) -> bool:
             t = (str(s or "").strip())
@@ -685,13 +943,12 @@ def export_lookup_template_from_json(
         df.loc[mask, "Choices"] = df.loc[mask, "Choices"].replace({"": "checkbox"}, regex=False)
         return df
 
-
     # Apply DOCX-aware expansions/splits (if a DOCX path was provided)
     if docx_path:
         df = _expand_matrix_rows_with_docx(df, docx_path)
         df = _split_inline_checkboxes_with_docx(df, docx_path)
         df = _final_split_compound_checkbox_fields(df)
-        #df = _mark_checkbox_rows(df)
+        df = _mark_checkbox_rows(df)
 
     # ---------- sort & write ----------
     def _sort_key_row(r):
@@ -719,6 +976,7 @@ def export_lookup_template_from_json(
 
     print(f"📤 Lookup template written to {out_path} with {len(df)} rows.")
     return out_path
+
 
 
 def _call_builder_with_compat(builder, input_path: str, template_json: str):
