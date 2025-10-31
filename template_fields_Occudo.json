@@ -1,0 +1,4745 @@
+{
+  "pdf": "input.pdf",
+  "fields": [
+    {
+      "page": 1,
+      "label": "Adobe Reader Version XI or higher is required in order for \nthis form to function properly. If you would like to download \nthe latest version of Adobe Reader, please click on the link \nin the bottom left corner of this page.",
+      "label_short": "Adobe Reader Version XI or higher is required in order for \nthis form to function properly. If you would like to download \nthe latest version of Adobe Reader, please click on the link \nin the bottom left corner of this page.",
+      "label_full": "Adobe Reader Version XI or higher is required in order for \nthis form to function properly. If you would like to download \nthe latest version of Adobe Reader, please click on the link \nin the bottom left corner of this page.",
+      "label_norm": "adobe reader version xi or higher is required in order for this form to function properly if you would like to download the latest version of adobe reader please click on the link in the bottom left corner of this page",
+      "anchor_x": 547.2409973144531,
+      "anchor_y": 18.678009033203125,
+      "box_rect": [
+        490.947998046875,
+        11.85601806640625,
+        603.5339965820312,
+        25.5
+      ],
+      "line_box": [
+        490.947998046875,
+        11.85601806640625,
+        603.5339965820312,
+        25.5
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "A000000994_F000007517",
+      "section_norm": "a000000994f000007517",
+      "index": 1
+    },
+    {
+      "page": 1,
+      "label": "Delivery Instructions",
+      "label_short": "Delivery Instructions",
+      "label_full": "Delivery Instructions",
+      "label_norm": "delivery instructions",
+      "anchor_x": 305.1945610046387,
+      "anchor_y": 567.7331085205078,
+      "box_rect": [
+        54.390098571777344,
+        439.0870056152344,
+        555.9990234375,
+        696.3792114257812
+      ],
+      "line_box": [
+        54.390098571777344,
+        439.0870056152344,
+        555.9990234375,
+        696.3792114257812
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "2. IMPORTANT: When signing, certain electronic signatures may cause the form to",
+      "section_norm": "2 important when signing certain electronic signatures may cause the form to",
+      "index": 1
+    },
+    {
+      "page": 1,
+      "label": "Stamp_Page_1",
+      "label_short": "Stamp_Page_1",
+      "label_full": "Stamp_Page_1",
+      "label_norm": "stamppage1",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 1,
+      "label": "IPF_MSFS_USA_OFFSHORE_AML::HeaderPage::Footer",
+      "label_short": "IPF_MSFS_USA_OFFSHORE_AML::HeaderPage::Footer",
+      "label_full": "IPF_MSFS_USA_OFFSHORE_AML::HeaderPage::Footer",
+      "label_norm": "ipfmsfsusaoffshoreamlheaderpagefooter",
+      "anchor_x": 427.19500732421875,
+      "anchor_y": 775.7335815429688,
+      "box_rect": [
+        352.19500732421875,
+        764.7335815429688,
+        502.19500732421875,
+        786.7335815429688
+      ],
+      "line_box": [
+        352.19500732421875,
+        764.7335815429688,
+        502.19500732421875,
+        786.7335815429688
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 1,
+      "label": "MSFS_24Sep2025-000190",
+      "label_short": "MSFS_24Sep2025-000190",
+      "label_full": "MSFS_24Sep2025-000190",
+      "label_norm": "msfs24sep2025000190",
+      "anchor_x": 563.1949768066406,
+      "anchor_y": 775.7335510253906,
+      "box_rect": [
+        522.52197265625,
+        766.6444091796875,
+        603.8679809570312,
+        784.8226928710938
+      ],
+      "line_box": [
+        522.52197265625,
+        766.6444091796875,
+        603.8679809570312,
+        784.8226928710938
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 2,
+      "label": "IPF_MSFS_USA_OFFSHORE_AML::HeaderPage::Footer",
+      "label_short": "IPF_MSFS_USA_OFFSHORE_AML::HeaderPage::Footer",
+      "label_full": "IPF_MSFS_USA_OFFSHORE_AML::HeaderPage::Footer",
+      "label_norm": "ipfmsfsusaoffshoreamlheaderpagefooter",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 2,
+      "label": "Stamp_Page_2",
+      "label_short": "Stamp_Page_2",
+      "label_full": "Stamp_Page_2",
+      "label_norm": "stamppage2",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 3,
+      "label": "2",
+      "label_short": "2",
+      "label_full": "2",
+      "label_norm": "2",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 3,
+      "label": "Stamp_Page_3",
+      "label_short": "Stamp_Page_3",
+      "label_full": "Stamp_Page_3",
+      "label_norm": "stamppage3",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 4,
+      "label": "IPF_MSFS_USA_OFFSHORE_AML::HeaderPage::Footer",
+      "label_short": "IPF_MSFS_USA_OFFSHORE_AML::HeaderPage::Footer",
+      "label_full": "IPF_MSFS_USA_OFFSHORE_AML::HeaderPage::Footer",
+      "label_norm": "ipfmsfsusaoffshoreamlheaderpagefooter",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 4,
+      "label": "Stamp_Page_4",
+      "label_short": "Stamp_Page_4",
+      "label_full": "Stamp_Page_4",
+      "label_norm": "stamppage4",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 5,
+      "label": "2",
+      "label_short": "2",
+      "label_full": "2",
+      "label_norm": "2",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 5,
+      "label": "Stamp_Page_5",
+      "label_short": "Stamp_Page_5",
+      "label_full": "Stamp_Page_5",
+      "label_norm": "stamppage5",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 6,
+      "label": "3",
+      "label_short": "3",
+      "label_full": "3",
+      "label_norm": "3",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 6,
+      "label": "Stamp_Page_6",
+      "label_short": "Stamp_Page_6",
+      "label_full": "Stamp_Page_6",
+      "label_norm": "stamppage6",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 7,
+      "label": "4",
+      "label_short": "4",
+      "label_full": "4",
+      "label_norm": "4",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 7,
+      "label": "Stamp_Page_7",
+      "label_short": "Stamp_Page_7",
+      "label_full": "Stamp_Page_7",
+      "label_norm": "stamppage7",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 8,
+      "label": "5",
+      "label_short": "5",
+      "label_full": "5",
+      "label_norm": "5",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 8,
+      "label": "Stamp_Page_8",
+      "label_short": "Stamp_Page_8",
+      "label_full": "Stamp_Page_8",
+      "label_norm": "stamppage8",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 9,
+      "label": "6",
+      "label_short": "6",
+      "label_full": "6",
+      "label_norm": "6",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 9,
+      "label": "Stamp_Page_9",
+      "label_short": "Stamp_Page_9",
+      "label_full": "Stamp_Page_9",
+      "label_norm": "stamppage9",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 10,
+      "label": "7",
+      "label_short": "7",
+      "label_full": "7",
+      "label_norm": "7",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 10,
+      "label": "Stamp_Page_10",
+      "label_short": "Stamp_Page_10",
+      "label_full": "Stamp_Page_10",
+      "label_norm": "stamppage10",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 11,
+      "label": "8",
+      "label_short": "8",
+      "label_full": "8",
+      "label_norm": "8",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 11,
+      "label": "Stamp_Page_11",
+      "label_short": "Stamp_Page_11",
+      "label_full": "Stamp_Page_11",
+      "label_norm": "stamppage11",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 12,
+      "label": "9",
+      "label_short": "9",
+      "label_full": "9",
+      "label_norm": "9",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 12,
+      "label": "Stamp_Page_12",
+      "label_short": "Stamp_Page_12",
+      "label_full": "Stamp_Page_12",
+      "label_norm": "stamppage12",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 13,
+      "label": "10",
+      "label_short": "10",
+      "label_full": "10",
+      "label_norm": "10",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 13,
+      "label": "Stamp_Page_13",
+      "label_short": "Stamp_Page_13",
+      "label_full": "Stamp_Page_13",
+      "label_norm": "stamppage13",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 14,
+      "label": "11",
+      "label_short": "11",
+      "label_full": "11",
+      "label_norm": "11",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 14,
+      "label": "Stamp_Page_14",
+      "label_short": "Stamp_Page_14",
+      "label_full": "Stamp_Page_14",
+      "label_norm": "stamppage14",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 15,
+      "label": "12",
+      "label_short": "12",
+      "label_full": "12",
+      "label_norm": "12",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 15,
+      "label": "Stamp_Page_15",
+      "label_short": "Stamp_Page_15",
+      "label_full": "Stamp_Page_15",
+      "label_norm": "stamppage15",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 16,
+      "label": "13",
+      "label_short": "13",
+      "label_full": "13",
+      "label_norm": "13",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 16,
+      "label": "Stamp_Page_16",
+      "label_short": "Stamp_Page_16",
+      "label_full": "Stamp_Page_16",
+      "label_norm": "stamppage16",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 17,
+      "label": "14",
+      "label_short": "14",
+      "label_full": "14",
+      "label_norm": "14",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 17,
+      "label": "Stamp_Page_17",
+      "label_short": "Stamp_Page_17",
+      "label_full": "Stamp_Page_17",
+      "label_norm": "stamppage17",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 18,
+      "label": "15",
+      "label_short": "15",
+      "label_full": "15",
+      "label_norm": "15",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 18,
+      "label": "Stamp_Page_18",
+      "label_short": "Stamp_Page_18",
+      "label_full": "Stamp_Page_18",
+      "label_norm": "stamppage18",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 19,
+      "label": "16",
+      "label_short": "16",
+      "label_full": "16",
+      "label_norm": "16",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 19,
+      "label": "Stamp_Page_19",
+      "label_short": "Stamp_Page_19",
+      "label_full": "Stamp_Page_19",
+      "label_norm": "stamppage19",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 20,
+      "label": "17",
+      "label_short": "17",
+      "label_full": "17",
+      "label_norm": "17",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 20,
+      "label": "Stamp_Page_20",
+      "label_short": "Stamp_Page_20",
+      "label_full": "Stamp_Page_20",
+      "label_norm": "stamppage20",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 21,
+      "label": "18",
+      "label_short": "18",
+      "label_full": "18",
+      "label_norm": "18",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 21,
+      "label": "Stamp_Page_21",
+      "label_short": "Stamp_Page_21",
+      "label_full": "Stamp_Page_21",
+      "label_norm": "stamppage21",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 22,
+      "label": "19",
+      "label_short": "19",
+      "label_full": "19",
+      "label_norm": "19",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 22,
+      "label": "Stamp_Page_22",
+      "label_short": "Stamp_Page_22",
+      "label_full": "Stamp_Page_22",
+      "label_norm": "stamppage22",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 23,
+      "label": "20",
+      "label_short": "20",
+      "label_full": "20",
+      "label_norm": "20",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 23,
+      "label": "Stamp_Page_23",
+      "label_short": "Stamp_Page_23",
+      "label_full": "Stamp_Page_23",
+      "label_norm": "stamppage23",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 24,
+      "label": "21",
+      "label_short": "21",
+      "label_full": "21",
+      "label_norm": "21",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 24,
+      "label": "Stamp_Page_24",
+      "label_short": "Stamp_Page_24",
+      "label_full": "Stamp_Page_24",
+      "label_norm": "stamppage24",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 25,
+      "label": "country:",
+      "label_short": "country:",
+      "label_full": "country:",
+      "label_norm": "country",
+      "anchor_x": 339.8574905395508,
+      "anchor_y": 212.21749877929688,
+      "box_rect": [
+        165.8730010986328,
+        203.06500244140625,
+        513.8419799804688,
+        221.3699951171875
+      ],
+      "line_box": [
+        165.8730010986328,
+        212.21749877929688,
+        513.8419799804688,
+        212.21749877929688
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "country",
+      "section_norm": "country",
+      "index": 1
+    },
+    {
+      "page": 25,
+      "label": "country:",
+      "label_short": "country:",
+      "label_full": "country:",
+      "label_norm": "country",
+      "anchor_x": 339.22449493408203,
+      "anchor_y": 251.73348999023438,
+      "box_rect": [
+        165.24000549316406,
+        242.58099365234375,
+        513.208984375,
+        260.885986328125
+      ],
+      "line_box": [
+        165.24000549316406,
+        251.73348999023438,
+        513.208984375,
+        251.73348999023438
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "country",
+      "section_norm": "country",
+      "index": 2
+    },
+    {
+      "page": 25,
+      "label": "GENERAL INVESTOR INFORMATION – item 1",
+      "label_short": "GENERAL INVESTOR INFORMATION – item 1",
+      "label_full": "",
+      "label_norm": "general investor information – item 1",
+      "anchor_x": 441.46949768066406,
+      "anchor_y": 143.20748901367188,
+      "box_rect": [
+        435.45599365234375,
+        137.1939697265625,
+        447.4830017089844,
+        149.22100830078125
+      ],
+      "line_box": [
+        435.45599365234375,
+        137.1939697265625,
+        447.4830017089844,
+        149.22100830078125
+      ],
+      "placement": "checkbox",
+      "section": "GENERAL INVESTOR INFORMATION",
+      "section_norm": "general investor information",
+      "index": 1
+    },
+    {
+      "page": 25,
+      "label": "GENERAL INVESTOR INFORMATION – item 2: (A) Was the Investor referred to the Fund by a placement agent?\nYes \nNo",
+      "label_short": "GENERAL INVESTOR INFORMATION – item 2",
+      "label_full": "(A) Was the Investor referred to the Fund by a placement agent?\nYes \nNo",
+      "label_norm": "general investor information – item 2 was the investor referred to the fund by a placement agent yes no",
+      "anchor_x": 508.469482421875,
+      "anchor_y": 143.20748901367188,
+      "box_rect": [
+        502.45599365234375,
+        137.1939697265625,
+        514.4829711914062,
+        149.22100830078125
+      ],
+      "line_box": [
+        502.45599365234375,
+        137.1939697265625,
+        514.4829711914062,
+        149.22100830078125
+      ],
+      "placement": "checkbox",
+      "section": "GENERAL INVESTOR INFORMATION",
+      "section_norm": "general investor information",
+      "index": 1
+    },
+    {
+      "page": 25,
+      "label": "country – item 3",
+      "label_short": "country – item 3",
+      "label_full": "",
+      "label_norm": "country – item 3",
+      "anchor_x": 206.4915008544922,
+      "anchor_y": 279.8424835205078,
+      "box_rect": [
+        200.47799682617188,
+        273.8289794921875,
+        212.5050048828125,
+        285.8559875488281
+      ],
+      "line_box": [
+        200.47799682617188,
+        273.8289794921875,
+        212.5050048828125,
+        285.8559875488281
+      ],
+      "placement": "checkbox",
+      "section": "country",
+      "section_norm": "country",
+      "index": 1
+    },
+    {
+      "page": 25,
+      "label": "country – item 4",
+      "label_short": "country – item 4",
+      "label_full": "",
+      "label_norm": "country – item 4",
+      "anchor_x": 266.4725036621094,
+      "anchor_y": 279.8424835205078,
+      "box_rect": [
+        260.4590148925781,
+        273.8289794921875,
+        272.4859924316406,
+        285.8559875488281
+      ],
+      "line_box": [
+        260.4590148925781,
+        273.8289794921875,
+        272.4859924316406,
+        285.8559875488281
+      ],
+      "placement": "checkbox",
+      "section": "country",
+      "section_norm": "country",
+      "index": 1
+    },
+    {
+      "page": 25,
+      "label": "Checklist – item 5: Volcker Rule).",
+      "label_short": "Checklist – item 5",
+      "label_full": "Volcker Rule).",
+      "label_norm": "checklist – item 5 volcker rule",
+      "anchor_x": 206.4915008544922,
+      "anchor_y": 332.8424987792969,
+      "box_rect": [
+        200.47799682617188,
+        326.8290100097656,
+        212.5050048828125,
+        338.8559875488281
+      ],
+      "line_box": [
+        200.47799682617188,
+        326.8290100097656,
+        212.5050048828125,
+        338.8559875488281
+      ],
+      "placement": "checkbox",
+      "section": "(E)",
+      "section_norm": "",
+      "index": 1
+    },
+    {
+      "page": 25,
+      "label": "Checklist – item 6: Volcker Rule).",
+      "label_short": "Checklist – item 6",
+      "label_full": "Volcker Rule).",
+      "label_norm": "checklist – item 6 volcker rule",
+      "anchor_x": 266.4725036621094,
+      "anchor_y": 332.8424987792969,
+      "box_rect": [
+        260.4590148925781,
+        326.8290100097656,
+        272.4859924316406,
+        338.8559875488281
+      ],
+      "line_box": [
+        260.4590148925781,
+        326.8290100097656,
+        272.4859924316406,
+        338.8559875488281
+      ],
+      "placement": "checkbox",
+      "section": "(E)",
+      "section_norm": "",
+      "index": 1
+    },
+    {
+      "page": 25,
+      "label": "If the Investor is a “covered fund”, please complete each of the following – item 7",
+      "label_short": "If the Investor is a “covered fund”, please complete each of the following – item 7",
+      "label_full": "",
+      "label_norm": "if the investor is a “covered fund” please complete each of the following – item 7",
+      "anchor_x": 224.9915008544922,
+      "anchor_y": 392.8424987792969,
+      "box_rect": [
+        218.97799682617188,
+        386.8290100097656,
+        231.0050048828125,
+        398.8559875488281
+      ],
+      "line_box": [
+        218.97799682617188,
+        386.8290100097656,
+        231.0050048828125,
+        398.8559875488281
+      ],
+      "placement": "checkbox",
+      "section": "If the Investor is a “covered fund”, please complete each of the following",
+      "section_norm": "if the investor is a “covered fund” please complete each of the following",
+      "index": 1
+    },
+    {
+      "page": 25,
+      "label": "If the Investor is a “covered fund”, please complete each of the following – item 8",
+      "label_short": "If the Investor is a “covered fund”, please complete each of the following – item 8",
+      "label_full": "",
+      "label_norm": "if the investor is a “covered fund” please complete each of the following – item 8",
+      "anchor_x": 285.9725036621094,
+      "anchor_y": 392.8424987792969,
+      "box_rect": [
+        279.9590148925781,
+        386.8290100097656,
+        291.9859924316406,
+        398.8559875488281
+      ],
+      "line_box": [
+        279.9590148925781,
+        386.8290100097656,
+        291.9859924316406,
+        398.8559875488281
+      ],
+      "placement": "checkbox",
+      "section": "If the Investor is a “covered fund”, please complete each of the following",
+      "section_norm": "if the investor is a “covered fund” please complete each of the following",
+      "index": 1
+    },
+    {
+      "page": 25,
+      "label": "If the Investor is a “covered fund”, please complete each of the following – item 9",
+      "label_short": "If the Investor is a “covered fund”, please complete each of the following – item 9",
+      "label_full": "",
+      "label_norm": "if the investor is a “covered fund” please complete each of the following – item 9",
+      "anchor_x": 224.9915008544922,
+      "anchor_y": 455.8424987792969,
+      "box_rect": [
+        218.97799682617188,
+        449.8290100097656,
+        231.0050048828125,
+        461.8559875488281
+      ],
+      "line_box": [
+        218.97799682617188,
+        449.8290100097656,
+        231.0050048828125,
+        461.8559875488281
+      ],
+      "placement": "checkbox",
+      "section": "If the Investor is a “covered fund”, please complete each of the following",
+      "section_norm": "if the investor is a “covered fund” please complete each of the following",
+      "index": 1
+    },
+    {
+      "page": 25,
+      "label": "If the Investor is a “covered fund”, please complete each of the following – item 10",
+      "label_short": "If the Investor is a “covered fund”, please complete each of the following – item 10",
+      "label_full": "",
+      "label_norm": "if the investor is a “covered fund” please complete each of the following – item 10",
+      "anchor_x": 285.9725036621094,
+      "anchor_y": 455.8424987792969,
+      "box_rect": [
+        279.9590148925781,
+        449.8290100097656,
+        291.9859924316406,
+        461.8559875488281
+      ],
+      "line_box": [
+        279.9590148925781,
+        449.8290100097656,
+        291.9859924316406,
+        461.8559875488281
+      ],
+      "placement": "checkbox",
+      "section": "If the Investor is a “covered fund”, please complete each of the following",
+      "section_norm": "if the investor is a “covered fund” please complete each of the following",
+      "index": 1
+    },
+    {
+      "page": 25,
+      "label": "Checklist – item 11",
+      "label_short": "Checklist – item 11",
+      "label_full": "",
+      "label_norm": "checklist – item 11",
+      "anchor_x": 282.19000244140625,
+      "anchor_y": 556.5450439453125,
+      "box_rect": [
+        276.2099914550781,
+        550.5650634765625,
+        288.1700134277344,
+        562.5250244140625
+      ],
+      "line_box": [
+        276.2099914550781,
+        550.5650634765625,
+        288.1700134277344,
+        562.5250244140625
+      ],
+      "placement": "checkbox",
+      "section": "(A)",
+      "section_norm": "",
+      "index": 1
+    },
+    {
+      "page": 25,
+      "label": "Checklist – item 12: Yes \n \nNo",
+      "label_short": "Checklist – item 12",
+      "label_full": "Yes \n \nNo",
+      "label_norm": "checklist – item 12 yes no",
+      "anchor_x": 350.31800842285156,
+      "anchor_y": 556.5450439453125,
+      "box_rect": [
+        344.3380126953125,
+        550.5650634765625,
+        356.2980041503906,
+        562.5250244140625
+      ],
+      "line_box": [
+        344.3380126953125,
+        550.5650634765625,
+        356.2980041503906,
+        562.5250244140625
+      ],
+      "placement": "checkbox",
+      "section": "(A)",
+      "section_norm": "",
+      "index": 1
+    },
+    {
+      "page": 25,
+      "label": "GENERAL INVESTOR INFORMATION – item 1",
+      "label_short": "GENERAL INVESTOR INFORMATION – item 1",
+      "label_full": "",
+      "label_norm": "general investor information – item 1",
+      "anchor_x": 441.46949768066406,
+      "anchor_y": 143.20748901367188,
+      "box_rect": [
+        434.95599365234375,
+        136.6939697265625,
+        447.9830017089844,
+        149.72100830078125
+      ],
+      "line_box": [
+        434.95599365234375,
+        136.6939697265625,
+        447.9830017089844,
+        149.72100830078125
+      ],
+      "placement": "checkbox",
+      "section": "GENERAL INVESTOR INFORMATION",
+      "section_norm": "general investor information",
+      "index": 2
+    },
+    {
+      "page": 25,
+      "label": "GENERAL INVESTOR INFORMATION – item 2: (A) Was the Investor referred to the Fund by a placement agent?\nYes \nNo",
+      "label_short": "GENERAL INVESTOR INFORMATION – item 2",
+      "label_full": "(A) Was the Investor referred to the Fund by a placement agent?\nYes \nNo",
+      "label_norm": "general investor information – item 2 was the investor referred to the fund by a placement agent yes no",
+      "anchor_x": 508.469482421875,
+      "anchor_y": 143.20748901367188,
+      "box_rect": [
+        501.95599365234375,
+        136.6939697265625,
+        514.9829711914062,
+        149.72100830078125
+      ],
+      "line_box": [
+        501.95599365234375,
+        136.6939697265625,
+        514.9829711914062,
+        149.72100830078125
+      ],
+      "placement": "checkbox",
+      "section": "GENERAL INVESTOR INFORMATION",
+      "section_norm": "general investor information",
+      "index": 2
+    },
+    {
+      "page": 25,
+      "label": "country – item 3",
+      "label_short": "country – item 3",
+      "label_full": "",
+      "label_norm": "country – item 3",
+      "anchor_x": 206.4915008544922,
+      "anchor_y": 279.8424835205078,
+      "box_rect": [
+        199.97799682617188,
+        273.3289794921875,
+        213.0050048828125,
+        286.3559875488281
+      ],
+      "line_box": [
+        199.97799682617188,
+        273.3289794921875,
+        213.0050048828125,
+        286.3559875488281
+      ],
+      "placement": "checkbox",
+      "section": "country",
+      "section_norm": "country",
+      "index": 2
+    },
+    {
+      "page": 25,
+      "label": "country – item 4",
+      "label_short": "country – item 4",
+      "label_full": "",
+      "label_norm": "country – item 4",
+      "anchor_x": 266.4725036621094,
+      "anchor_y": 279.8424835205078,
+      "box_rect": [
+        259.9590148925781,
+        273.3289794921875,
+        272.9859924316406,
+        286.3559875488281
+      ],
+      "line_box": [
+        259.9590148925781,
+        273.3289794921875,
+        272.9859924316406,
+        286.3559875488281
+      ],
+      "placement": "checkbox",
+      "section": "country",
+      "section_norm": "country",
+      "index": 2
+    },
+    {
+      "page": 25,
+      "label": "Checklist – item 5: Volcker Rule).",
+      "label_short": "Checklist – item 5",
+      "label_full": "Volcker Rule).",
+      "label_norm": "checklist – item 5 volcker rule",
+      "anchor_x": 206.4915008544922,
+      "anchor_y": 332.8424987792969,
+      "box_rect": [
+        199.97799682617188,
+        326.3290100097656,
+        213.0050048828125,
+        339.3559875488281
+      ],
+      "line_box": [
+        199.97799682617188,
+        326.3290100097656,
+        213.0050048828125,
+        339.3559875488281
+      ],
+      "placement": "checkbox",
+      "section": "(E)",
+      "section_norm": "",
+      "index": 2
+    },
+    {
+      "page": 25,
+      "label": "Checklist – item 6: Volcker Rule).",
+      "label_short": "Checklist – item 6",
+      "label_full": "Volcker Rule).",
+      "label_norm": "checklist – item 6 volcker rule",
+      "anchor_x": 266.4725036621094,
+      "anchor_y": 332.8424987792969,
+      "box_rect": [
+        259.9590148925781,
+        326.3290100097656,
+        272.9859924316406,
+        339.3559875488281
+      ],
+      "line_box": [
+        259.9590148925781,
+        326.3290100097656,
+        272.9859924316406,
+        339.3559875488281
+      ],
+      "placement": "checkbox",
+      "section": "(E)",
+      "section_norm": "",
+      "index": 2
+    },
+    {
+      "page": 25,
+      "label": "If the Investor is a “covered fund”, please complete each of the following – item 7",
+      "label_short": "If the Investor is a “covered fund”, please complete each of the following – item 7",
+      "label_full": "",
+      "label_norm": "if the investor is a “covered fund” please complete each of the following – item 7",
+      "anchor_x": 224.9915008544922,
+      "anchor_y": 392.8424987792969,
+      "box_rect": [
+        218.47799682617188,
+        386.3290100097656,
+        231.5050048828125,
+        399.3559875488281
+      ],
+      "line_box": [
+        218.47799682617188,
+        386.3290100097656,
+        231.5050048828125,
+        399.3559875488281
+      ],
+      "placement": "checkbox",
+      "section": "If the Investor is a “covered fund”, please complete each of the following",
+      "section_norm": "if the investor is a “covered fund” please complete each of the following",
+      "index": 2
+    },
+    {
+      "page": 25,
+      "label": "If the Investor is a “covered fund”, please complete each of the following – item 8",
+      "label_short": "If the Investor is a “covered fund”, please complete each of the following – item 8",
+      "label_full": "",
+      "label_norm": "if the investor is a “covered fund” please complete each of the following – item 8",
+      "anchor_x": 285.9725036621094,
+      "anchor_y": 392.8424987792969,
+      "box_rect": [
+        279.4590148925781,
+        386.3290100097656,
+        292.4859924316406,
+        399.3559875488281
+      ],
+      "line_box": [
+        279.4590148925781,
+        386.3290100097656,
+        292.4859924316406,
+        399.3559875488281
+      ],
+      "placement": "checkbox",
+      "section": "If the Investor is a “covered fund”, please complete each of the following",
+      "section_norm": "if the investor is a “covered fund” please complete each of the following",
+      "index": 2
+    },
+    {
+      "page": 25,
+      "label": "If the Investor is a “covered fund”, please complete each of the following – item 9",
+      "label_short": "If the Investor is a “covered fund”, please complete each of the following – item 9",
+      "label_full": "",
+      "label_norm": "if the investor is a “covered fund” please complete each of the following – item 9",
+      "anchor_x": 224.9915008544922,
+      "anchor_y": 455.8424987792969,
+      "box_rect": [
+        218.47799682617188,
+        449.3290100097656,
+        231.5050048828125,
+        462.3559875488281
+      ],
+      "line_box": [
+        218.47799682617188,
+        449.3290100097656,
+        231.5050048828125,
+        462.3559875488281
+      ],
+      "placement": "checkbox",
+      "section": "If the Investor is a “covered fund”, please complete each of the following",
+      "section_norm": "if the investor is a “covered fund” please complete each of the following",
+      "index": 2
+    },
+    {
+      "page": 25,
+      "label": "If the Investor is a “covered fund”, please complete each of the following – item 10",
+      "label_short": "If the Investor is a “covered fund”, please complete each of the following – item 10",
+      "label_full": "",
+      "label_norm": "if the investor is a “covered fund” please complete each of the following – item 10",
+      "anchor_x": 285.9725036621094,
+      "anchor_y": 455.8424987792969,
+      "box_rect": [
+        279.4590148925781,
+        449.3290100097656,
+        292.4859924316406,
+        462.3559875488281
+      ],
+      "line_box": [
+        279.4590148925781,
+        449.3290100097656,
+        292.4859924316406,
+        462.3559875488281
+      ],
+      "placement": "checkbox",
+      "section": "If the Investor is a “covered fund”, please complete each of the following",
+      "section_norm": "if the investor is a “covered fund” please complete each of the following",
+      "index": 2
+    },
+    {
+      "page": 25,
+      "label": "Checklist – item 11",
+      "label_short": "Checklist – item 11",
+      "label_full": "",
+      "label_norm": "checklist – item 11",
+      "anchor_x": 282.19000244140625,
+      "anchor_y": 556.5450134277344,
+      "box_rect": [
+        275.7099914550781,
+        550.0650024414062,
+        288.6700134277344,
+        563.0250244140625
+      ],
+      "line_box": [
+        275.7099914550781,
+        550.0650024414062,
+        288.6700134277344,
+        563.0250244140625
+      ],
+      "placement": "checkbox",
+      "section": "(A)",
+      "section_norm": "",
+      "index": 2
+    },
+    {
+      "page": 25,
+      "label": "Checklist – item 12: Yes \n \nNo",
+      "label_short": "Checklist – item 12",
+      "label_full": "Yes \n \nNo",
+      "label_norm": "checklist – item 12 yes no",
+      "anchor_x": 350.31800842285156,
+      "anchor_y": 556.5450134277344,
+      "box_rect": [
+        343.8380126953125,
+        550.0650024414062,
+        356.7980041503906,
+        563.0250244140625
+      ],
+      "line_box": [
+        343.8380126953125,
+        550.0650024414062,
+        356.7980041503906,
+        563.0250244140625
+      ],
+      "placement": "checkbox",
+      "section": "(A)",
+      "section_norm": "",
+      "index": 2
+    },
+    {
+      "page": 25,
+      "label": "If yes, please provide name of placement agent:",
+      "label_short": "If yes, please provide name of placement agent:",
+      "label_full": "If yes, please provide name of placement agent:",
+      "label_norm": "if yes please provide name of placement agent",
+      "anchor_x": 430.7539978027344,
+      "anchor_y": 170.68099975585938,
+      "box_rect": [
+        339.38800048828125,
+        161.02899169921875,
+        522.1199951171875,
+        180.3330078125
+      ],
+      "line_box": [
+        339.38800048828125,
+        161.02899169921875,
+        522.1199951171875,
+        180.3330078125
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "If yes, please provide name of placement agent",
+      "section_norm": "if yes please provide name of placement agent",
+      "index": 1
+    },
+    {
+      "page": 25,
+      "label": "country:",
+      "label_short": "country:",
+      "label_full": "country:",
+      "label_norm": "country",
+      "anchor_x": 339.8574905395508,
+      "anchor_y": 212.21749877929688,
+      "box_rect": [
+        165.3730010986328,
+        202.56500244140625,
+        514.3419799804688,
+        221.8699951171875
+      ],
+      "line_box": [
+        165.3730010986328,
+        202.56500244140625,
+        514.3419799804688,
+        221.8699951171875
+      ],
+      "placement": "acro_choice",
+      "choices": [
+        "",
+        "United States",
+        "Afghanistan",
+        "Aland Islands",
+        "Albania",
+        "Algeria",
+        "American Samoa",
+        "Andorra",
+        "Angola",
+        "Anguilla",
+        "Antarctica",
+        "Antigua And Barbuda",
+        "Argentina",
+        "Armenia",
+        "Aruba",
+        "Australia",
+        "Austria",
+        "Azerbaijan",
+        "Bahamas",
+        "Bahrain",
+        "Bangladesh",
+        "Barbados",
+        "Belarus",
+        "Belgium",
+        "Belize",
+        "Benin",
+        "Bermuda",
+        "Bhutan",
+        "Bolivia",
+        "Bonaire, Saint Eustatius And Saba",
+        "Bosnia And Herzegovina",
+        "Botswana",
+        "Bouvet Island",
+        "Brazil",
+        "British Indian Ocean Territory",
+        "Brunei Darussalam",
+        "Bulgaria",
+        "Burkina Faso",
+        "Burundi",
+        "Cambodia",
+        "Cameroon",
+        "Canada",
+        "Cape Verde",
+        "Cayman Islands",
+        "Central African Republic",
+        "Chad",
+        "Chile",
+        "Christmas Island",
+        "Cocos (keeling) Islands",
+        "Colombia",
+        "Comoros",
+        "Congo",
+        "Congo, The Democratic Republic Of The",
+        "Cook Islands",
+        "Costa Rica",
+        "Cote D'ivoire",
+        "Croatia",
+        "Cuba",
+        "Curacao",
+        "Cyprus",
+        "Czech Republic",
+        "Democratic Republic Of Timor-Leste",
+        "Denmark",
+        "Djibouti",
+        "Dominica",
+        "Dominican Republic",
+        "Ecuador",
+        "Egypt",
+        "El Salvador",
+        "Equatorial Guinea",
+        "Eritrea",
+        "Estonia",
+        "Ethiopia",
+        "Falkland Islands",
+        "Faroe Islands",
+        "Fiji",
+        "Finland",
+        "France",
+        "France, Metropolitan",
+        "French Guiana",
+        "French Polynesia",
+        "French Southern Territories",
+        "Gabon",
+        "Gambia",
+        "Georgia",
+        "Germany",
+        "Ghana",
+        "Gibraltar",
+        "Greece",
+        "Greenland",
+        "Grenada",
+        "Guadeloupe",
+        "Guam",
+        "Guatemala",
+        "Guernsey",
+        "Guinea",
+        "Guinea-Bissau",
+        "Guyana",
+        "Haiti",
+        "Heard Island And Mcdonald Islands",
+        "Holy See (vatican City State)",
+        "Honduras",
+        "Hong Kong",
+        "Hungary",
+        "Iceland",
+        "India",
+        "Indonesia",
+        "Iran, Islamic Republic Of",
+        "Iraq",
+        "Ireland",
+        "Isle Of Man",
+        "Israel",
+        "Italy",
+        "Jamaica",
+        "Japan",
+        "Jersey",
+        "Jordan",
+        "Kazakhstan",
+        "Kenya",
+        "Kiribati",
+        "Korea, Democratic People's Republic Of",
+        "Korea, Republic Of",
+        "Kosovo",
+        "Kuwait",
+        "Kyrgyzstan",
+        "Lao People's Democratic Republic",
+        "Latvia",
+        "Lebanon",
+        "Lesotho",
+        "Liberia",
+        "Libya - Libyan Arab Jamahiriya",
+        "Liechtenstein",
+        "Lithuania",
+        "Luxembourg",
+        "Macau",
+        "Macedonia, The Former Yugoslav Republic Of",
+        "Madagascar",
+        "Malawi",
+        "Malaysia",
+        "Maldives",
+        "Mali",
+        "Malta",
+        "Marshall Islands",
+        "Martinique",
+        "Mauritania",
+        "Mauritius",
+        "Mayotte",
+        "Mexico",
+        "Micronesia, Federated States Of",
+        "Moldova, Republic Of",
+        "Monaco",
+        "Mongolia",
+        "Montenegro",
+        "Montserrat",
+        "Morocco",
+        "Mozambique",
+        "Myanmar",
+        "Namibia",
+        "Nauru",
+        "Nepal",
+        "Netherlands",
+        "Netherlands Antilles",
+        "New Caledonia",
+        "New Zealand",
+        "Nicaragua",
+        "Niger",
+        "Nigeria",
+        "Niue",
+        "Norfolk Island",
+        "Northern Mariana Islands",
+        "Norway",
+        "Oman",
+        "Pakistan",
+        "Palau",
+        "Palestine, State Of",
+        "Panama",
+        "Papua New Guinea",
+        "Paraguay",
+        "Peru",
+        "Philippines",
+        "Pitcairn",
+        "Poland",
+        "Portugal",
+        "Puerto Rico",
+        "Qatar",
+        "Reunion",
+        "Romania",
+        "Russian Federation",
+        "Rwanda",
+        "Saint Barthelemy",
+        "Saint Helena",
+        "Saint Kitts And Nevis",
+        "Saint Lucia",
+        "Saint Martin (french Part)",
+        "Saint Pierre And Miquelon",
+        "Saint Vincent And The Grenadines",
+        "Samoa",
+        "San Marino",
+        "Sao Tome And Principe",
+        "Saudi Arabia",
+        "Senegal",
+        "Serbia",
+        "Serbia And Montenegro",
+        "Seychelles",
+        "Sierra Leone",
+        "Singapore",
+        "Sint Maarten (dutch Part)",
+        "Slovakia",
+        "Slovenia",
+        "Solomon Islands",
+        "Somalia",
+        "South Africa",
+        "South Georgia And The South Sandwich Islands",
+        "South Sudan",
+        "Spain",
+        "Sri Lanka",
+        "Sudan",
+        "Suriname",
+        "Svalbard And Jan Mayen",
+        "Swaziland",
+        "Sweden",
+        "Switzerland",
+        "Syrian Arab Republic",
+        "Taiwan",
+        "Tajikistan",
+        "Tanzania, United Republic Of",
+        "Thailand",
+        "The People's Republic Of China",
+        "Togo",
+        "Tokelau",
+        "Tonga",
+        "Trinidad And Tobago",
+        "Tunisia",
+        "Turkey",
+        "Turkmenistan",
+        "Turks And Caicos Islands",
+        "Tuvalu",
+        "Uganda",
+        "Ukraine",
+        "United Arab Emirates",
+        "United Kingdom",
+        "undefined",
+        "United States Minor Outlying Islands",
+        "Uruguay",
+        "Uzbekistan",
+        "Vanuatu",
+        "Venezuela",
+        "Viet Nam",
+        "Virgin Islands, British",
+        "Virgin Islands, U.s.",
+        "Wallis And Futuna",
+        "Western Sahara",
+        "Yemen",
+        "Zambia",
+        "Zimbabwe"
+      ],
+      "section": "country",
+      "section_norm": "country",
+      "index": 3
+    },
+    {
+      "page": 25,
+      "label": "country:",
+      "label_short": "country:",
+      "label_full": "country:",
+      "label_norm": "country",
+      "anchor_x": 339.22449493408203,
+      "anchor_y": 251.73348999023438,
+      "box_rect": [
+        164.74000549316406,
+        242.08099365234375,
+        513.708984375,
+        261.385986328125
+      ],
+      "line_box": [
+        164.74000549316406,
+        242.08099365234375,
+        513.708984375,
+        261.385986328125
+      ],
+      "placement": "acro_choice",
+      "choices": [
+        "",
+        "United States",
+        "Afghanistan",
+        "Aland Islands",
+        "Albania",
+        "Algeria",
+        "American Samoa",
+        "Andorra",
+        "Angola",
+        "Anguilla",
+        "Antarctica",
+        "Antigua And Barbuda",
+        "Argentina",
+        "Armenia",
+        "Aruba",
+        "Australia",
+        "Austria",
+        "Azerbaijan",
+        "Bahamas",
+        "Bahrain",
+        "Bangladesh",
+        "Barbados",
+        "Belarus",
+        "Belgium",
+        "Belize",
+        "Benin",
+        "Bermuda",
+        "Bhutan",
+        "Bolivia",
+        "Bonaire, Saint Eustatius And Saba",
+        "Bosnia And Herzegovina",
+        "Botswana",
+        "Bouvet Island",
+        "Brazil",
+        "British Indian Ocean Territory",
+        "Brunei Darussalam",
+        "Bulgaria",
+        "Burkina Faso",
+        "Burundi",
+        "Cambodia",
+        "Cameroon",
+        "Canada",
+        "Cape Verde",
+        "Cayman Islands",
+        "Central African Republic",
+        "Chad",
+        "Chile",
+        "Christmas Island",
+        "Cocos (keeling) Islands",
+        "Colombia",
+        "Comoros",
+        "Congo",
+        "Congo, The Democratic Republic Of The",
+        "Cook Islands",
+        "Costa Rica",
+        "Cote D'ivoire",
+        "Croatia",
+        "Cuba",
+        "Curacao",
+        "Cyprus",
+        "Czech Republic",
+        "Democratic Republic Of Timor-Leste",
+        "Denmark",
+        "Djibouti",
+        "Dominica",
+        "Dominican Republic",
+        "Ecuador",
+        "Egypt",
+        "El Salvador",
+        "Equatorial Guinea",
+        "Eritrea",
+        "Estonia",
+        "Ethiopia",
+        "Falkland Islands",
+        "Faroe Islands",
+        "Fiji",
+        "Finland",
+        "France",
+        "France, Metropolitan",
+        "French Guiana",
+        "French Polynesia",
+        "French Southern Territories",
+        "Gabon",
+        "Gambia",
+        "Georgia",
+        "Germany",
+        "Ghana",
+        "Gibraltar",
+        "Greece",
+        "Greenland",
+        "Grenada",
+        "Guadeloupe",
+        "Guam",
+        "Guatemala",
+        "Guernsey",
+        "Guinea",
+        "Guinea-Bissau",
+        "Guyana",
+        "Haiti",
+        "Heard Island And Mcdonald Islands",
+        "Holy See (vatican City State)",
+        "Honduras",
+        "Hong Kong",
+        "Hungary",
+        "Iceland",
+        "India",
+        "Indonesia",
+        "Iran, Islamic Republic Of",
+        "Iraq",
+        "Ireland",
+        "Isle Of Man",
+        "Israel",
+        "Italy",
+        "Jamaica",
+        "Japan",
+        "Jersey",
+        "Jordan",
+        "Kazakhstan",
+        "Kenya",
+        "Kiribati",
+        "Korea, Democratic People's Republic Of",
+        "Korea, Republic Of",
+        "Kosovo",
+        "Kuwait",
+        "Kyrgyzstan",
+        "Lao People's Democratic Republic",
+        "Latvia",
+        "Lebanon",
+        "Lesotho",
+        "Liberia",
+        "Libya - Libyan Arab Jamahiriya",
+        "Liechtenstein",
+        "Lithuania",
+        "Luxembourg",
+        "Macau",
+        "Macedonia, The Former Yugoslav Republic Of",
+        "Madagascar",
+        "Malawi",
+        "Malaysia",
+        "Maldives",
+        "Mali",
+        "Malta",
+        "Marshall Islands",
+        "Martinique",
+        "Mauritania",
+        "Mauritius",
+        "Mayotte",
+        "Mexico",
+        "Micronesia, Federated States Of",
+        "Moldova, Republic Of",
+        "Monaco",
+        "Mongolia",
+        "Montenegro",
+        "Montserrat",
+        "Morocco",
+        "Mozambique",
+        "Myanmar",
+        "Namibia",
+        "Nauru",
+        "Nepal",
+        "Netherlands",
+        "Netherlands Antilles",
+        "New Caledonia",
+        "New Zealand",
+        "Nicaragua",
+        "Niger",
+        "Nigeria",
+        "Niue",
+        "Norfolk Island",
+        "Northern Mariana Islands",
+        "Norway",
+        "Oman",
+        "Pakistan",
+        "Palau",
+        "Palestine, State Of",
+        "Panama",
+        "Papua New Guinea",
+        "Paraguay",
+        "Peru",
+        "Philippines",
+        "Pitcairn",
+        "Poland",
+        "Portugal",
+        "Puerto Rico",
+        "Qatar",
+        "Reunion",
+        "Romania",
+        "Russian Federation",
+        "Rwanda",
+        "Saint Barthelemy",
+        "Saint Helena",
+        "Saint Kitts And Nevis",
+        "Saint Lucia",
+        "Saint Martin (french Part)",
+        "Saint Pierre And Miquelon",
+        "Saint Vincent And The Grenadines",
+        "Samoa",
+        "San Marino",
+        "Sao Tome And Principe",
+        "Saudi Arabia",
+        "Senegal",
+        "Serbia",
+        "Serbia And Montenegro",
+        "Seychelles",
+        "Sierra Leone",
+        "Singapore",
+        "Sint Maarten (dutch Part)",
+        "Slovakia",
+        "Slovenia",
+        "Solomon Islands",
+        "Somalia",
+        "South Africa",
+        "South Georgia And The South Sandwich Islands",
+        "South Sudan",
+        "Spain",
+        "Sri Lanka",
+        "Sudan",
+        "Suriname",
+        "Svalbard And Jan Mayen",
+        "Swaziland",
+        "Sweden",
+        "Switzerland",
+        "Syrian Arab Republic",
+        "Taiwan",
+        "Tajikistan",
+        "Tanzania, United Republic Of",
+        "Thailand",
+        "The People's Republic Of China",
+        "Togo",
+        "Tokelau",
+        "Tonga",
+        "Trinidad And Tobago",
+        "Tunisia",
+        "Turkey",
+        "Turkmenistan",
+        "Turks And Caicos Islands",
+        "Tuvalu",
+        "Uganda",
+        "Ukraine",
+        "United Arab Emirates",
+        "United Kingdom",
+        "undefined",
+        "United States Minor Outlying Islands",
+        "Uruguay",
+        "Uzbekistan",
+        "Vanuatu",
+        "Venezuela",
+        "Viet Nam",
+        "Virgin Islands, British",
+        "Virgin Islands, U.s.",
+        "Wallis And Futuna",
+        "Western Sahara",
+        "Yemen",
+        "Zambia",
+        "Zimbabwe"
+      ],
+      "section": "country",
+      "section_norm": "country",
+      "index": 4
+    },
+    {
+      "page": 25,
+      "label": "22",
+      "label_short": "22",
+      "label_full": "22",
+      "label_norm": "22",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 25,
+      "label": "Stamp_Page_25",
+      "label_short": "Stamp_Page_25",
+      "label_full": "Stamp_Page_25",
+      "label_norm": "stamppage25",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 26,
+      "label": "Checklist – item 1",
+      "label_short": "Checklist – item 1",
+      "label_full": "",
+      "label_norm": "checklist – item 1",
+      "anchor_x": 147.5989990234375,
+      "anchor_y": 129.88299560546875,
+      "box_rect": [
+        141.61900329589844,
+        123.8690185546875,
+        153.57899475097656,
+        135.89697265625
+      ],
+      "line_box": [
+        141.61900329589844,
+        123.8690185546875,
+        153.57899475097656,
+        135.89697265625
+      ],
+      "placement": "checkbox",
+      "section": "(B)",
+      "section_norm": "",
+      "index": 1
+    },
+    {
+      "page": 26,
+      "label": "Checklist – item 2: Not applicable.",
+      "label_short": "Checklist – item 2",
+      "label_full": "Not applicable.",
+      "label_norm": "checklist – item 2 not applicable",
+      "anchor_x": 147.5989990234375,
+      "anchor_y": 280.9660186767578,
+      "box_rect": [
+        141.61900329589844,
+        274.9520263671875,
+        153.57899475097656,
+        286.9800109863281
+      ],
+      "line_box": [
+        141.61900329589844,
+        274.9520263671875,
+        153.57899475097656,
+        286.9800109863281
+      ],
+      "placement": "checkbox",
+      "section": "(B)",
+      "section_norm": "",
+      "index": 1
+    },
+    {
+      "page": 26,
+      "label": "Checklist – item 3: 1. \nThe undersigned represents and warrants that the Investor is a “professional \ninvestor” (within the meaning of AIFMD) because it is any of the following",
+      "label_short": "Checklist – item 3",
+      "label_full": "1. \nThe undersigned represents and warrants that the Investor is a “professional \ninvestor” (within the meaning of AIFMD) because it is any of the following:",
+      "label_norm": "checklist – item 3 1 the undersigned represents and warrants that the investor is a “professional investor” because it is any of the following",
+      "anchor_x": 147.94200134277344,
+      "anchor_y": 456.32899475097656,
+      "box_rect": [
+        141.96200561523438,
+        450.3489990234375,
+        153.9219970703125,
+        462.3089904785156
+      ],
+      "line_box": [
+        141.96200561523438,
+        450.3489990234375,
+        153.9219970703125,
+        462.3089904785156
+      ],
+      "placement": "checkbox",
+      "section": "(C)",
+      "section_norm": "",
+      "index": 1
+    },
+    {
+      "page": 26,
+      "label": "Checklist – item 1",
+      "label_short": "Checklist – item 1",
+      "label_full": "",
+      "label_norm": "checklist – item 1",
+      "anchor_x": 147.5989990234375,
+      "anchor_y": 129.88299560546875,
+      "box_rect": [
+        141.11900329589844,
+        123.3690185546875,
+        154.07899475097656,
+        136.39697265625
+      ],
+      "line_box": [
+        141.11900329589844,
+        123.3690185546875,
+        154.07899475097656,
+        136.39697265625
+      ],
+      "placement": "checkbox",
+      "section": "(B)",
+      "section_norm": "",
+      "index": 2
+    },
+    {
+      "page": 26,
+      "label": "Checklist – item 2: Not applicable.",
+      "label_short": "Checklist – item 2",
+      "label_full": "Not applicable.",
+      "label_norm": "checklist – item 2 not applicable",
+      "anchor_x": 147.5989990234375,
+      "anchor_y": 280.9660186767578,
+      "box_rect": [
+        141.11900329589844,
+        274.4520263671875,
+        154.07899475097656,
+        287.4800109863281
+      ],
+      "line_box": [
+        141.11900329589844,
+        274.4520263671875,
+        154.07899475097656,
+        287.4800109863281
+      ],
+      "placement": "checkbox",
+      "section": "(B)",
+      "section_norm": "",
+      "index": 2
+    },
+    {
+      "page": 26,
+      "label": "Checklist – item 3: 1. \nThe undersigned represents and warrants that the Investor is a “professional \ninvestor” (within the meaning of AIFMD) because it is any of the following",
+      "label_short": "Checklist – item 3",
+      "label_full": "1. \nThe undersigned represents and warrants that the Investor is a “professional \ninvestor” (within the meaning of AIFMD) because it is any of the following:",
+      "label_norm": "checklist – item 3 1 the undersigned represents and warrants that the investor is a “professional investor” because it is any of the following",
+      "anchor_x": 147.94200134277344,
+      "anchor_y": 456.32899475097656,
+      "box_rect": [
+        141.46200561523438,
+        449.8489990234375,
+        154.4219970703125,
+        462.8089904785156
+      ],
+      "line_box": [
+        141.46200561523438,
+        449.8489990234375,
+        154.4219970703125,
+        462.8089904785156
+      ],
+      "placement": "checkbox",
+      "section": "(C)",
+      "section_norm": "",
+      "index": 2
+    },
+    {
+      "page": 26,
+      "label": "23",
+      "label_short": "23",
+      "label_full": "23",
+      "label_norm": "23",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 26,
+      "label": "Stamp_Page_26",
+      "label_short": "Stamp_Page_26",
+      "label_full": "Stamp_Page_26",
+      "label_norm": "stamppage26",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 27,
+      "label": "G ENERAL E LIGIBILITY R EPRESENTATIONS – item 1: 2. \nThe undersigned cannot check Item 1 above but wishes to be treated as a \n“professional investor” (within the meaning of AIFMD) by the Investment \nManager in respect of the Investor’s investment in the Fund.",
+      "label_short": "G ENERAL E LIGIBILITY R EPRESENTATIONS – item 1",
+      "label_full": "2. \nThe undersigned cannot check Item 1 above but wishes to be treated as a \n“professional investor” (within the meaning of AIFMD) by the Investment \nManager in respect of the Investor’s investment in the Fund.",
+      "label_norm": "g eneral e ligibility r epresentations – item 1 2 the undersigned cannot check item 1 above but wishes to be treated as a “professional investor” by the investment manager in respect of the investor’s investment in the fund",
+      "anchor_x": 146.05699920654297,
+      "anchor_y": 142.06900024414062,
+      "box_rect": [
+        140.07699584960938,
+        136.05499267578125,
+        152.03700256347656,
+        148.0830078125
+      ],
+      "line_box": [
+        140.07699584960938,
+        136.05499267578125,
+        152.03700256347656,
+        148.0830078125
+      ],
+      "placement": "checkbox",
+      "section": "G ENERAL E LIGIBILITY R EPRESENTATIONS",
+      "section_norm": "g eneral e ligibility r epresentations",
+      "index": 1
+    },
+    {
+      "page": 27,
+      "label": "If the undersigned checked this Item, please check one of the following – item 2",
+      "label_short": "If the undersigned checked this Item, please check one of the following – item 2",
+      "label_full": "",
+      "label_norm": "if the undersigned checked this item please check one of the following – item 2",
+      "anchor_x": 231.8270034790039,
+      "anchor_y": 204.51998901367188,
+      "box_rect": [
+        225.8470001220703,
+        198.5059814453125,
+        237.8070068359375,
+        210.53399658203125
+      ],
+      "line_box": [
+        225.8470001220703,
+        198.5059814453125,
+        237.8070068359375,
+        210.53399658203125
+      ],
+      "placement": "checkbox",
+      "section": "If the undersigned checked this Item, please check one of the following",
+      "section_norm": "if the undersigned checked this item please check one of the following",
+      "index": 1
+    },
+    {
+      "page": 27,
+      "label": "If the undersigned checked this Item, please check one of the following – item 3",
+      "label_short": "If the undersigned checked this Item, please check one of the following – item 3",
+      "label_full": "",
+      "label_norm": "if the undersigned checked this item please check one of the following – item 3",
+      "anchor_x": 231.8270034790039,
+      "anchor_y": 399.2949981689453,
+      "box_rect": [
+        225.8470001220703,
+        393.281005859375,
+        237.8070068359375,
+        405.3089904785156
+      ],
+      "line_box": [
+        225.8470001220703,
+        393.281005859375,
+        237.8070068359375,
+        405.3089904785156
+      ],
+      "placement": "checkbox",
+      "section": "If the undersigned checked this Item, please check one of the following",
+      "section_norm": "if the undersigned checked this item please check one of the following",
+      "index": 1
+    },
+    {
+      "page": 27,
+      "label": "G ENERAL E LIGIBILITY R EPRESENTATIONS – item 1: 2. \nThe undersigned cannot check Item 1 above but wishes to be treated as a \n“professional investor” (within the meaning of AIFMD) by the Investment \nManager in respect of the Investor’s investment in the Fund.",
+      "label_short": "G ENERAL E LIGIBILITY R EPRESENTATIONS – item 1",
+      "label_full": "2. \nThe undersigned cannot check Item 1 above but wishes to be treated as a \n“professional investor” (within the meaning of AIFMD) by the Investment \nManager in respect of the Investor’s investment in the Fund.",
+      "label_norm": "g eneral e ligibility r epresentations – item 1 2 the undersigned cannot check item 1 above but wishes to be treated as a “professional investor” by the investment manager in respect of the investor’s investment in the fund",
+      "anchor_x": 146.05699920654297,
+      "anchor_y": 142.06900024414062,
+      "box_rect": [
+        139.57699584960938,
+        135.55499267578125,
+        152.53700256347656,
+        148.5830078125
+      ],
+      "line_box": [
+        139.57699584960938,
+        135.55499267578125,
+        152.53700256347656,
+        148.5830078125
+      ],
+      "placement": "checkbox",
+      "section": "G ENERAL E LIGIBILITY R EPRESENTATIONS",
+      "section_norm": "g eneral e ligibility r epresentations",
+      "index": 2
+    },
+    {
+      "page": 27,
+      "label": "If the undersigned checked this Item, please check one of the following – item 2",
+      "label_short": "If the undersigned checked this Item, please check one of the following – item 2",
+      "label_full": "",
+      "label_norm": "if the undersigned checked this item please check one of the following – item 2",
+      "anchor_x": 231.8270034790039,
+      "anchor_y": 204.51998901367188,
+      "box_rect": [
+        225.3470001220703,
+        198.0059814453125,
+        238.3070068359375,
+        211.03399658203125
+      ],
+      "line_box": [
+        225.3470001220703,
+        198.0059814453125,
+        238.3070068359375,
+        211.03399658203125
+      ],
+      "placement": "checkbox",
+      "section": "If the undersigned checked this Item, please check one of the following",
+      "section_norm": "if the undersigned checked this item please check one of the following",
+      "index": 2
+    },
+    {
+      "page": 27,
+      "label": "If the undersigned checked this Item, please check one of the following – item 3",
+      "label_short": "If the undersigned checked this Item, please check one of the following – item 3",
+      "label_full": "",
+      "label_norm": "if the undersigned checked this item please check one of the following – item 3",
+      "anchor_x": 231.8270034790039,
+      "anchor_y": 399.2949981689453,
+      "box_rect": [
+        225.3470001220703,
+        392.781005859375,
+        238.3070068359375,
+        405.8089904785156
+      ],
+      "line_box": [
+        225.3470001220703,
+        392.781005859375,
+        238.3070068359375,
+        405.8089904785156
+      ],
+      "placement": "checkbox",
+      "section": "If the undersigned checked this Item, please check one of the following",
+      "section_norm": "if the undersigned checked this item please check one of the following",
+      "index": 2
+    },
+    {
+      "page": 27,
+      "label": "24",
+      "label_short": "24",
+      "label_full": "24",
+      "label_norm": "24",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 27,
+      "label": "Stamp_Page_27",
+      "label_short": "Stamp_Page_27",
+      "label_full": "Stamp_Page_27",
+      "label_norm": "stamppage27",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 28,
+      "label": "25",
+      "label_short": "25",
+      "label_full": "25",
+      "label_norm": "25",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 28,
+      "label": "Stamp_Page_28",
+      "label_short": "Stamp_Page_28",
+      "label_full": "Stamp_Page_28",
+      "label_norm": "stamppage28",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 29,
+      "label": "IN WITNESS WHEREOF, the undersigned has executed this Subscription Agreement on the date indicated below.",
+      "label_short": "IN WITNESS WHEREOF, the undersigned has executed this Subscription Agreement on the date indicated below.",
+      "label_full": "IN WITNESS WHEREOF, the undersigned has executed this Subscription Agreement on the date indicated below.",
+      "label_norm": "in witness whereof the undersigned has executed this subscription agreement on the date indicated below",
+      "anchor_x": 177.4420051574707,
+      "anchor_y": 279.2950134277344,
+      "box_rect": [
+        59.334999084472656,
+        269.57501220703125,
+        295.54901123046875,
+        289.0150146484375
+      ],
+      "line_box": [
+        59.334999084472656,
+        269.57501220703125,
+        295.54901123046875,
+        289.0150146484375
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "agrees that the execution of this signature page constitutes the execution and receipt of this Subscription",
+      "section_norm": "agrees that the execution of this signature page constitutes the execution and receipt of this subscription",
+      "index": 1
+    },
+    {
+      "page": 29,
+      "label": "$",
+      "label_short": "$",
+      "label_full": "$",
+      "label_norm": "",
+      "anchor_x": 149.44250106811523,
+      "anchor_y": 316.2950134277344,
+      "box_rect": [
+        69.4229965209961,
+        306.57501220703125,
+        229.46200561523438,
+        326.0150146484375
+      ],
+      "line_box": [
+        69.4229965209961,
+        306.57501220703125,
+        229.46200561523438,
+        326.0150146484375
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "agrees that the execution of this signature page constitutes the execution and receipt of this Subscription",
+      "section_norm": "agrees that the execution of this signature page constitutes the execution and receipt of this subscription",
+      "index": 1
+    },
+    {
+      "page": 29,
+      "label": "Requested Subscription Date (e.g. 01/JAN/2025):",
+      "label_short": "Requested Subscription Date (e.g. 01/JAN/2025):",
+      "label_full": "Requested Subscription Date (e.g. 01/JAN/2025):",
+      "label_norm": "requested subscription date ",
+      "anchor_x": 358.61700439453125,
+      "anchor_y": 352.8769989013672,
+      "box_rect": [
+        286.79901123046875,
+        343.1570129394531,
+        430.43499755859375,
+        362.59698486328125
+      ],
+      "line_box": [
+        286.79901123046875,
+        343.1570129394531,
+        430.43499755859375,
+        362.59698486328125
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "Requested Subscription Date (e.g. 01/JAN/2025)",
+      "section_norm": "requested subscription date",
+      "index": 1
+    },
+    {
+      "page": 29,
+      "label": "Class of Shares:",
+      "label_short": "Class of Shares:",
+      "label_full": "Class of Shares:",
+      "label_norm": "class of shares",
+      "anchor_x": 245.81499862670898,
+      "anchor_y": 390.53399658203125,
+      "box_rect": [
+        127.86299896240234,
+        380.8819885253906,
+        363.7669982910156,
+        400.1860046386719
+      ],
+      "line_box": [
+        127.86299896240234,
+        380.8819885253906,
+        363.7669982910156,
+        400.1860046386719
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "Requested Subscription Date (e.g. 01/JAN/2025)",
+      "section_norm": "requested subscription date",
+      "index": 1
+    },
+    {
+      "page": 29,
+      "label": "Date(e.g. 01/JAN/2025):",
+      "label_short": "Date(e.g. 01/JAN/2025):",
+      "label_full": "Date(e.g. 01/JAN/2025):",
+      "label_norm": "date",
+      "anchor_x": 238.78899383544922,
+      "anchor_y": 421.5740051269531,
+      "box_rect": [
+        166.9709930419922,
+        411.85400390625,
+        310.60699462890625,
+        431.29400634765625
+      ],
+      "line_box": [
+        166.9709930419922,
+        411.85400390625,
+        310.60699462890625,
+        431.29400634765625
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "Class of Shares",
+      "section_norm": "class of shares",
+      "index": 1
+    },
+    {
+      "page": 29,
+      "label": "Name:",
+      "label_short": "Name:",
+      "label_full": "Name:",
+      "label_norm": "name",
+      "anchor_x": 423.38800048828125,
+      "anchor_y": 489.8634948730469,
+      "box_rect": [
+        288.38800048828125,
+        480.21099853515625,
+        558.3880004882812,
+        499.5159912109375
+      ],
+      "line_box": [
+        288.38800048828125,
+        480.21099853515625,
+        558.3880004882812,
+        499.5159912109375
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "( One signature required )",
+      "section_norm": "",
+      "index": 1
+    },
+    {
+      "page": 29,
+      "label": "Signature:",
+      "label_short": "Signature:",
+      "label_full": "Signature:",
+      "label_norm": "signature",
+      "anchor_x": 423.38800048828125,
+      "anchor_y": 517.8909912109375,
+      "box_rect": [
+        288.38800048828125,
+        501.8909912109375,
+        558.3880004882812,
+        533.8909912109375
+      ],
+      "line_box": [
+        288.38800048828125,
+        501.8909912109375,
+        558.3880004882812,
+        533.8909912109375
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "Signature",
+      "section_norm": "signature",
+      "index": 1
+    },
+    {
+      "page": 29,
+      "label": "Name:",
+      "label_short": "Name:",
+      "label_full": "Name:",
+      "label_norm": "name",
+      "anchor_x": 423.38800048828125,
+      "anchor_y": 579.0885009765625,
+      "box_rect": [
+        288.38800048828125,
+        569.4349975585938,
+        558.3880004882812,
+        588.7420043945312
+      ],
+      "line_box": [
+        288.38800048828125,
+        569.4349975585938,
+        558.3880004882812,
+        588.7420043945312
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "JOINT ACCOUNT WITH RIGHT OF SURVIVORSHIP",
+      "section_norm": "joint account with right of survivorship",
+      "index": 1
+    },
+    {
+      "page": 29,
+      "label": "Signature:",
+      "label_short": "Signature:",
+      "label_full": "Signature:",
+      "label_norm": "signature",
+      "anchor_x": 423.38800048828125,
+      "anchor_y": 606.7795104980469,
+      "box_rect": [
+        288.38800048828125,
+        590.7789916992188,
+        558.3880004882812,
+        622.780029296875
+      ],
+      "line_box": [
+        288.38800048828125,
+        590.7789916992188,
+        558.3880004882812,
+        622.780029296875
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "SIGN",
+      "section_norm": "sign",
+      "index": 1
+    },
+    {
+      "page": 29,
+      "label": "Name:",
+      "label_short": "Name:",
+      "label_full": "Name:",
+      "label_norm": "name",
+      "anchor_x": 423.38800048828125,
+      "anchor_y": 634.8025207519531,
+      "box_rect": [
+        288.38800048828125,
+        625.1500244140625,
+        558.3880004882812,
+        644.4550170898438
+      ],
+      "line_box": [
+        288.38800048828125,
+        625.1500244140625,
+        558.3880004882812,
+        644.4550170898438
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "Signature",
+      "section_norm": "signature",
+      "index": 1
+    },
+    {
+      "page": 29,
+      "label": "Signature:",
+      "label_short": "Signature:",
+      "label_full": "Signature:",
+      "label_norm": "signature",
+      "anchor_x": 423.0669860839844,
+      "anchor_y": 663.4420166015625,
+      "box_rect": [
+        288.38800048828125,
+        647.4420166015625,
+        557.7459716796875,
+        679.4420166015625
+      ],
+      "line_box": [
+        288.38800048828125,
+        647.4420166015625,
+        557.7459716796875,
+        679.4420166015625
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "Signature",
+      "section_norm": "signature",
+      "index": 2
+    },
+    {
+      "page": 29,
+      "label": "Subscription Agreement",
+      "label_short": "Subscription Agreement",
+      "label_full": "Subscription Agreement",
+      "label_norm": "subscription agreement",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 29,
+      "label": "Stamp_Page_29",
+      "label_short": "Stamp_Page_29",
+      "label_full": "Stamp_Page_29",
+      "label_norm": "stamppage29",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 30,
+      "label": "Name:",
+      "label_short": "Name:",
+      "label_full": "Name:",
+      "label_norm": "name",
+      "anchor_x": 421.65199279785156,
+      "anchor_y": 110.781494140625,
+      "box_rect": [
+        286.6520080566406,
+        101.12799072265625,
+        556.6519775390625,
+        120.43499755859375
+      ],
+      "line_box": [
+        286.6520080566406,
+        101.12799072265625,
+        556.6519775390625,
+        120.43499755859375
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "TENANTS IN COMMON",
+      "section_norm": "tenants in common",
+      "index": 1
+    },
+    {
+      "page": 30,
+      "label": "Signature:",
+      "label_short": "Signature:",
+      "label_full": "Signature:",
+      "label_norm": "signature",
+      "anchor_x": 421.65199279785156,
+      "anchor_y": 139.47549438476562,
+      "box_rect": [
+        286.6520080566406,
+        123.47698974609375,
+        556.6519775390625,
+        155.4739990234375
+      ],
+      "line_box": [
+        286.6520080566406,
+        123.47698974609375,
+        556.6519775390625,
+        155.4739990234375
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "SIGN",
+      "section_norm": "sign",
+      "index": 1
+    },
+    {
+      "page": 30,
+      "label": "Name:",
+      "label_short": "Name:",
+      "label_full": "Name:",
+      "label_norm": "name",
+      "anchor_x": 421.65199279785156,
+      "anchor_y": 167.864501953125,
+      "box_rect": [
+        286.6520080566406,
+        158.21197509765625,
+        556.6519775390625,
+        177.51702880859375
+      ],
+      "line_box": [
+        286.6520080566406,
+        158.21197509765625,
+        556.6519775390625,
+        177.51702880859375
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "Signature",
+      "section_norm": "signature",
+      "index": 1
+    },
+    {
+      "page": 30,
+      "label": "Signature:",
+      "label_short": "Signature:",
+      "label_full": "Signature:",
+      "label_norm": "signature",
+      "anchor_x": 421.65199279785156,
+      "anchor_y": 196.37701416015625,
+      "box_rect": [
+        286.6520080566406,
+        180.37701416015625,
+        556.6519775390625,
+        212.37701416015625
+      ],
+      "line_box": [
+        286.6520080566406,
+        180.37701416015625,
+        556.6519775390625,
+        212.37701416015625
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "Signature",
+      "section_norm": "signature",
+      "index": 1
+    },
+    {
+      "page": 30,
+      "label": "Name of Account Custodian:",
+      "label_short": "Name of Account Custodian:",
+      "label_full": "Name of Account Custodian:",
+      "label_norm": "name of account custodian",
+      "anchor_x": 421.65199279785156,
+      "anchor_y": 294.7220001220703,
+      "box_rect": [
+        286.6520080566406,
+        285.07000732421875,
+        556.6519775390625,
+        304.3739929199219
+      ],
+      "line_box": [
+        286.6520080566406,
+        285.07000732421875,
+        556.6519775390625,
+        304.3739929199219
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "Name of Account Custodian",
+      "section_norm": "name of account custodian",
+      "index": 1
+    },
+    {
+      "page": 30,
+      "label": "Signature of Authorized Signatory:",
+      "label_short": "Signature of Authorized Signatory:",
+      "label_full": "Signature of Authorized Signatory:",
+      "label_norm": "signature of authorized signatory",
+      "anchor_x": 421.65199279785156,
+      "anchor_y": 324.5559997558594,
+      "box_rect": [
+        286.6520080566406,
+        308.5559997558594,
+        556.6519775390625,
+        340.5559997558594
+      ],
+      "line_box": [
+        286.6520080566406,
+        308.5559997558594,
+        556.6519775390625,
+        340.5559997558594
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "Signature of Authorized Signatory",
+      "section_norm": "signature of authorized signatory",
+      "index": 1
+    },
+    {
+      "page": 30,
+      "label": "Name of Authorized Signatory:",
+      "label_short": "Name of Authorized Signatory:",
+      "label_full": "Name of Authorized Signatory:",
+      "label_norm": "name of authorized signatory",
+      "anchor_x": 421.65199279785156,
+      "anchor_y": 353.5480041503906,
+      "box_rect": [
+        286.6520080566406,
+        343.89599609375,
+        556.6519775390625,
+        363.20001220703125
+      ],
+      "line_box": [
+        286.6520080566406,
+        343.89599609375,
+        556.6519775390625,
+        363.20001220703125
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "Name of Authorized Signatory",
+      "section_norm": "name of authorized signatory",
+      "index": 1
+    },
+    {
+      "page": 30,
+      "label": "Title:",
+      "label_short": "Title:",
+      "label_full": "Title:",
+      "label_norm": "title",
+      "anchor_x": 421.65199279785156,
+      "anchor_y": 377.86399841308594,
+      "box_rect": [
+        286.6520080566406,
+        368.2120056152344,
+        556.6519775390625,
+        387.5159912109375
+      ],
+      "line_box": [
+        286.6520080566406,
+        368.2120056152344,
+        556.6519775390625,
+        387.5159912109375
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "Title",
+      "section_norm": "title",
+      "index": 1
+    },
+    {
+      "page": 30,
+      "label": "Signature of Owner:",
+      "label_short": "Signature of Owner:",
+      "label_full": "Signature of Owner:",
+      "label_norm": "signature of owner",
+      "anchor_x": 421.65199279785156,
+      "anchor_y": 433.52398681640625,
+      "box_rect": [
+        286.6520080566406,
+        417.52398681640625,
+        556.6519775390625,
+        449.52398681640625
+      ],
+      "line_box": [
+        286.6520080566406,
+        417.52398681640625,
+        556.6519775390625,
+        449.52398681640625
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "Signature of Owner",
+      "section_norm": "signature of owner",
+      "index": 1
+    },
+    {
+      "page": 30,
+      "label": "Name of Owner:",
+      "label_short": "Name of Owner:",
+      "label_full": "Name of Owner:",
+      "label_norm": "name of owner",
+      "anchor_x": 421.65199279785156,
+      "anchor_y": 461.03199768066406,
+      "box_rect": [
+        286.6520080566406,
+        451.3800048828125,
+        556.6519775390625,
+        470.6839904785156
+      ],
+      "line_box": [
+        286.6520080566406,
+        451.3800048828125,
+        556.6519775390625,
+        470.6839904785156
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "Name of Owner",
+      "section_norm": "name of owner",
+      "index": 1
+    },
+    {
+      "page": 30,
+      "label": "Name of Entity:",
+      "label_short": "Name of Entity:",
+      "label_full": "Name of Entity:",
+      "label_norm": "name of entity",
+      "anchor_x": 421.65199279785156,
+      "anchor_y": 526.6460266113281,
+      "box_rect": [
+        286.6520080566406,
+        516.9930419921875,
+        556.6519775390625,
+        536.2990112304688
+      ],
+      "line_box": [
+        286.6520080566406,
+        516.9930419921875,
+        556.6519775390625,
+        536.2990112304688
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "( One signature required )",
+      "section_norm": "",
+      "index": 1
+    },
+    {
+      "page": 30,
+      "label": "Signature:",
+      "label_short": "Signature:",
+      "label_full": "Signature:",
+      "label_norm": "signature",
+      "anchor_x": 421.65199279785156,
+      "anchor_y": 554.5919799804688,
+      "box_rect": [
+        286.6520080566406,
+        538.5919799804688,
+        556.6519775390625,
+        570.5919799804688
+      ],
+      "line_box": [
+        286.6520080566406,
+        538.5919799804688,
+        556.6519775390625,
+        570.5919799804688
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "Signature",
+      "section_norm": "signature",
+      "index": 2
+    },
+    {
+      "page": 30,
+      "label": "Name of Signatory:",
+      "label_short": "Name of Signatory:",
+      "label_full": "Name of Signatory:",
+      "label_norm": "name of signatory",
+      "anchor_x": 421.65199279785156,
+      "anchor_y": 582.1929931640625,
+      "box_rect": [
+        286.6520080566406,
+        572.5399780273438,
+        556.6519775390625,
+        591.8460083007812
+      ],
+      "line_box": [
+        286.6520080566406,
+        572.5399780273438,
+        556.6519775390625,
+        591.8460083007812
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "Signature",
+      "section_norm": "signature",
+      "index": 1
+    },
+    {
+      "page": 30,
+      "label": "Title:",
+      "label_short": "Title:",
+      "label_full": "Title:",
+      "label_norm": "title",
+      "anchor_x": 421.65199279785156,
+      "anchor_y": 604.5025024414062,
+      "box_rect": [
+        286.6520080566406,
+        594.8499755859375,
+        556.6519775390625,
+        614.155029296875
+      ],
+      "line_box": [
+        286.6520080566406,
+        594.8499755859375,
+        556.6519775390625,
+        614.155029296875
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "Name of Signatory",
+      "section_norm": "name of signatory",
+      "index": 1
+    },
+    {
+      "page": 30,
+      "label": "Additional Signature:",
+      "label_short": "Additional Signature:",
+      "label_full": "Additional Signature:",
+      "label_norm": "additional signature",
+      "anchor_x": 421.65199279785156,
+      "anchor_y": 662.7030029296875,
+      "box_rect": [
+        286.6520080566406,
+        646.863037109375,
+        556.6519775390625,
+        678.54296875
+      ],
+      "line_box": [
+        286.6520080566406,
+        646.863037109375,
+        556.6519775390625,
+        678.54296875
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "Additional Signature",
+      "section_norm": "additional signature",
+      "index": 1
+    },
+    {
+      "page": 30,
+      "label": "Name of Additional Signatory:",
+      "label_short": "Name of Additional Signatory:",
+      "label_full": "Name of Additional Signatory:",
+      "label_norm": "name of additional signatory",
+      "anchor_x": 421.65199279785156,
+      "anchor_y": 689.8909912109375,
+      "box_rect": [
+        286.6520080566406,
+        680.239013671875,
+        556.6519775390625,
+        699.54296875
+      ],
+      "line_box": [
+        286.6520080566406,
+        680.239013671875,
+        556.6519775390625,
+        699.54296875
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "Name of Additional Signatory",
+      "section_norm": "name of additional signatory",
+      "index": 1
+    },
+    {
+      "page": 30,
+      "label": "Additional Signatory Title:",
+      "label_short": "Additional Signatory Title:",
+      "label_full": "Additional Signatory Title:",
+      "label_norm": "additional signatory title",
+      "anchor_x": 421.65199279785156,
+      "anchor_y": 711.3543395996094,
+      "box_rect": [
+        286.6520080566406,
+        701.702880859375,
+        556.6519775390625,
+        721.0057983398438
+      ],
+      "line_box": [
+        286.6520080566406,
+        701.702880859375,
+        556.6519775390625,
+        721.0057983398438
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "Additional Signatory Title",
+      "section_norm": "additional signatory title",
+      "index": 1
+    },
+    {
+      "page": 30,
+      "label": "Signature Pages \nOccudo Beacon Cayman Fund Ltd.",
+      "label_short": "Signature Pages \nOccudo Beacon Cayman Fund Ltd.",
+      "label_full": "Signature Pages \nOccudo Beacon Cayman Fund Ltd.",
+      "label_norm": "signature pages occudo beacon cayman fund ltd",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 30,
+      "label": "Stamp_Page_30",
+      "label_short": "Stamp_Page_30",
+      "label_full": "Stamp_Page_30",
+      "label_norm": "stamppage30",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 31,
+      "label": "Subscription Agreement",
+      "label_short": "Subscription Agreement",
+      "label_full": "Subscription Agreement",
+      "label_norm": "subscription agreement",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 31,
+      "label": "Stamp_Page_31",
+      "label_short": "Stamp_Page_31",
+      "label_full": "Stamp_Page_31",
+      "label_norm": "stamppage31",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 32,
+      "label": "A-1",
+      "label_short": "A-1",
+      "label_full": "A-1",
+      "label_norm": "a1",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 32,
+      "label": "Stamp_Page_32",
+      "label_short": "Stamp_Page_32",
+      "label_full": "Stamp_Page_32",
+      "label_norm": "stamppage32",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 33,
+      "label": "A-2",
+      "label_short": "A-2",
+      "label_full": "A-2",
+      "label_norm": "a2",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 33,
+      "label": "Stamp_Page_33",
+      "label_short": "Stamp_Page_33",
+      "label_full": "Stamp_Page_33",
+      "label_norm": "stamppage33",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 34,
+      "label": "A-3",
+      "label_short": "A-3",
+      "label_full": "A-3",
+      "label_norm": "a3",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 34,
+      "label": "Stamp_Page_34",
+      "label_short": "Stamp_Page_34",
+      "label_full": "Stamp_Page_34",
+      "label_norm": "stamppage34",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 35,
+      "label": "A-4",
+      "label_short": "A-4",
+      "label_full": "A-4",
+      "label_norm": "a4",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 35,
+      "label": "Stamp_Page_35",
+      "label_short": "Stamp_Page_35",
+      "label_full": "Stamp_Page_35",
+      "label_norm": "stamppage35",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 36,
+      "label": "A-5",
+      "label_short": "A-5",
+      "label_full": "A-5",
+      "label_norm": "a5",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 36,
+      "label": "Stamp_Page_36",
+      "label_short": "Stamp_Page_36",
+      "label_full": "Stamp_Page_36",
+      "label_norm": "stamppage36",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 37,
+      "label": "A-6",
+      "label_short": "A-6",
+      "label_full": "A-6",
+      "label_norm": "a6",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 37,
+      "label": "Stamp_Page_37",
+      "label_short": "Stamp_Page_37",
+      "label_full": "Stamp_Page_37",
+      "label_norm": "stamppage37",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 38,
+      "label": "A-7",
+      "label_short": "A-7",
+      "label_full": "A-7",
+      "label_norm": "a7",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 38,
+      "label": "Stamp_Page_38",
+      "label_short": "Stamp_Page_38",
+      "label_full": "Stamp_Page_38",
+      "label_norm": "stamppage38",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 39,
+      "label": "A-8",
+      "label_short": "A-8",
+      "label_full": "A-8",
+      "label_norm": "a8",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 39,
+      "label": "Stamp_Page_39",
+      "label_short": "Stamp_Page_39",
+      "label_full": "Stamp_Page_39",
+      "label_norm": "stamppage39",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 40,
+      "label": "A-9",
+      "label_short": "A-9",
+      "label_full": "A-9",
+      "label_norm": "a9",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 40,
+      "label": "Stamp_Page_40",
+      "label_short": "Stamp_Page_40",
+      "label_full": "Stamp_Page_40",
+      "label_norm": "stamppage40",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 41,
+      "label": "IPF_MSFS_USA_OFFSHORE_AML::HeaderPage::OnClickDetails",
+      "label_short": "IPF_MSFS_USA_OFFSHORE_AML::HeaderPage::OnClickDetails",
+      "label_full": "IPF_MSFS_USA_OFFSHORE_AML::HeaderPage::OnClickDetails",
+      "label_norm": "ipfmsfsusaoffshoreamlheaderpageonclickdetails",
+      "anchor_x": 305.94209384918213,
+      "anchor_y": 45.2335205078125,
+      "box_rect": [
+        28.222200393676758,
+        27.58001708984375,
+        583.6619873046875,
+        62.88702392578125
+      ],
+      "line_box": [
+        28.222200393676758,
+        27.58001708984375,
+        583.6619873046875,
+        62.88702392578125
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "",
+      "section_norm": "",
+      "index": 1
+    },
+    {
+      "page": 41,
+      "label": "IPF_MSFS_USA_OFFSHORE_AML::InvComments",
+      "label_short": "IPF_MSFS_USA_OFFSHORE_AML::InvComments",
+      "label_full": "IPF_MSFS_USA_OFFSHORE_AML::InvComments",
+      "label_norm": "ipfmsfsusaoffshoreamlinvcomments",
+      "anchor_x": 305.94209384918213,
+      "anchor_y": 85.04550170898438,
+      "box_rect": [
+        28.222200393676758,
+        67.39202880859375,
+        583.6619873046875,
+        102.698974609375
+      ],
+      "line_box": [
+        28.222200393676758,
+        67.39202880859375,
+        583.6619873046875,
+        102.698974609375
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "",
+      "section_norm": "",
+      "index": 1
+    },
+    {
+      "page": 41,
+      "label": "IPF_MSFS_USA_OFFSHORE_AML::SA_SecureType",
+      "label_short": "IPF_MSFS_USA_OFFSHORE_AML::SA_SecureType",
+      "label_full": "IPF_MSFS_USA_OFFSHORE_AML::SA_SecureType",
+      "label_norm": "ipfmsfsusaoffshoreamlsasecuretype",
+      "anchor_x": 305.94209384918213,
+      "anchor_y": 124.85748291015625,
+      "box_rect": [
+        28.222200393676758,
+        107.2039794921875,
+        583.6619873046875,
+        142.510986328125
+      ],
+      "line_box": [
+        28.222200393676758,
+        107.2039794921875,
+        583.6619873046875,
+        142.510986328125
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "",
+      "section_norm": "",
+      "index": 1
+    },
+    {
+      "page": 41,
+      "label": "IPF_MSFS_USA_OFFSHORE_AML::SA_ApplicationName",
+      "label_short": "IPF_MSFS_USA_OFFSHORE_AML::SA_ApplicationName",
+      "label_full": "IPF_MSFS_USA_OFFSHORE_AML::SA_ApplicationName",
+      "label_norm": "ipfmsfsusaoffshoreamlsaapplicationname",
+      "anchor_x": 305.94159412384033,
+      "anchor_y": 164.67050170898438,
+      "box_rect": [
+        28.221200942993164,
+        147.01702880859375,
+        583.6619873046875,
+        182.323974609375
+      ],
+      "line_box": [
+        28.221200942993164,
+        147.01702880859375,
+        583.6619873046875,
+        182.323974609375
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "",
+      "section_norm": "",
+      "index": 1
+    },
+    {
+      "page": 41,
+      "label": "IPF_MSFS_USA_OFFSHORE_AML::SA_ApplicationList",
+      "label_short": "IPF_MSFS_USA_OFFSHORE_AML::SA_ApplicationList",
+      "label_full": "IPF_MSFS_USA_OFFSHORE_AML::SA_ApplicationList",
+      "label_norm": "ipfmsfsusaoffshoreamlsaapplicationlist",
+      "anchor_x": 305.94209384918213,
+      "anchor_y": 204.48248291015625,
+      "box_rect": [
+        28.222200393676758,
+        186.8289794921875,
+        583.6619873046875,
+        222.135986328125
+      ],
+      "line_box": [
+        28.222200393676758,
+        186.8289794921875,
+        583.6619873046875,
+        222.135986328125
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "",
+      "section_norm": "",
+      "index": 1
+    },
+    {
+      "page": 41,
+      "label": "CountryList",
+      "label_short": "CountryList",
+      "label_full": "CountryList",
+      "label_norm": "countrylist",
+      "anchor_x": 306.552001953125,
+      "anchor_y": 555.2235260009766,
+      "box_rect": [
+        107.68499755859375,
+        495.4330139160156,
+        505.41900634765625,
+        615.0140380859375
+      ],
+      "line_box": [
+        107.68499755859375,
+        495.4330139160156,
+        505.41900634765625,
+        615.0140380859375
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "Latvia::Lebanon::Lesotho::Liberia::Libya - Libyan Arab Jamahiriya::Liechtenstein::Lithuania::Luxembourg::Macau::Macedonia, The Former Yugoslav Republic Of::Madagascar::Malawi",
+      "section_norm": "latvialebanonlesotholiberialibya  libyan arab jamahiriyaliechtensteinlithuanialuxembourgmacaumacedonia the former yugoslav republic ofmadagascarmalawi",
+      "index": 1
+    },
+    {
+      "page": 41,
+      "label": "IPF_MSFS_USA_OFFSHORE_AML::HeaderPage::Countries",
+      "label_short": "IPF_MSFS_USA_OFFSHORE_AML::HeaderPage::Countries",
+      "label_full": "IPF_MSFS_USA_OFFSHORE_AML::HeaderPage::Countries",
+      "label_norm": "ipfmsfsusaoffshoreamlheaderpagecountries",
+      "anchor_x": 305.29450607299805,
+      "anchor_y": 664.8330078125,
+      "box_rect": [
+        106.4280014038086,
+        640.5650024414062,
+        504.1610107421875,
+        689.1010131835938
+      ],
+      "line_box": [
+        106.4280014038086,
+        640.5650024414062,
+        504.1610107421875,
+        689.1010131835938
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "Of China::Togo::Tokelau::Tonga::Trinidad And Tobago::Tunisia::Turkey::Turkmenistan::Turks And Caicos Islands::Tuvalu::Uganda::Ukraine::United Arab Emirates::United Kingdom",
+      "section_norm": "of chinatogotokelautongatrinidad and tobagotunisiaturkeyturkmenistanturks and caicos islandstuvaluugandaukraineunited arab emiratesunited kingdom",
+      "index": 1
+    },
+    {
+      "page": 41,
+      "label": "IPF_MSFS_USA_OFFSHORE_AML::HeaderPage::Footer",
+      "label_short": "IPF_MSFS_USA_OFFSHORE_AML::HeaderPage::Footer",
+      "label_full": "IPF_MSFS_USA_OFFSHORE_AML::HeaderPage::Footer",
+      "label_norm": "ipfmsfsusaoffshoreamlheaderpagefooter",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 41,
+      "label": "Stamp_Page_41",
+      "label_short": "Stamp_Page_41",
+      "label_full": "Stamp_Page_41",
+      "label_norm": "stamppage41",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 42,
+      "label": "BarPage1-41",
+      "label_short": "BarPage1-41",
+      "label_full": "BarPage1-41",
+      "label_norm": "barpage141",
+      "anchor_x": 156.95324802398682,
+      "anchor_y": 127.572998046875,
+      "box_rect": [
+        9.352510452270508,
+        10.9329833984375,
+        304.5539855957031,
+        244.2130126953125
+      ],
+      "line_box": [
+        9.352510452270508,
+        10.9329833984375,
+        304.5539855957031,
+        244.2130126953125
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "",
+      "section_norm": "",
+      "index": 1
+    },
+    {
+      "page": 42,
+      "label": "IPF_MSFS_USA_OFFSHORE_AML::HeaderPage::Footer",
+      "label_short": "IPF_MSFS_USA_OFFSHORE_AML::HeaderPage::Footer",
+      "label_full": "IPF_MSFS_USA_OFFSHORE_AML::HeaderPage::Footer",
+      "label_norm": "ipfmsfsusaoffshoreamlheaderpagefooter",
+      "anchor_x": 515.9019927978516,
+      "anchor_y": 771.0357055664062,
+      "box_rect": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "line_box": [
+        440.9020080566406,
+        760.0357055664062,
+        590.9019775390625,
+        782.0357055664062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    },
+    {
+      "page": 42,
+      "label": "Stamp_Page_42",
+      "label_short": "Stamp_Page_42",
+      "label_full": "Stamp_Page_42",
+      "label_norm": "stamppage42",
+      "anchor_x": 30.0,
+      "anchor_y": 777.0,
+      "box_rect": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "line_box": [
+        0.0,
+        762.0,
+        60.0,
+        792.0
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "MSFS_24Sep2025-000190",
+      "section_norm": "msfs24sep2025000190",
+      "index": 1
+    }
+  ]
+}
