@@ -1,0 +1,5717 @@
+{
+  "pdf": "input.pdf",
+  "fields": [
+    {
+      "page": 16,
+      "label": "Name",
+      "label_short": "Name",
+      "label_full": "Name",
+      "label_norm": "name",
+      "anchor_x": 68.40029907226562,
+      "anchor_y": 183.46377563476562,
+      "line_box": [
+        62.400299072265625,
+        183.46377563476562,
+        286.84130859375,
+        183.46377563476562
+      ],
+      "placement": "start",
+      "section": "RECIPIENT 1",
+      "section_norm": "recipient 1",
+      "index": 1
+    },
+    {
+      "page": 16,
+      "label": "Address for Notices Provided for Under Organizational Document",
+      "label_short": "Address for Notices Provided for Under Organizational Document",
+      "label_full": "Address for Notices Provided for Under Organizational Document",
+      "label_norm": "address for notices provided for under organizational document",
+      "anchor_x": 311.5334167480469,
+      "anchor_y": 183.46377563476562,
+      "line_box": [
+        305.5334167480469,
+        183.46377563476562,
+        542.4512939453125,
+        183.46377563476562
+      ],
+      "placement": "start",
+      "section": "RECIPIENT 1",
+      "section_norm": "recipient 1",
+      "index": 1
+    },
+    {
+      "page": 16,
+      "label": "E-Mail",
+      "label_short": "E-Mail",
+      "label_full": "E-Mail",
+      "label_norm": "email",
+      "anchor_x": 68.04000091552734,
+      "anchor_y": 210.70352172851562,
+      "line_box": [
+        62.040000915527344,
+        210.70352172851562,
+        287.8834533691406,
+        210.70352172851562
+      ],
+      "placement": "start",
+      "section": "RECIPIENT 1",
+      "section_norm": "recipient 1",
+      "index": 1
+    },
+    {
+      "page": 16,
+      "label": "Address for Notices Provided for Under Organizational Document",
+      "label_short": "Address for Notices Provided for Under Organizational Document",
+      "label_full": "Address for Notices Provided for Under Organizational Document",
+      "label_norm": "address for notices provided for under organizational document",
+      "anchor_x": 310.4758605957031,
+      "anchor_y": 210.70352172851562,
+      "line_box": [
+        304.4758605957031,
+        210.70352172851562,
+        541.5396118164062,
+        210.70352172851562
+      ],
+      "placement": "start",
+      "section": "RECIPIENT 1",
+      "section_norm": "recipient 1",
+      "index": 2
+    },
+    {
+      "page": 16,
+      "label": "Telephone",
+      "label_short": "Telephone",
+      "label_full": "Telephone",
+      "label_norm": "telephone",
+      "anchor_x": 68.04000091552734,
+      "anchor_y": 237.82351684570312,
+      "line_box": [
+        62.040000915527344,
+        237.82351684570312,
+        287.8834533691406,
+        237.82351684570312
+      ],
+      "placement": "start",
+      "section": "RECIPIENT 1",
+      "section_norm": "recipient 1",
+      "index": 1
+    },
+    {
+      "page": 16,
+      "label": "Facsimile",
+      "label_short": "Facsimile",
+      "label_full": "Facsimile",
+      "label_norm": "facsimile",
+      "anchor_x": 310.4758605957031,
+      "anchor_y": 237.82351684570312,
+      "line_box": [
+        304.4758605957031,
+        237.82351684570312,
+        541.5396118164062,
+        237.82351684570312
+      ],
+      "placement": "start",
+      "section": "RECIPIENT 1",
+      "section_norm": "recipient 1",
+      "index": 1
+    },
+    {
+      "page": 16,
+      "label": "Name",
+      "label_short": "Name",
+      "label_full": "Name",
+      "label_norm": "name",
+      "anchor_x": 68.40029907226562,
+      "anchor_y": 325.0635223388672,
+      "line_box": [
+        62.400299072265625,
+        325.0635223388672,
+        286.84130859375,
+        325.0635223388672
+      ],
+      "placement": "start",
+      "section": "RECIPIENT 2",
+      "section_norm": "recipient 2",
+      "index": 1
+    },
+    {
+      "page": 16,
+      "label": "E-mail",
+      "label_short": "E-mail",
+      "label_full": "E-mail",
+      "label_norm": "email",
+      "anchor_x": 311.5334167480469,
+      "anchor_y": 325.0635223388672,
+      "line_box": [
+        305.5334167480469,
+        325.0635223388672,
+        542.4512939453125,
+        325.0635223388672
+      ],
+      "placement": "start",
+      "section": "RECIPIENT 2",
+      "section_norm": "recipient 2",
+      "index": 1
+    },
+    {
+      "page": 16,
+      "label": "Name",
+      "label_short": "Name",
+      "label_full": "Name",
+      "label_norm": "name",
+      "anchor_x": 68.40029907226562,
+      "anchor_y": 412.1837921142578,
+      "line_box": [
+        62.400299072265625,
+        412.1837921142578,
+        286.84130859375,
+        412.1837921142578
+      ],
+      "placement": "start",
+      "section": "RECIPIENT 3",
+      "section_norm": "recipient 3",
+      "index": 1
+    },
+    {
+      "page": 16,
+      "label": "E-mail",
+      "label_short": "E-mail",
+      "label_full": "E-mail",
+      "label_norm": "email",
+      "anchor_x": 311.5334167480469,
+      "anchor_y": 412.1837921142578,
+      "line_box": [
+        305.5334167480469,
+        412.1837921142578,
+        542.4512939453125,
+        412.1837921142578
+      ],
+      "placement": "start",
+      "section": "RECIPIENT 3",
+      "section_norm": "recipient 3",
+      "index": 1
+    },
+    {
+      "page": 16,
+      "label": "Name",
+      "label_short": "Name",
+      "label_full": "Name",
+      "label_norm": "name",
+      "anchor_x": 68.40029907226562,
+      "anchor_y": 499.4235076904297,
+      "line_box": [
+        62.400299072265625,
+        499.4235076904297,
+        286.84130859375,
+        499.4235076904297
+      ],
+      "placement": "start",
+      "section": "RECIPIENT 4",
+      "section_norm": "recipient 4",
+      "index": 1
+    },
+    {
+      "page": 16,
+      "label": "E-mail",
+      "label_short": "E-mail",
+      "label_full": "E-mail",
+      "label_norm": "email",
+      "anchor_x": 311.5334167480469,
+      "anchor_y": 499.4235076904297,
+      "line_box": [
+        305.5334167480469,
+        499.4235076904297,
+        542.4512939453125,
+        499.4235076904297
+      ],
+      "placement": "start",
+      "section": "RECIPIENT 4",
+      "section_norm": "recipient 4",
+      "index": 1
+    },
+    {
+      "page": 16,
+      "label": "copy documents for any particular recipient, please write “Hard Copy” and specify the recipient number(s) here:",
+      "label_short": "copy documents for any particular recipient, please write “Hard Copy” and specify the recipient number(s) here:",
+      "label_full": "copy documents for any particular recipient, please write “Hard Copy” and specify the recipient number(s) here:",
+      "label_norm": "copy documents for any particular recipient please write “hard copy” and specify the recipient number here",
+      "anchor_x": 59.999969482421875,
+      "anchor_y": 638.3827819824219,
+      "line_box": [
+        53.999969482421875,
+        638.3827819824219,
+        550.2708740234375,
+        638.3827819824219
+      ],
+      "placement": "start",
+      "section": "copy documents for any particular recipient, please write “Hard Copy” and specify the recipient number(s) here",
+      "section_norm": "copy documents for any particular recipient please write “hard copy” and specify the recipient number here",
+      "index": 1
+    },
+    {
+      "page": 16,
+      "label": "RECIPIENT 1 – item 1: Purchase confirmation\nPerformance Indications",
+      "label_short": "RECIPIENT 1 – item 1",
+      "label_full": "Purchase confirmation\nPerformance Indications",
+      "label_norm": "recipient 1 – item 1 purchase confirmation performance indications",
+      "anchor_x": 63.299997329711914,
+      "anchor_y": 144.71997833251953,
+      "box_rect": [
+        60.119998931884766,
+        141.5999755859375,
+        66.47999572753906,
+        147.83998107910156
+      ],
+      "line_box": [
+        60.119998931884766,
+        141.5999755859375,
+        66.47999572753906,
+        147.83998107910156
+      ],
+      "placement": "checkbox",
+      "section": "RECIPIENT 1",
+      "section_norm": "recipient 1",
+      "index": 1
+    },
+    {
+      "page": 16,
+      "label": "RECIPIENT 1 – item 2: RECIPIENT 1",
+      "label_short": "RECIPIENT 1 – item 2",
+      "label_full": "RECIPIENT 1:",
+      "label_norm": "recipient 1 – item 2 recipient 1",
+      "anchor_x": 306.29998779296875,
+      "anchor_y": 144.71997833251953,
+      "box_rect": [
+        303.1199951171875,
+        141.5999755859375,
+        309.47998046875,
+        147.83998107910156
+      ],
+      "line_box": [
+        303.1199951171875,
+        141.5999755859375,
+        309.47998046875,
+        147.83998107910156
+      ],
+      "placement": "checkbox",
+      "section": "RECIPIENT 1",
+      "section_norm": "recipient 1",
+      "index": 1
+    },
+    {
+      "page": 16,
+      "label": "RECIPIENT 1 – item 3: Account statements\nAnnual (audited)/quarterly (unaudited) financial statements",
+      "label_short": "RECIPIENT 1 – item 3",
+      "label_full": "Account statements\nAnnual (audited)/quarterly (unaudited) financial statements",
+      "label_norm": "recipient 1 – item 3 account statements annual quarterly financial statements",
+      "anchor_x": 63.299997329711914,
+      "anchor_y": 158.76006317138672,
+      "box_rect": [
+        60.119998931884766,
+        155.6400146484375,
+        66.47999572753906,
+        161.88011169433594
+      ],
+      "line_box": [
+        60.119998931884766,
+        155.6400146484375,
+        66.47999572753906,
+        161.88011169433594
+      ],
+      "placement": "checkbox",
+      "section": "RECIPIENT 1",
+      "section_norm": "recipient 1",
+      "index": 1
+    },
+    {
+      "page": 16,
+      "label": "RECIPIENT 1 – item 4",
+      "label_short": "RECIPIENT 1 – item 4",
+      "label_full": "",
+      "label_norm": "recipient 1 – item 4",
+      "anchor_x": 306.29998779296875,
+      "anchor_y": 158.76006317138672,
+      "box_rect": [
+        303.1199951171875,
+        155.6400146484375,
+        309.47998046875,
+        161.88011169433594
+      ],
+      "line_box": [
+        303.1199951171875,
+        155.6400146484375,
+        309.47998046875,
+        161.88011169433594
+      ],
+      "placement": "checkbox",
+      "section": "RECIPIENT 1",
+      "section_norm": "recipient 1",
+      "index": 1
+    },
+    {
+      "page": 16,
+      "label": "RECIPIENT 2 – item 5: Purchase confirmation\nPerformance Indications",
+      "label_short": "RECIPIENT 2 – item 5",
+      "label_full": "Purchase confirmation\nPerformance Indications",
+      "label_norm": "recipient 2 – item 5 purchase confirmation performance indications",
+      "anchor_x": 63.299997329711914,
+      "anchor_y": 286.32000732421875,
+      "box_rect": [
+        60.119998931884766,
+        283.20001220703125,
+        66.47999572753906,
+        289.44000244140625
+      ],
+      "line_box": [
+        60.119998931884766,
+        283.20001220703125,
+        66.47999572753906,
+        289.44000244140625
+      ],
+      "placement": "checkbox",
+      "section": "RECIPIENT 2",
+      "section_norm": "recipient 2",
+      "index": 1
+    },
+    {
+      "page": 16,
+      "label": "RECIPIENT 2 – item 6: RECIPIENT 2",
+      "label_short": "RECIPIENT 2 – item 6",
+      "label_full": "RECIPIENT 2:",
+      "label_norm": "recipient 2 – item 6 recipient 2",
+      "anchor_x": 306.29998779296875,
+      "anchor_y": 286.32000732421875,
+      "box_rect": [
+        303.1199951171875,
+        283.20001220703125,
+        309.47998046875,
+        289.44000244140625
+      ],
+      "line_box": [
+        303.1199951171875,
+        283.20001220703125,
+        309.47998046875,
+        289.44000244140625
+      ],
+      "placement": "checkbox",
+      "section": "RECIPIENT 2",
+      "section_norm": "recipient 2",
+      "index": 1
+    },
+    {
+      "page": 16,
+      "label": "RECIPIENT 2 – item 7: Account statements\nAnnual (audited)/quarterly (unaudited) financial statements",
+      "label_short": "RECIPIENT 2 – item 7",
+      "label_full": "Account statements\nAnnual (audited)/quarterly (unaudited) financial statements",
+      "label_norm": "recipient 2 – item 7 account statements annual quarterly financial statements",
+      "anchor_x": 63.299997329711914,
+      "anchor_y": 300.239990234375,
+      "box_rect": [
+        60.119998931884766,
+        297.1199951171875,
+        66.47999572753906,
+        303.3599853515625
+      ],
+      "line_box": [
+        60.119998931884766,
+        297.1199951171875,
+        66.47999572753906,
+        303.3599853515625
+      ],
+      "placement": "checkbox",
+      "section": "RECIPIENT 2",
+      "section_norm": "recipient 2",
+      "index": 1
+    },
+    {
+      "page": 16,
+      "label": "RECIPIENT 2 – item 8",
+      "label_short": "RECIPIENT 2 – item 8",
+      "label_full": "",
+      "label_norm": "recipient 2 – item 8",
+      "anchor_x": 306.29998779296875,
+      "anchor_y": 300.239990234375,
+      "box_rect": [
+        303.1199951171875,
+        297.1199951171875,
+        309.47998046875,
+        303.3599853515625
+      ],
+      "line_box": [
+        303.1199951171875,
+        297.1199951171875,
+        309.47998046875,
+        303.3599853515625
+      ],
+      "placement": "checkbox",
+      "section": "RECIPIENT 2",
+      "section_norm": "recipient 2",
+      "index": 1
+    },
+    {
+      "page": 16,
+      "label": "RECIPIENT 3 – item 9: Purchase confirmation\nPerformance Indications",
+      "label_short": "RECIPIENT 3 – item 9",
+      "label_full": "Purchase confirmation\nPerformance Indications",
+      "label_norm": "recipient 3 – item 9 purchase confirmation performance indications",
+      "anchor_x": 63.299997329711914,
+      "anchor_y": 373.44000244140625,
+      "box_rect": [
+        60.119998931884766,
+        370.32000732421875,
+        66.47999572753906,
+        376.55999755859375
+      ],
+      "line_box": [
+        60.119998931884766,
+        370.32000732421875,
+        66.47999572753906,
+        376.55999755859375
+      ],
+      "placement": "checkbox",
+      "section": "RECIPIENT 3",
+      "section_norm": "recipient 3",
+      "index": 1
+    },
+    {
+      "page": 16,
+      "label": "RECIPIENT 3 – item 10: RECIPIENT 3",
+      "label_short": "RECIPIENT 3 – item 10",
+      "label_full": "RECIPIENT 3:",
+      "label_norm": "recipient 3 – item 10 recipient 3",
+      "anchor_x": 306.29998779296875,
+      "anchor_y": 373.44000244140625,
+      "box_rect": [
+        303.1199951171875,
+        370.32000732421875,
+        309.47998046875,
+        376.55999755859375
+      ],
+      "line_box": [
+        303.1199951171875,
+        370.32000732421875,
+        309.47998046875,
+        376.55999755859375
+      ],
+      "placement": "checkbox",
+      "section": "RECIPIENT 3",
+      "section_norm": "recipient 3",
+      "index": 1
+    },
+    {
+      "page": 16,
+      "label": "RECIPIENT 3 – item 11: Account statements\nAnnual (audited)/quarterly (unaudited) financial statements",
+      "label_short": "RECIPIENT 3 – item 11",
+      "label_full": "Account statements\nAnnual (audited)/quarterly (unaudited) financial statements",
+      "label_norm": "recipient 3 – item 11 account statements annual quarterly financial statements",
+      "anchor_x": 63.299997329711914,
+      "anchor_y": 387.47998046875,
+      "box_rect": [
+        60.119998931884766,
+        384.3599853515625,
+        66.47999572753906,
+        390.5999755859375
+      ],
+      "line_box": [
+        60.119998931884766,
+        384.3599853515625,
+        66.47999572753906,
+        390.5999755859375
+      ],
+      "placement": "checkbox",
+      "section": "RECIPIENT 3",
+      "section_norm": "recipient 3",
+      "index": 1
+    },
+    {
+      "page": 16,
+      "label": "RECIPIENT 3 – item 12",
+      "label_short": "RECIPIENT 3 – item 12",
+      "label_full": "",
+      "label_norm": "recipient 3 – item 12",
+      "anchor_x": 306.29998779296875,
+      "anchor_y": 387.47998046875,
+      "box_rect": [
+        303.1199951171875,
+        384.3599853515625,
+        309.47998046875,
+        390.5999755859375
+      ],
+      "line_box": [
+        303.1199951171875,
+        384.3599853515625,
+        309.47998046875,
+        390.5999755859375
+      ],
+      "placement": "checkbox",
+      "section": "RECIPIENT 3",
+      "section_norm": "recipient 3",
+      "index": 1
+    },
+    {
+      "page": 16,
+      "label": "RECIPIENT 4 – item 13: Purchase confirmation\nPerformance Indications",
+      "label_short": "RECIPIENT 4 – item 13",
+      "label_full": "Purchase confirmation\nPerformance Indications",
+      "label_norm": "recipient 4 – item 13 purchase confirmation performance indications",
+      "anchor_x": 63.299997329711914,
+      "anchor_y": 460.67999267578125,
+      "box_rect": [
+        60.119998931884766,
+        457.55999755859375,
+        66.47999572753906,
+        463.79998779296875
+      ],
+      "line_box": [
+        60.119998931884766,
+        457.55999755859375,
+        66.47999572753906,
+        463.79998779296875
+      ],
+      "placement": "checkbox",
+      "section": "RECIPIENT 4",
+      "section_norm": "recipient 4",
+      "index": 1
+    },
+    {
+      "page": 16,
+      "label": "RECIPIENT 4 – item 14: RECIPIENT 4",
+      "label_short": "RECIPIENT 4 – item 14",
+      "label_full": "RECIPIENT 4:",
+      "label_norm": "recipient 4 – item 14 recipient 4",
+      "anchor_x": 306.29998779296875,
+      "anchor_y": 460.67999267578125,
+      "box_rect": [
+        303.1199951171875,
+        457.55999755859375,
+        309.47998046875,
+        463.79998779296875
+      ],
+      "line_box": [
+        303.1199951171875,
+        457.55999755859375,
+        309.47998046875,
+        463.79998779296875
+      ],
+      "placement": "checkbox",
+      "section": "RECIPIENT 4",
+      "section_norm": "recipient 4",
+      "index": 1
+    },
+    {
+      "page": 16,
+      "label": "RECIPIENT 4 – item 15: Account statements\nAnnual (audited)/quarterly (unaudited) financial statements",
+      "label_short": "RECIPIENT 4 – item 15",
+      "label_full": "Account statements\nAnnual (audited)/quarterly (unaudited) financial statements",
+      "label_norm": "recipient 4 – item 15 account statements annual quarterly financial statements",
+      "anchor_x": 63.299997329711914,
+      "anchor_y": 474.6000061035156,
+      "box_rect": [
+        60.119998931884766,
+        471.4800109863281,
+        66.47999572753906,
+        477.7200012207031
+      ],
+      "line_box": [
+        60.119998931884766,
+        471.4800109863281,
+        66.47999572753906,
+        477.7200012207031
+      ],
+      "placement": "checkbox",
+      "section": "RECIPIENT 4",
+      "section_norm": "recipient 4",
+      "index": 1
+    },
+    {
+      "page": 16,
+      "label": "RECIPIENT 4 – item 16",
+      "label_short": "RECIPIENT 4 – item 16",
+      "label_full": "",
+      "label_norm": "recipient 4 – item 16",
+      "anchor_x": 306.29998779296875,
+      "anchor_y": 474.6000061035156,
+      "box_rect": [
+        303.1199951171875,
+        471.4800109863281,
+        309.47998046875,
+        477.7200012207031
+      ],
+      "line_box": [
+        303.1199951171875,
+        471.4800109863281,
+        309.47998046875,
+        477.7200012207031
+      ],
+      "placement": "checkbox",
+      "section": "RECIPIENT 4",
+      "section_norm": "recipient 4",
+      "index": 1
+    },
+    {
+      "page": 17,
+      "label": "The Investor is – item 1: An entity (i.e., not a natural person)",
+      "label_short": "The Investor is – item 1",
+      "label_full": "An entity (i.e., not a natural person)",
+      "label_norm": "the investor is – item 1 an entity",
+      "anchor_x": 75.95999526977539,
+      "anchor_y": 149.40001678466797,
+      "box_rect": [
+        72.7199935913086,
+        146.16001892089844,
+        79.19999694824219,
+        152.6400146484375
+      ],
+      "line_box": [
+        72.7199935913086,
+        146.16001892089844,
+        79.19999694824219,
+        152.6400146484375
+      ],
+      "placement": "checkbox",
+      "section": "The Investor is (please check only one box)",
+      "section_norm": "the investor is",
+      "index": 1
+    },
+    {
+      "page": 17,
+      "label": "The Investor is – item 2: If checking this box, please complete “Items applicable only to Investors that are entities” in this Annex B.",
+      "label_short": "The Investor is – item 2",
+      "label_full": "If checking this box, please complete “Items applicable only to Investors that are entities” in this Annex B.",
+      "label_norm": "the investor is – item 2 if checking this box please complete “items applicable only to investors that are entities” in this annex b",
+      "anchor_x": 93.30000305175781,
+      "anchor_y": 169.13999938964844,
+      "box_rect": [
+        91.68000030517578,
+        167.52000427246094,
+        94.92000579833984,
+        170.75999450683594
+      ],
+      "line_box": [
+        91.68000030517578,
+        167.52000427246094,
+        94.92000579833984,
+        170.75999450683594
+      ],
+      "placement": "checkbox",
+      "section": "The Investor is (please check only one box)",
+      "section_norm": "the investor is",
+      "index": 1
+    },
+    {
+      "page": 17,
+      "label": "The Investor is – item 3: An individual (i.e., a natural person)",
+      "label_short": "The Investor is – item 3",
+      "label_full": "An individual (i.e., a natural person)",
+      "label_norm": "the investor is – item 3 an individual",
+      "anchor_x": 75.95999526977539,
+      "anchor_y": 187.43999481201172,
+      "box_rect": [
+        72.7199935913086,
+        184.1999969482422,
+        79.19999694824219,
+        190.67999267578125
+      ],
+      "line_box": [
+        72.7199935913086,
+        184.1999969482422,
+        79.19999694824219,
+        190.67999267578125
+      ],
+      "placement": "checkbox",
+      "section": "The Investor is (please check only one box)",
+      "section_norm": "the investor is",
+      "index": 1
+    },
+    {
+      "page": 17,
+      "label": "The Investor is – item 4: An “institutional account” as defined in FINRA Rule 4512(c), meaning the account of",
+      "label_short": "The Investor is – item 4",
+      "label_full": "An “institutional account” as defined in FINRA Rule 4512(c), meaning the account of:",
+      "label_norm": "the investor is – item 4 an “institutional account” as defined in finra rule 4512 meaning the account of",
+      "anchor_x": 75.95999526977539,
+      "anchor_y": 227.34001922607422,
+      "box_rect": [
+        72.7199935913086,
+        224.1000213623047,
+        79.19999694824219,
+        230.58001708984375
+      ],
+      "line_box": [
+        72.7199935913086,
+        224.1000213623047,
+        79.19999694824219,
+        230.58001708984375
+      ],
+      "placement": "checkbox",
+      "section": "The Investor is (please check only one box)",
+      "section_norm": "the investor is",
+      "index": 1
+    },
+    {
+      "page": 17,
+      "label": "An “institutional account” as defined in FINRA Rule 4512(c), meaning the account of – item 5: Not an “institutional account”",
+      "label_short": "An “institutional account” as defined in FINRA Rule 4512(c), meaning the account of – item 5",
+      "label_full": "Not an “institutional account”",
+      "label_norm": "an “institutional account” as defined in finra rule 4512 meaning the account of – item 5 not an “institutional account”",
+      "anchor_x": 75.95999526977539,
+      "anchor_y": 331.4399871826172,
+      "box_rect": [
+        72.7199935913086,
+        328.1999816894531,
+        79.19999694824219,
+        334.67999267578125
+      ],
+      "line_box": [
+        72.7199935913086,
+        328.1999816894531,
+        79.19999694824219,
+        334.67999267578125
+      ],
+      "placement": "checkbox",
+      "section": "An “institutional account” as defined in FINRA Rule 4512(c), meaning the account of",
+      "section_norm": "an “institutional account” as defined in finra rule 4512 meaning the account of",
+      "index": 1
+    },
+    {
+      "page": 17,
+      "label": "An “institutional account” as defined in FINRA Rule 4512(c), meaning the account of – item 6: If checking this box, please contact the D. E. Shaw group’s Investor Relations staff at +1 (212) 478-0890 or",
+      "label_short": "An “institutional account” as defined in FINRA Rule 4512(c), meaning the account of – item 6",
+      "label_full": "If checking this box, please contact the D. E. Shaw group’s Investor Relations staff at +1 (212) 478-0890 or",
+      "label_norm": "an “institutional account” as defined in finra rule 4512 meaning the account of – item 6 if checking this box please contact the d e shaw group’s investor relations staff at 1 4780890 or",
+      "anchor_x": 93.30000305175781,
+      "anchor_y": 351.0600128173828,
+      "box_rect": [
+        91.68000030517578,
+        349.44000244140625,
+        94.92000579833984,
+        352.6800231933594
+      ],
+      "line_box": [
+        91.68000030517578,
+        349.44000244140625,
+        94.92000579833984,
+        352.6800231933594
+      ],
+      "placement": "checkbox",
+      "section": "An “institutional account” as defined in FINRA Rule 4512(c), meaning the account of",
+      "section_norm": "an “institutional account” as defined in finra rule 4512 meaning the account of",
+      "index": 1
+    },
+    {
+      "page": 17,
+      "label": "The Investor is – item 7: A U.S. person, meaning",
+      "label_short": "The Investor is – item 7",
+      "label_full": "A U.S. person, meaning:",
+      "label_norm": "the investor is – item 7 a us person meaning",
+      "anchor_x": 75.95999526977539,
+      "anchor_y": 404.40000915527344,
+      "box_rect": [
+        72.7199935913086,
+        401.1600036621094,
+        79.19999694824219,
+        407.6400146484375
+      ],
+      "line_box": [
+        72.7199935913086,
+        401.1600036621094,
+        79.19999694824219,
+        407.6400146484375
+      ],
+      "placement": "checkbox",
+      "section": "The Investor is (please check only one box)",
+      "section_norm": "the investor is",
+      "index": 1
+    },
+    {
+      "page": 17,
+      "label": "A U.S. person, meaning – item 8: If checking this box, please complete “Items applicable only to Investors that are U.S. persons” of this Annex B.",
+      "label_short": "A U.S. person, meaning – item 8",
+      "label_full": "If checking this box, please complete “Items applicable only to Investors that are U.S. persons” of this Annex B.",
+      "label_norm": "a us person meaning – item 8 if checking this box please complete “items applicable only to investors that are us persons” of this annex b",
+      "anchor_x": 93.30000305175781,
+      "anchor_y": 542.1000366210938,
+      "box_rect": [
+        91.68000030517578,
+        540.4800415039062,
+        94.92000579833984,
+        543.7200317382812
+      ],
+      "line_box": [
+        91.68000030517578,
+        540.4800415039062,
+        94.92000579833984,
+        543.7200317382812
+      ],
+      "placement": "checkbox",
+      "section": "A U.S. person, meaning",
+      "section_norm": "a us person meaning",
+      "index": 1
+    },
+    {
+      "page": 17,
+      "label": "A U.S. person, meaning – item 9: A non-U.S. person",
+      "label_short": "A U.S. person, meaning – item 9",
+      "label_full": "A non-U.S. person",
+      "label_norm": "a us person meaning – item 9 a nonus person",
+      "anchor_x": 75.95999526977539,
+      "anchor_y": 560.4000244140625,
+      "box_rect": [
+        72.7199935913086,
+        557.1600341796875,
+        79.19999694824219,
+        563.6400146484375
+      ],
+      "line_box": [
+        72.7199935913086,
+        557.1600341796875,
+        79.19999694824219,
+        563.6400146484375
+      ],
+      "placement": "checkbox",
+      "section": "A U.S. person, meaning",
+      "section_norm": "a us person meaning",
+      "index": 1
+    },
+    {
+      "page": 17,
+      "label": "A U.S. person, meaning – item 10: By checking this box, the Investor is making the representations, warranties, acknowledgments, and agreements set",
+      "label_short": "A U.S. person, meaning – item 10",
+      "label_full": "By checking this box, the Investor is making the representations, warranties, acknowledgments, and agreements set",
+      "label_norm": "a us person meaning – item 10 by checking this box the investor is making the representations warranties acknowledgments and agreements set",
+      "anchor_x": 93.30000305175781,
+      "anchor_y": 580.1400146484375,
+      "box_rect": [
+        91.68000030517578,
+        578.52001953125,
+        94.92000579833984,
+        581.760009765625
+      ],
+      "line_box": [
+        91.68000030517578,
+        578.52001953125,
+        94.92000579833984,
+        581.760009765625
+      ],
+      "placement": "checkbox",
+      "section": "A U.S. person, meaning",
+      "section_norm": "a us person meaning",
+      "index": 1
+    },
+    {
+      "page": 17,
+      "label": "A U.S. person, meaning – item 11: In addition, if checking this box, please complete appropriate portions of “Items applicable only to Investors that are",
+      "label_short": "A U.S. person, meaning – item 11",
+      "label_full": "In addition, if checking this box, please complete appropriate portions of “Items applicable only to Investors that are",
+      "label_norm": "a us person meaning – item 11 in addition if checking this box please complete appropriate portions of “items applicable only to investors that are",
+      "anchor_x": 93.30000305175781,
+      "anchor_y": 613.1400146484375,
+      "box_rect": [
+        91.68000030517578,
+        611.52001953125,
+        94.92000579833984,
+        614.760009765625
+      ],
+      "line_box": [
+        91.68000030517578,
+        611.52001953125,
+        94.92000579833984,
+        614.760009765625
+      ],
+      "placement": "checkbox",
+      "section": "A U.S. person, meaning",
+      "section_norm": "a us person meaning",
+      "index": 1
+    },
+    {
+      "page": 17,
+      "label": "The Investor is – item 12: Investing for its own account.",
+      "label_short": "The Investor is – item 12",
+      "label_full": "Investing for its own account.",
+      "label_norm": "the investor is – item 12 investing for its own account",
+      "anchor_x": 75.95999526977539,
+      "anchor_y": 693.239990234375,
+      "box_rect": [
+        72.7199935913086,
+        690.0,
+        79.19999694824219,
+        696.47998046875
+      ],
+      "line_box": [
+        72.7199935913086,
+        690.0,
+        79.19999694824219,
+        696.47998046875
+      ],
+      "placement": "checkbox",
+      "section": "The Investor is (please check only one box and, if applicable, complete the requested information)",
+      "section_norm": "the investor is",
+      "index": 1
+    },
+    {
+      "page": 17,
+      "label": "The Investor is – item 13: Investing for its own account, but through a custodian or administrator (the “Custodian”) authorized to act for the",
+      "label_short": "The Investor is – item 13",
+      "label_full": "Investing for its own account, but through a custodian or administrator (the “Custodian”) authorized to act for the",
+      "label_norm": "the investor is – item 13 investing for its own account but through a custodian or administrator authorized to act for the",
+      "anchor_x": 75.95999526977539,
+      "anchor_y": 713.4000244140625,
+      "box_rect": [
+        72.7199935913086,
+        710.1600341796875,
+        79.19999694824219,
+        716.6400146484375
+      ],
+      "line_box": [
+        72.7199935913086,
+        710.1600341796875,
+        79.19999694824219,
+        716.6400146484375
+      ],
+      "placement": "checkbox",
+      "section": "The Investor is (please check only one box and, if applicable, complete the requested information)",
+      "section_norm": "the investor is",
+      "index": 1
+    },
+    {
+      "page": 18,
+      "label": "acknowledgments, and agreements set forth in Annex F of this Agreement.",
+      "label_short": "acknowledgments, and agreements set forth in Annex F of this Agreement.",
+      "label_full": "acknowledgments, and agreements set forth in Annex F of this Agreement.",
+      "label_norm": "acknowledgments and agreements set forth in annex f of this agreement",
+      "anchor_x": 109.55999755859375,
+      "anchor_y": 143.02346801757812,
+      "line_box": [
+        103.55999755859375,
+        143.02346801757812,
+        523.9862670898438,
+        143.02346801757812
+      ],
+      "placement": "start",
+      "section": "",
+      "section_norm": "",
+      "index": 1
+    },
+    {
+      "page": 18,
+      "label": "5.",
+      "label_short": "5.",
+      "label_full": "5.",
+      "label_norm": "5",
+      "anchor_x": 77.92680358886719,
+      "anchor_y": 162.82345581054688,
+      "line_box": [
+        71.92680358886719,
+        162.82345581054688,
+        393.0990905761719,
+        162.82345581054688
+      ],
+      "placement": "start",
+      "section": "",
+      "section_norm": "",
+      "index": 1
+    },
+    {
+      "page": 18,
+      "label": "6.",
+      "label_short": "6.",
+      "label_full": "6.",
+      "label_norm": "6",
+      "anchor_x": 77.97000122070312,
+      "anchor_y": 183.82315063476562,
+      "line_box": [
+        71.97000122070312,
+        183.82315063476562,
+        418.5977478027344,
+        183.82315063476562
+      ],
+      "placement": "start",
+      "section": "",
+      "section_norm": "",
+      "index": 1
+    },
+    {
+      "page": 18,
+      "label": "Checklist – item 1: By checking this box, the Custodian is making, on its own behalf, the representations, warranties, acknowledgments,",
+      "label_short": "Checklist – item 1",
+      "label_full": "By checking this box, the Custodian is making, on its own behalf, the representations, warranties, acknowledgments,",
+      "label_norm": "checklist – item 1 by checking this box the custodian is making on its own behalf the representations warranties acknowledgments",
+      "anchor_x": 91.9800033569336,
+      "anchor_y": 44.58000183105469,
+      "box_rect": [
+        90.36000061035156,
+        42.96000289916992,
+        93.60000610351562,
+        46.20000076293945
+      ],
+      "line_box": [
+        90.36000061035156,
+        42.96000289916992,
+        93.60000610351562,
+        46.20000076293945
+      ],
+      "placement": "checkbox",
+      "section": "",
+      "section_norm": "",
+      "index": 1
+    },
+    {
+      "page": 18,
+      "label": "Checklist – item 2: Investing for the account of one or more investor(s) (each, a “Beneficial Owner”) for which the Investor is acting as a",
+      "label_short": "Checklist – item 2",
+      "label_full": "Investing for the account of one or more investor(s) (each, a “Beneficial Owner”) for which the Investor is acting as a",
+      "label_norm": "checklist – item 2 investing for the account of one or more investor for which the investor is acting as a",
+      "anchor_x": 75.95999526977539,
+      "anchor_y": 76.91997146606445,
+      "box_rect": [
+        72.7199935913086,
+        73.67996978759766,
+        79.19999694824219,
+        80.15997314453125
+      ],
+      "line_box": [
+        72.7199935913086,
+        73.67996978759766,
+        79.19999694824219,
+        80.15997314453125
+      ],
+      "placement": "checkbox",
+      "section": "",
+      "section_norm": "",
+      "index": 1
+    },
+    {
+      "page": 18,
+      "label": "Checklist – item 3: By checking this box, the Investor is making, on its own behalf as Nominee, the representations, warranties,",
+      "label_short": "Checklist – item 3",
+      "label_full": "By checking this box, the Investor is making, on its own behalf as Nominee, the representations, warranties,",
+      "label_norm": "checklist – item 3 by checking this box the investor is making on its own behalf as nominee the representations warranties",
+      "anchor_x": 91.9800033569336,
+      "anchor_y": 110.58000183105469,
+      "box_rect": [
+        90.36000061035156,
+        108.95999908447266,
+        93.60000610351562,
+        112.20000457763672
+      ],
+      "line_box": [
+        90.36000061035156,
+        108.95999908447266,
+        93.60000610351562,
+        112.20000457763672
+      ],
+      "placement": "checkbox",
+      "section": "",
+      "section_norm": "",
+      "index": 1
+    },
+    {
+      "page": 18,
+      "label": "Checklist – item 4: Number of Beneficial Owners for which the Nominee is acting: _______________________________",
+      "label_short": "Checklist – item 4",
+      "label_full": "Number of Beneficial Owners for which the Nominee is acting: _______________________________",
+      "label_norm": "checklist – item 4 number of beneficial owners for which the nominee is acting ",
+      "anchor_x": 91.9800033569336,
+      "anchor_y": 143.5800018310547,
+      "box_rect": [
+        90.36000061035156,
+        141.9600067138672,
+        93.60000610351562,
+        145.1999969482422
+      ],
+      "line_box": [
+        90.36000061035156,
+        141.9600067138672,
+        93.60000610351562,
+        145.1999969482422
+      ],
+      "placement": "checkbox",
+      "section": "",
+      "section_norm": "",
+      "index": 1
+    },
+    {
+      "page": 18,
+      "label": "Checklist – item 5: No",
+      "label_short": "Checklist – item 5",
+      "label_full": "No",
+      "label_norm": "checklist – item 5 no",
+      "anchor_x": 75.95999526977539,
+      "anchor_y": 239.87999725341797,
+      "box_rect": [
+        72.7199935913086,
+        236.63999938964844,
+        79.19999694824219,
+        243.1199951171875
+      ],
+      "line_box": [
+        72.7199935913086,
+        236.63999938964844,
+        79.19999694824219,
+        243.1199951171875
+      ],
+      "placement": "checkbox",
+      "section": "",
+      "section_norm": "",
+      "index": 1
+    },
+    {
+      "page": 18,
+      "label": "No – item 6: Yes",
+      "label_short": "No – item 6",
+      "label_full": "Yes",
+      "label_norm": "no – item 6 yes",
+      "anchor_x": 75.95999526977539,
+      "anchor_y": 258.9600143432617,
+      "box_rect": [
+        72.7199935913086,
+        255.7200164794922,
+        79.19999694824219,
+        262.20001220703125
+      ],
+      "line_box": [
+        72.7199935913086,
+        255.7200164794922,
+        79.19999694824219,
+        262.20001220703125
+      ],
+      "placement": "checkbox",
+      "section": "No",
+      "section_norm": "no",
+      "index": 1
+    },
+    {
+      "page": 18,
+      "label": "No – item 7: If YES, the Investor, the Custodian, and/or any applicable Beneficial Owner(s) will be required to complete a",
+      "label_short": "No – item 7",
+      "label_full": "If YES, the Investor, the Custodian, and/or any applicable Beneficial Owner(s) will be required to complete a",
+      "label_norm": "no – item 7 if yes the investor the custodian andor any applicable beneficial owner will be required to complete a",
+      "anchor_x": 73.9800033569336,
+      "anchor_y": 278.5800018310547,
+      "box_rect": [
+        72.36000061035156,
+        276.9599914550781,
+        75.60000610351562,
+        280.20001220703125
+      ],
+      "line_box": [
+        72.36000061035156,
+        276.9599914550781,
+        75.60000610351562,
+        280.20001220703125
+      ],
+      "placement": "checkbox",
+      "section": "No",
+      "section_norm": "no",
+      "index": 1
+    },
+    {
+      "page": 18,
+      "label": "The Investor – item 8: No",
+      "label_short": "The Investor – item 8",
+      "label_full": "No",
+      "label_norm": "the investor – item 8 no",
+      "anchor_x": 93.95999526977539,
+      "anchor_y": 364.9199981689453,
+      "box_rect": [
+        90.7199935913086,
+        361.67999267578125,
+        97.19999694824219,
+        368.1600036621094
+      ],
+      "line_box": [
+        90.7199935913086,
+        361.67999267578125,
+        97.19999694824219,
+        368.1600036621094
+      ],
+      "placement": "checkbox",
+      "section": "The Investor (and/or, if the Investor is a Nominee, any Beneficial Owner)",
+      "section_norm": "the investor",
+      "index": 1
+    },
+    {
+      "page": 18,
+      "label": "No – item 9: Yes",
+      "label_short": "No – item 9",
+      "label_full": "Yes",
+      "label_norm": "no – item 9 yes",
+      "anchor_x": 93.95999526977539,
+      "anchor_y": 383.87998962402344,
+      "box_rect": [
+        90.7199935913086,
+        380.6399841308594,
+        97.19999694824219,
+        387.1199951171875
+      ],
+      "line_box": [
+        90.7199935913086,
+        380.6399841308594,
+        97.19999694824219,
+        387.1199951171875
+      ],
+      "placement": "checkbox",
+      "section": "No",
+      "section_norm": "no",
+      "index": 1
+    },
+    {
+      "page": 18,
+      "label": "No – item 10: No",
+      "label_short": "No – item 10",
+      "label_full": "No",
+      "label_norm": "no – item 10 no",
+      "anchor_x": 93.95999526977539,
+      "anchor_y": 435.90000915527344,
+      "box_rect": [
+        90.7199935913086,
+        432.6600036621094,
+        97.19999694824219,
+        439.1400146484375
+      ],
+      "line_box": [
+        90.7199935913086,
+        432.6600036621094,
+        97.19999694824219,
+        439.1400146484375
+      ],
+      "placement": "checkbox",
+      "section": "No",
+      "section_norm": "no",
+      "index": 1
+    },
+    {
+      "page": 18,
+      "label": "No – item 11: Yes",
+      "label_short": "No – item 11",
+      "label_full": "Yes",
+      "label_norm": "no – item 11 yes",
+      "anchor_x": 93.95999526977539,
+      "anchor_y": 454.9199981689453,
+      "box_rect": [
+        90.7199935913086,
+        451.67999267578125,
+        97.19999694824219,
+        458.1600036621094
+      ],
+      "line_box": [
+        90.7199935913086,
+        451.67999267578125,
+        97.19999694824219,
+        458.1600036621094
+      ],
+      "placement": "checkbox",
+      "section": "No",
+      "section_norm": "no",
+      "index": 1
+    },
+    {
+      "page": 18,
+      "label": "No – item 12: If YES, was the Investor (and/or any Beneficial Owner that is a private investment company) formed prior to",
+      "label_short": "No – item 12",
+      "label_full": "If YES, was the Investor (and/or any Beneficial Owner that is a private investment company) formed prior to",
+      "label_norm": "no – item 12 if yes was the investor formed prior to",
+      "anchor_x": 109.9800033569336,
+      "anchor_y": 474.5399932861328,
+      "box_rect": [
+        108.36000061035156,
+        472.91998291015625,
+        111.60000610351562,
+        476.1600036621094
+      ],
+      "line_box": [
+        108.36000061035156,
+        472.91998291015625,
+        111.60000610351562,
+        476.1600036621094
+      ],
+      "placement": "checkbox",
+      "section": "No",
+      "section_norm": "no",
+      "index": 1
+    },
+    {
+      "page": 18,
+      "label": "No – item 13: No",
+      "label_short": "No – item 13",
+      "label_full": "No",
+      "label_norm": "no – item 13 no",
+      "anchor_x": 129.9599952697754,
+      "anchor_y": 506.87998962402344,
+      "box_rect": [
+        126.7199935913086,
+        503.6399841308594,
+        133.1999969482422,
+        510.1199951171875
+      ],
+      "line_box": [
+        126.7199935913086,
+        503.6399841308594,
+        133.1999969482422,
+        510.1199951171875
+      ],
+      "placement": "checkbox",
+      "section": "No",
+      "section_norm": "no",
+      "index": 1
+    },
+    {
+      "page": 18,
+      "label": "No – item 14: Yes",
+      "label_short": "No – item 14",
+      "label_full": "Yes",
+      "label_norm": "no – item 14 yes",
+      "anchor_x": 129.9599952697754,
+      "anchor_y": 525.9600219726562,
+      "box_rect": [
+        126.7199935913086,
+        522.7200317382812,
+        133.1999969482422,
+        529.2000122070312
+      ],
+      "line_box": [
+        126.7199935913086,
+        522.7200317382812,
+        133.1999969482422,
+        529.2000122070312
+      ],
+      "placement": "checkbox",
+      "section": "No",
+      "section_norm": "no",
+      "index": 1
+    },
+    {
+      "page": 18,
+      "label": "No – item 15: If YES, the Investor and/or any applicable Beneficial Owner(s) will be required to complete a",
+      "label_short": "No – item 15",
+      "label_full": "If YES, the Investor and/or any applicable Beneficial Owner(s) will be required to complete a",
+      "label_norm": "no – item 15 if yes the investor andor any applicable beneficial owner will be required to complete a",
+      "anchor_x": 145.97999572753906,
+      "anchor_y": 545.5800170898438,
+      "box_rect": [
+        144.36000061035156,
+        543.9600219726562,
+        147.59999084472656,
+        547.2000122070312
+      ],
+      "line_box": [
+        144.36000061035156,
+        543.9600219726562,
+        147.59999084472656,
+        547.2000122070312
+      ],
+      "placement": "checkbox",
+      "section": "No",
+      "section_norm": "no",
+      "index": 1
+    },
+    {
+      "page": 18,
+      "label": "No – item 16: No",
+      "label_short": "No – item 16",
+      "label_full": "No",
+      "label_norm": "no – item 16 no",
+      "anchor_x": 93.95999526977539,
+      "anchor_y": 638.8800048828125,
+      "box_rect": [
+        90.7199935913086,
+        635.6400146484375,
+        97.19999694824219,
+        642.1199951171875
+      ],
+      "line_box": [
+        90.7199935913086,
+        635.6400146484375,
+        97.19999694824219,
+        642.1199951171875
+      ],
+      "placement": "checkbox",
+      "section": "No",
+      "section_norm": "no",
+      "index": 1
+    },
+    {
+      "page": 18,
+      "label": "No – item 17: Yes",
+      "label_short": "No – item 17",
+      "label_full": "Yes",
+      "label_norm": "no – item 17 yes",
+      "anchor_x": 93.95999526977539,
+      "anchor_y": 657.9600219726562,
+      "box_rect": [
+        90.7199935913086,
+        654.7200317382812,
+        97.19999694824219,
+        661.2000122070312
+      ],
+      "line_box": [
+        90.7199935913086,
+        654.7200317382812,
+        97.19999694824219,
+        661.2000122070312
+      ],
+      "placement": "checkbox",
+      "section": "No",
+      "section_norm": "no",
+      "index": 1
+    },
+    {
+      "page": 18,
+      "label": "No – item 18: If YES, the Investor and/or any applicable Beneficial Owner(s) represents that each of its “beneficial owners”",
+      "label_short": "No – item 18",
+      "label_full": "If YES, the Investor and/or any applicable Beneficial Owner(s) represents that each of its “beneficial owners”",
+      "label_norm": "no – item 18 if yes the investor andor any applicable beneficial owner represents that each of its “beneficial owners”",
+      "anchor_x": 109.9800033569336,
+      "anchor_y": 677.5800170898438,
+      "box_rect": [
+        108.36000061035156,
+        675.9600219726562,
+        111.60000610351562,
+        679.2000122070312
+      ],
+      "line_box": [
+        108.36000061035156,
+        675.9600219726562,
+        111.60000610351562,
+        679.2000122070312
+      ],
+      "placement": "checkbox",
+      "section": "No",
+      "section_norm": "no",
+      "index": 1
+    },
+    {
+      "page": 18,
+      "label": "No – item 19: The Investor may be required to provide additional information and/or certifications to the Manager.",
+      "label_short": "No – item 19",
+      "label_full": "The Investor may be required to provide additional information and/or certifications to the Manager.",
+      "label_norm": "no – item 19 the investor may be required to provide additional information andor certifications to the manager",
+      "anchor_x": 109.9800033569336,
+      "anchor_y": 724.6199951171875,
+      "box_rect": [
+        108.36000061035156,
+        723.0,
+        111.60000610351562,
+        726.239990234375
+      ],
+      "line_box": [
+        108.36000061035156,
+        723.0,
+        111.60000610351562,
+        726.239990234375
+      ],
+      "placement": "checkbox",
+      "section": "No",
+      "section_norm": "no",
+      "index": 1
+    },
+    {
+      "page": 19,
+      "label": "Not required to be registered with the CFTC and/or to be a member of the NFA in any capacity because it does not",
+      "label_short": "Not required to be registered with the CFTC and/or to be a member of the NFA in any capacity because it does not",
+      "label_full": "Not required to be registered with the CFTC and/or to be a member of the NFA in any capacity because it does not",
+      "label_norm": "not required to be registered with the cftc andor to be a member of the nfa in any capacity because it does not",
+      "anchor_x": 109.55999755859375,
+      "anchor_y": 452.0235137939453,
+      "line_box": [
+        103.55999755859375,
+        452.0235137939453,
+        512.0079956054688,
+        452.0235137939453
+      ],
+      "placement": "start",
+      "section": "The Investor (and/or, if the Investor is a Nominee, each Beneficial Owner) is",
+      "section_norm": "the investor is",
+      "index": 1
+    },
+    {
+      "page": 19,
+      "label": "4.5 or 4.13(a)(3) and/or to foreign pools that do not solicit or accept U.S. participants); or",
+      "label_short": "4.5 or 4.13(a)(3) and/or to foreign pools that do not solicit or accept U.S. participants); or",
+      "label_full": "4.5 or 4.13(a)(3) and/or to foreign pools that do not solicit or accept U.S. participants); or",
+      "label_norm": "45 or 413 andor to foreign pools that do not solicit or accept us participants or",
+      "anchor_x": 127.55999755859375,
+      "anchor_y": 721.0635070800781,
+      "line_box": [
+        121.55999755859375,
+        721.0635070800781,
+        552.5681762695312,
+        721.0635070800781
+      ],
+      "placement": "start",
+      "section": "pursuant to which you are claiming an exclusion or exemption from registration and membership",
+      "section_norm": "pursuant to which you are claiming an exclusion or exemption from registration and membership",
+      "index": 1
+    },
+    {
+      "page": 19,
+      "label": "Checklist – item 1: No",
+      "label_short": "Checklist – item 1",
+      "label_full": "No",
+      "label_norm": "checklist – item 1 no",
+      "anchor_x": 93.95999526977539,
+      "anchor_y": 118.91997146606445,
+      "box_rect": [
+        90.7199935913086,
+        115.67996978759766,
+        97.19999694824219,
+        122.15997314453125
+      ],
+      "line_box": [
+        90.7199935913086,
+        115.67996978759766,
+        97.19999694824219,
+        122.15997314453125
+      ],
+      "placement": "checkbox",
+      "section": "",
+      "section_norm": "",
+      "index": 1
+    },
+    {
+      "page": 19,
+      "label": "No – item 2: Yes",
+      "label_short": "No – item 2",
+      "label_full": "Yes",
+      "label_norm": "no – item 2 yes",
+      "anchor_x": 93.95999526977539,
+      "anchor_y": 137.87999725341797,
+      "box_rect": [
+        90.7199935913086,
+        134.63999938964844,
+        97.19999694824219,
+        141.1199951171875
+      ],
+      "line_box": [
+        90.7199935913086,
+        134.63999938964844,
+        97.19999694824219,
+        141.1199951171875
+      ],
+      "placement": "checkbox",
+      "section": "No",
+      "section_norm": "no",
+      "index": 1
+    },
+    {
+      "page": 19,
+      "label": "No – item 3: If YES, the Manager’s execution and delivery of this Agreement to the Investor will acknowledge the Investor’s",
+      "label_short": "No – item 3",
+      "label_full": "If YES, the Manager’s execution and delivery of this Agreement to the Investor will acknowledge the Investor’s",
+      "label_norm": "no – item 3 if yes the manager’s execution and delivery of this agreement to the investor will acknowledge the investor’s",
+      "anchor_x": 109.9800033569336,
+      "anchor_y": 157.61997985839844,
+      "box_rect": [
+        108.36000061035156,
+        155.99998474121094,
+        111.60000610351562,
+        159.23997497558594
+      ],
+      "line_box": [
+        108.36000061035156,
+        155.99998474121094,
+        111.60000610351562,
+        159.23997497558594
+      ],
+      "placement": "checkbox",
+      "section": "No",
+      "section_norm": "no",
+      "index": 1
+    },
+    {
+      "page": 19,
+      "label": "No – item 4: If NO, does the Investor nevertheless wish to be treated as a BHC Member?",
+      "label_short": "No – item 4",
+      "label_full": "If NO, does the Investor nevertheless wish to be treated as a BHC Member?",
+      "label_norm": "no – item 4 if no does the investor nevertheless wish to be treated as a bhc member",
+      "anchor_x": 109.9800033569336,
+      "anchor_y": 190.61997985839844,
+      "box_rect": [
+        108.36000061035156,
+        188.99998474121094,
+        111.60000610351562,
+        192.23997497558594
+      ],
+      "line_box": [
+        108.36000061035156,
+        188.99998474121094,
+        111.60000610351562,
+        192.23997497558594
+      ],
+      "placement": "checkbox",
+      "section": "No",
+      "section_norm": "no",
+      "index": 1
+    },
+    {
+      "page": 19,
+      "label": "No – item 5: No",
+      "label_short": "No – item 5",
+      "label_full": "No",
+      "label_norm": "no – item 5 no",
+      "anchor_x": 129.9599952697754,
+      "anchor_y": 208.91997528076172,
+      "box_rect": [
+        126.7199935913086,
+        205.6799774169922,
+        133.1999969482422,
+        212.15997314453125
+      ],
+      "line_box": [
+        126.7199935913086,
+        205.6799774169922,
+        133.1999969482422,
+        212.15997314453125
+      ],
+      "placement": "checkbox",
+      "section": "No",
+      "section_norm": "no",
+      "index": 1
+    },
+    {
+      "page": 19,
+      "label": "No – item 6: Yes",
+      "label_short": "No – item 6",
+      "label_full": "Yes",
+      "label_norm": "no – item 6 yes",
+      "anchor_x": 129.9599952697754,
+      "anchor_y": 227.87999725341797,
+      "box_rect": [
+        126.7199935913086,
+        224.63999938964844,
+        133.1999969482422,
+        231.1199951171875
+      ],
+      "line_box": [
+        126.7199935913086,
+        224.63999938964844,
+        133.1999969482422,
+        231.1199951171875
+      ],
+      "placement": "checkbox",
+      "section": "No",
+      "section_norm": "no",
+      "index": 1
+    },
+    {
+      "page": 19,
+      "label": "No – item 7: If YES, the Manager’s execution and delivery of this Agreement to the Investor will acknowledge the Investor’s",
+      "label_short": "No – item 7",
+      "label_full": "If YES, the Manager’s execution and delivery of this Agreement to the Investor will acknowledge the Investor’s",
+      "label_norm": "no – item 7 if yes the manager’s execution and delivery of this agreement to the investor will acknowledge the investor’s",
+      "anchor_x": 109.9800033569336,
+      "anchor_y": 247.61997985839844,
+      "box_rect": [
+        108.36000061035156,
+        245.99998474121094,
+        111.60000610351562,
+        249.23997497558594
+      ],
+      "line_box": [
+        108.36000061035156,
+        245.99998474121094,
+        111.60000610351562,
+        249.23997497558594
+      ],
+      "placement": "checkbox",
+      "section": "No",
+      "section_norm": "no",
+      "index": 1
+    },
+    {
+      "page": 19,
+      "label": "No – item 8: No",
+      "label_short": "No – item 8",
+      "label_full": "No",
+      "label_norm": "no – item 8 no",
+      "anchor_x": 93.95999526977539,
+      "anchor_y": 326.87998962402344,
+      "box_rect": [
+        90.7199935913086,
+        323.6399841308594,
+        97.19999694824219,
+        330.1199951171875
+      ],
+      "line_box": [
+        90.7199935913086,
+        323.6399841308594,
+        97.19999694824219,
+        330.1199951171875
+      ],
+      "placement": "checkbox",
+      "section": "No",
+      "section_norm": "no",
+      "index": 1
+    },
+    {
+      "page": 19,
+      "label": "No – item 9: Yes",
+      "label_short": "No – item 9",
+      "label_full": "Yes",
+      "label_norm": "no – item 9 yes",
+      "anchor_x": 93.95999526977539,
+      "anchor_y": 345.9600067138672,
+      "box_rect": [
+        90.7199935913086,
+        342.7200012207031,
+        97.19999694824219,
+        349.20001220703125
+      ],
+      "line_box": [
+        90.7199935913086,
+        342.7200012207031,
+        97.19999694824219,
+        349.20001220703125
+      ],
+      "placement": "checkbox",
+      "section": "No",
+      "section_norm": "no",
+      "index": 1
+    },
+    {
+      "page": 19,
+      "label": "No – item 10: If YES, by checking this box, the Investor is making the representations, warranties, acknowledgments, and",
+      "label_short": "No – item 10",
+      "label_full": "If YES, by checking this box, the Investor is making the representations, warranties, acknowledgments, and",
+      "label_norm": "no – item 10 if yes by checking this box the investor is making the representations warranties acknowledgments and",
+      "anchor_x": 109.9800033569336,
+      "anchor_y": 365.5800018310547,
+      "box_rect": [
+        108.36000061035156,
+        363.9599914550781,
+        111.60000610351562,
+        367.20001220703125
+      ],
+      "line_box": [
+        108.36000061035156,
+        363.9599914550781,
+        111.60000610351562,
+        367.20001220703125
+      ],
+      "placement": "checkbox",
+      "section": "No",
+      "section_norm": "no",
+      "index": 1
+    },
+    {
+      "page": 19,
+      "label": "The Investor (and/or, if the Investor is a Nominee, each Beneficial Owner) is – item 11: Duly registered with the Commodity Futures Trading Commission (the “CFTC”) and a member in good standing of the",
+      "label_short": "The Investor (and/or, if the Investor is a Nominee, each Beneficial Owner) is – item 11",
+      "label_full": "Duly registered with the Commodity Futures Trading Commission (the “CFTC”) and a member in good standing of the",
+      "label_norm": "the investor is – item 11 duly registered with the commodity futures trading commission and a member in good standing of the",
+      "anchor_x": 75.95999526977539,
+      "anchor_y": 418.9199981689453,
+      "box_rect": [
+        72.7199935913086,
+        415.67999267578125,
+        79.19999694824219,
+        422.1600036621094
+      ],
+      "line_box": [
+        72.7199935913086,
+        415.67999267578125,
+        79.19999694824219,
+        422.1600036621094
+      ],
+      "placement": "checkbox",
+      "section": "The Investor (and/or, if the Investor is a Nominee, each Beneficial Owner) is",
+      "section_norm": "the investor is",
+      "index": 1
+    },
+    {
+      "page": 19,
+      "label": "The Investor (and/or, if the Investor is a Nominee, each Beneficial Owner) is – item 12: If checking this box, please indicate your NFA identification number here:  ____________________;",
+      "label_short": "The Investor (and/or, if the Investor is a Nominee, each Beneficial Owner) is – item 12",
+      "label_full": "If checking this box, please indicate your NFA identification number here:  ____________________;",
+      "label_norm": "the investor is – item 12 if checking this box please indicate your nfa identification number here ",
+      "anchor_x": 91.9800033569336,
+      "anchor_y": 452.5800018310547,
+      "box_rect": [
+        90.36000061035156,
+        450.9599914550781,
+        93.60000610351562,
+        454.20001220703125
+      ],
+      "line_box": [
+        90.36000061035156,
+        450.9599914550781,
+        93.60000610351562,
+        454.20001220703125
+      ],
+      "placement": "checkbox",
+      "section": "The Investor (and/or, if the Investor is a Nominee, each Beneficial Owner) is",
+      "section_norm": "the investor is",
+      "index": 1
+    },
+    {
+      "page": 19,
+      "label": "The Investor (and/or, if the Investor is a Nominee, each Beneficial Owner) is – item 13: Not required to be registered with the CFTC and/or to be a member of the NFA in any capacity because it does not",
+      "label_short": "The Investor (and/or, if the Investor is a Nominee, each Beneficial Owner) is – item 13",
+      "label_full": "Not required to be registered with the CFTC and/or to be a member of the NFA in any capacity because it does not",
+      "label_norm": "the investor is – item 13 not required to be registered with the cftc andor to be a member of the nfa in any capacity because it does not",
+      "anchor_x": 75.95999526977539,
+      "anchor_y": 470.8199920654297,
+      "box_rect": [
+        72.7199935913086,
+        467.5799865722656,
+        79.19999694824219,
+        474.05999755859375
+      ],
+      "line_box": [
+        72.7199935913086,
+        467.5799865722656,
+        79.19999694824219,
+        474.05999755859375
+      ],
+      "placement": "checkbox",
+      "section": "The Investor (and/or, if the Investor is a Nominee, each Beneficial Owner) is",
+      "section_norm": "the investor is",
+      "index": 1
+    },
+    {
+      "page": 19,
+      "label": "The Investor (and/or, if the Investor is a Nominee, each Beneficial Owner) is – item 14: Otherwise excluded or exempt from registration with the CFTC and membership in the NFA under the Commodity",
+      "label_short": "The Investor (and/or, if the Investor is a Nominee, each Beneficial Owner) is – item 14",
+      "label_full": "Otherwise excluded or exempt from registration with the CFTC and membership in the NFA under the Commodity",
+      "label_norm": "the investor is – item 14 otherwise excluded or exempt from registration with the cftc and membership in the nfa under the commodity",
+      "anchor_x": 75.95999526977539,
+      "anchor_y": 503.87998962402344,
+      "box_rect": [
+        72.7199935913086,
+        500.6399841308594,
+        79.19999694824219,
+        507.1199951171875
+      ],
+      "line_box": [
+        72.7199935913086,
+        500.6399841308594,
+        79.19999694824219,
+        507.1199951171875
+      ],
+      "placement": "checkbox",
+      "section": "The Investor (and/or, if the Investor is a Nominee, each Beneficial Owner) is",
+      "section_norm": "the investor is",
+      "index": 1
+    },
+    {
+      "page": 19,
+      "label": "The Investor (and/or, if the Investor is a Nominee, each Beneficial Owner) is – item 15: If checking this box, please identify below the applicable section of the Commodity Exchange Act or CFTC rule",
+      "label_short": "The Investor (and/or, if the Investor is a Nominee, each Beneficial Owner) is – item 15",
+      "label_full": "If checking this box, please identify below the applicable section of the Commodity Exchange Act or CFTC rule",
+      "label_norm": "the investor is – item 15 if checking this box please identify below the applicable section of the commodity exchange act or cftc rule",
+      "anchor_x": 91.9800033569336,
+      "anchor_y": 537.5400390625,
+      "box_rect": [
+        90.36000061035156,
+        535.9200439453125,
+        93.60000610351562,
+        539.1600341796875
+      ],
+      "line_box": [
+        90.36000061035156,
+        535.9200439453125,
+        93.60000610351562,
+        539.1600341796875
+      ],
+      "placement": "checkbox",
+      "section": "The Investor (and/or, if the Investor is a Nominee, each Beneficial Owner) is",
+      "section_norm": "the investor is",
+      "index": 1
+    },
+    {
+      "page": 19,
+      "label": "pursuant to which you are claiming an exclusion or exemption from registration and membership – item 16: Rule 4.5 (excluded from the definition of commodity pool operator as an operator of a “qualifying entity”);",
+      "label_short": "pursuant to which you are claiming an exclusion or exemption from registration and membership – item 16",
+      "label_full": "Rule 4.5 (excluded from the definition of commodity pool operator as an operator of a “qualifying entity”);",
+      "label_norm": "pursuant to which you are claiming an exclusion or exemption from registration and membership – item 16 rule 45 ",
+      "anchor_x": 107.63999557495117,
+      "anchor_y": 569.8800048828125,
+      "box_rect": [
+        104.39999389648438,
+        566.6400146484375,
+        110.87999725341797,
+        573.1199951171875
+      ],
+      "line_box": [
+        104.39999389648438,
+        566.6400146484375,
+        110.87999725341797,
+        573.1199951171875
+      ],
+      "placement": "checkbox",
+      "section": "pursuant to which you are claiming an exclusion or exemption from registration and membership",
+      "section_norm": "pursuant to which you are claiming an exclusion or exemption from registration and membership",
+      "index": 1
+    },
+    {
+      "page": 19,
+      "label": "pursuant to which you are claiming an exclusion or exemption from registration and membership – item 17: Rule 4.13(a)(1) (operates only one pool, is not compensated for operating the pool, and is not affiliated with a",
+      "label_short": "pursuant to which you are claiming an exclusion or exemption from registration and membership – item 17",
+      "label_full": "Rule 4.13(a)(1) (operates only one pool, is not compensated for operating the pool, and is not affiliated with a",
+      "label_norm": "pursuant to which you are claiming an exclusion or exemption from registration and membership – item 17 rule 413 operates only one pool is not compensated for operating the pool and is not affiliated with a",
+      "anchor_x": 107.45999526977539,
+      "anchor_y": 588.9600219726562,
+      "box_rect": [
+        104.2199935913086,
+        585.7200317382812,
+        110.69999694824219,
+        592.2000122070312
+      ],
+      "line_box": [
+        104.2199935913086,
+        585.7200317382812,
+        110.69999694824219,
+        592.2000122070312
+      ],
+      "placement": "checkbox",
+      "section": "pursuant to which you are claiming an exclusion or exemption from registration and membership",
+      "section_norm": "pursuant to which you are claiming an exclusion or exemption from registration and membership",
+      "index": 1
+    },
+    {
+      "page": 19,
+      "label": "pursuant to which you are claiming an exclusion or exemption from registration and membership – item 18: Rule 4.13(a)(2) (operates pools with total gross capital contributions of no more than $400,000, and no single",
+      "label_short": "pursuant to which you are claiming an exclusion or exemption from registration and membership – item 18",
+      "label_full": "Rule 4.13(a)(2) (operates pools with total gross capital contributions of no more than $400,000, and no single",
+      "label_norm": "pursuant to which you are claiming an exclusion or exemption from registration and membership – item 18 rule 413 operates pools with total gross capital contributions of no more than 400000 and no single",
+      "anchor_x": 107.45999526977539,
+      "anchor_y": 621.9600219726562,
+      "box_rect": [
+        104.2199935913086,
+        618.7200317382812,
+        110.69999694824219,
+        625.2000122070312
+      ],
+      "line_box": [
+        104.2199935913086,
+        618.7200317382812,
+        110.69999694824219,
+        625.2000122070312
+      ],
+      "placement": "checkbox",
+      "section": "pursuant to which you are claiming an exclusion or exemption from registration and membership",
+      "section_norm": "pursuant to which you are claiming an exclusion or exemption from registration and membership",
+      "index": 1
+    },
+    {
+      "page": 19,
+      "label": "pursuant to which you are claiming an exclusion or exemption from registration and membership – item 19: Rule 4.13(a)(3) (operates pools limited to sophisticated participants with de minimis levels of commodity",
+      "label_short": "pursuant to which you are claiming an exclusion or exemption from registration and membership – item 19",
+      "label_full": "Rule 4.13(a)(3) (operates pools limited to sophisticated participants with de minimis levels of commodity",
+      "label_norm": "pursuant to which you are claiming an exclusion or exemption from registration and membership – item 19 rule 413 operates pools limited to sophisticated participants with de minimis levels of commodity",
+      "anchor_x": 107.45999526977539,
+      "anchor_y": 654.9600219726562,
+      "box_rect": [
+        104.2199935913086,
+        651.7200317382812,
+        110.69999694824219,
+        658.2000122070312
+      ],
+      "line_box": [
+        104.2199935913086,
+        651.7200317382812,
+        110.69999694824219,
+        658.2000122070312
+      ],
+      "placement": "checkbox",
+      "section": "pursuant to which you are claiming an exclusion or exemption from registration and membership",
+      "section_norm": "pursuant to which you are claiming an exclusion or exemption from registration and membership",
+      "index": 1
+    },
+    {
+      "page": 19,
+      "label": "pursuant to which you are claiming an exclusion or exemption from registration and membership – item 20: Rule 4.14(a)(8) (acts as a sub-adviser solely to commodity pools that have claimed exemption under CFTC Rules",
+      "label_short": "pursuant to which you are claiming an exclusion or exemption from registration and membership – item 20",
+      "label_full": "Rule 4.14(a)(8) (acts as a sub-adviser solely to commodity pools that have claimed exemption under CFTC Rules",
+      "label_norm": "pursuant to which you are claiming an exclusion or exemption from registration and membership – item 20 rule 414 acts as a subadviser solely to commodity pools that have claimed exemption under cftc rules",
+      "anchor_x": 107.45999526977539,
+      "anchor_y": 687.9600219726562,
+      "box_rect": [
+        104.2199935913086,
+        684.7200317382812,
+        110.69999694824219,
+        691.2000122070312
+      ],
+      "line_box": [
+        104.2199935913086,
+        684.7200317382812,
+        110.69999694824219,
+        691.2000122070312
+      ],
+      "placement": "checkbox",
+      "section": "pursuant to which you are claiming an exclusion or exemption from registration and membership",
+      "section_norm": "pursuant to which you are claiming an exclusion or exemption from registration and membership",
+      "index": 1
+    },
+    {
+      "page": 19,
+      "label": "pursuant to which you are claiming an exclusion or exemption from registration and membership – item 21: Other (describe here): ____________________________________________________________",
+      "label_short": "pursuant to which you are claiming an exclusion or exemption from registration and membership – item 21",
+      "label_full": "Other (describe here): ____________________________________________________________",
+      "label_norm": "pursuant to which you are claiming an exclusion or exemption from registration and membership – item 21 other  ",
+      "anchor_x": 107.45999526977539,
+      "anchor_y": 720.9600219726562,
+      "box_rect": [
+        104.2199935913086,
+        717.7200317382812,
+        110.69999694824219,
+        724.2000122070312
+      ],
+      "line_box": [
+        104.2199935913086,
+        717.7200317382812,
+        110.69999694824219,
+        724.2000122070312
+      ],
+      "placement": "checkbox",
+      "section": "pursuant to which you are claiming an exclusion or exemption from registration and membership",
+      "section_norm": "pursuant to which you are claiming an exclusion or exemption from registration and membership",
+      "index": 1
+    },
+    {
+      "page": 20,
+      "label": "Please enter the Investor’s taxpayer identification number (Social Security Number for natural persons; Employer",
+      "label_short": "Please enter the Investor’s taxpayer identification number (Social Security Number for natural persons; Employer",
+      "label_full": "Please enter the Investor’s taxpayer identification number (Social Security Number for natural persons; Employer",
+      "label_norm": "please enter the investor’s taxpayer identification number social security number for natural persons employer",
+      "anchor_x": 78.0,
+      "anchor_y": 137.86380004882812,
+      "line_box": [
+        72.0,
+        137.86380004882812,
+        384.1463623046875,
+        137.86380004882812
+      ],
+      "placement": "start",
+      "section": "No",
+      "section_norm": "no",
+      "index": 1
+    },
+    {
+      "page": 20,
+      "label": "The Investor is a non-U.S. person that is an entity and that does not have an identification number.",
+      "label_short": "The Investor is a non-U.S. person that is an entity and that does not have an identification number.",
+      "label_full": "The Investor is a non-U.S. person that is an entity and that does not have an identification number.",
+      "label_norm": "the investor is a nonus person that is an entity and that does not have an identification number",
+      "anchor_x": 77.99996948242188,
+      "anchor_y": 263.9852752685547,
+      "line_box": [
+        71.99996948242188,
+        263.9852752685547,
+        349.207275390625,
+        263.9852752685547
+      ],
+      "placement": "start",
+      "section": "Items applicable only to Investors that are non-U.S. persons",
+      "section_norm": "items applicable only to investors that are nonus persons",
+      "index": 1
+    },
+    {
+      "page": 20,
+      "label": "Items applicable only to Investors that are U.S. persons – item 1: No",
+      "label_short": "Items applicable only to Investors that are U.S. persons – item 1",
+      "label_full": "No",
+      "label_norm": "items applicable only to investors that are us persons – item 1 no",
+      "anchor_x": 93.95999526977539,
+      "anchor_y": 83.8799934387207,
+      "box_rect": [
+        90.7199935913086,
+        80.6399917602539,
+        97.19999694824219,
+        87.1199951171875
+      ],
+      "line_box": [
+        90.7199935913086,
+        80.6399917602539,
+        97.19999694824219,
+        87.1199951171875
+      ],
+      "placement": "checkbox",
+      "section": "Items applicable only to Investors that are U.S. persons",
+      "section_norm": "items applicable only to investors that are us persons",
+      "index": 1
+    },
+    {
+      "page": 20,
+      "label": "No – item 2: Yes",
+      "label_short": "No – item 2",
+      "label_full": "Yes",
+      "label_norm": "no – item 2 yes",
+      "anchor_x": 93.95999526977539,
+      "anchor_y": 102.96001052856445,
+      "box_rect": [
+        90.7199935913086,
+        99.72000885009766,
+        97.19999694824219,
+        106.20001220703125
+      ],
+      "line_box": [
+        90.7199935913086,
+        99.72000885009766,
+        97.19999694824219,
+        106.20001220703125
+      ],
+      "placement": "checkbox",
+      "section": "No",
+      "section_norm": "no",
+      "index": 1
+    },
+    {
+      "page": 20,
+      "label": "Items applicable only to Investors that are non-U.S. persons – item 3: The Investor is a non-U.S. person that is an entity and that does not have an identification number.",
+      "label_short": "Items applicable only to Investors that are non-U.S. persons – item 3",
+      "label_full": "The Investor is a non-U.S. person that is an entity and that does not have an identification number.",
+      "label_norm": "items applicable only to investors that are nonus persons – item 3 the investor is a nonus person that is an entity and that does not have an identification number",
+      "anchor_x": 75.95999526977539,
+      "anchor_y": 282.9600067138672,
+      "box_rect": [
+        72.7199935913086,
+        279.7200012207031,
+        79.19999694824219,
+        286.20001220703125
+      ],
+      "line_box": [
+        72.7199935913086,
+        279.7200012207031,
+        79.19999694824219,
+        286.20001220703125
+      ],
+      "placement": "checkbox",
+      "section": "Items applicable only to Investors that are non-U.S. persons",
+      "section_norm": "items applicable only to investors that are nonus persons",
+      "index": 1
+    },
+    {
+      "page": 20,
+      "label": "14. For Canadian investors only – item 4: By checking this box, the Investor represents and warrants that it has received, read, and understood in its entirety the",
+      "label_short": "14. For Canadian investors only – item 4",
+      "label_full": "By checking this box, the Investor represents and warrants that it has received, read, and understood in its entirety the",
+      "label_norm": "14 for canadian investors only – item 4 by checking this box the investor represents and warrants that it has received read and understood in its entirety the",
+      "anchor_x": 75.95999526977539,
+      "anchor_y": 673.9200439453125,
+      "box_rect": [
+        72.7199935913086,
+        670.6800537109375,
+        79.19999694824219,
+        677.1600341796875
+      ],
+      "line_box": [
+        72.7199935913086,
+        670.6800537109375,
+        79.19999694824219,
+        677.1600341796875
+      ],
+      "placement": "checkbox",
+      "section": "14. For Canadian investors only",
+      "section_norm": "14 for canadian investors only",
+      "index": 1
+    },
+    {
+      "page": 21,
+      "label": "Checklist – item 1: By checking this box, the Investor is making all of the representations, warranties, and acknowledgements included in",
+      "label_short": "Checklist – item 1",
+      "label_full": "By checking this box, the Investor is making all of the representations, warranties, and acknowledgements included in",
+      "label_norm": "checklist – item 1 by checking this box the investor is making all of the representations warranties and acknowledgements included in",
+      "anchor_x": 75.95999526977539,
+      "anchor_y": 43.919973373413086,
+      "box_rect": [
+        72.7199935913086,
+        40.67997360229492,
+        79.19999694824219,
+        47.15997314453125
+      ],
+      "line_box": [
+        72.7199935913086,
+        40.67997360229492,
+        79.19999694824219,
+        47.15997314453125
+      ],
+      "placement": "checkbox",
+      "section": "",
+      "section_norm": "",
+      "index": 1
+    },
+    {
+      "page": 22,
+      "label": "The Investor wishes to hold the New Issues Series of Regular Member Interests – item 1: No\nThe Covered Interest will be of the Restricted Series.",
+      "label_short": "The Investor wishes to hold the New Issues Series of Regular Member Interests – item 1",
+      "label_full": "No\nThe Covered Interest will be of the Restricted Series.",
+      "label_norm": "the investor wishes to hold the new issues series of regular member interests – item 1 no the covered interest will be of the restricted series",
+      "anchor_x": 58.7400016784668,
+      "anchor_y": 86.76001358032227,
+      "box_rect": [
+        55.560001373291016,
+        83.6400146484375,
+        61.92000198364258,
+        89.88001251220703
+      ],
+      "line_box": [
+        55.560001373291016,
+        83.6400146484375,
+        61.92000198364258,
+        89.88001251220703
+      ],
+      "placement": "checkbox",
+      "section": "The Investor wishes to hold the New Issues Series of Regular Member Interests",
+      "section_norm": "the investor wishes to hold the new issues series of regular member interests",
+      "index": 1
+    },
+    {
+      "page": 22,
+      "label": "No – item 2: Yes By checking this box, the Investor represents and warrants that the Investor (and/or, if the Investor is a Nominee, any",
+      "label_short": "No – item 2",
+      "label_full": "Yes By checking this box, the Investor represents and warrants that the Investor (and/or, if the Investor is a Nominee, any",
+      "label_norm": "no – item 2 yes by checking this box the investor represents and warrants that the investor andor if the investor is a nominee any",
+      "anchor_x": 58.7400016784668,
+      "anchor_y": 105.71997451782227,
+      "box_rect": [
+        55.560001373291016,
+        102.5999755859375,
+        61.92000198364258,
+        108.83997344970703
+      ],
+      "line_box": [
+        55.560001373291016,
+        102.5999755859375,
+        61.92000198364258,
+        108.83997344970703
+      ],
+      "placement": "checkbox",
+      "section": "No",
+      "section_norm": "no",
+      "index": 1
+    },
+    {
+      "page": 22,
+      "label": "Nominee, any Beneficial Owner) – item 3: No",
+      "label_short": "Nominee, any Beneficial Owner) – item 3",
+      "label_full": "No",
+      "label_norm": "nominee any beneficial owner – item 3 no",
+      "anchor_x": 135.29999542236328,
+      "anchor_y": 246.68997955322266,
+      "box_rect": [
+        132.1199951171875,
+        243.53997802734375,
+        138.47999572753906,
+        249.83998107910156
+      ],
+      "line_box": [
+        132.1199951171875,
+        243.53997802734375,
+        138.47999572753906,
+        249.83998107910156
+      ],
+      "placement": "checkbox",
+      "section": "Nominee, any Beneficial Owner)",
+      "section_norm": "nominee any beneficial owner",
+      "index": 1
+    },
+    {
+      "page": 22,
+      "label": "No – item 4: Yes",
+      "label_short": "No – item 4",
+      "label_full": "Yes",
+      "label_norm": "no – item 4 yes",
+      "anchor_x": 135.29999542236328,
+      "anchor_y": 265.800048828125,
+      "box_rect": [
+        132.1199951171875,
+        262.67999267578125,
+        138.47999572753906,
+        268.92010498046875
+      ],
+      "line_box": [
+        132.1199951171875,
+        262.67999267578125,
+        138.47999572753906,
+        268.92010498046875
+      ],
+      "placement": "checkbox",
+      "section": "No",
+      "section_norm": "no",
+      "index": 1
+    },
+    {
+      "page": 22,
+      "label": "No – item 5: No",
+      "label_short": "No – item 5",
+      "label_full": "No",
+      "label_norm": "no – item 5 no",
+      "anchor_x": 135.29999542236328,
+      "anchor_y": 336.7200012207031,
+      "box_rect": [
+        132.1199951171875,
+        333.6000061035156,
+        138.47999572753906,
+        339.8399963378906
+      ],
+      "line_box": [
+        132.1199951171875,
+        333.6000061035156,
+        138.47999572753906,
+        339.8399963378906
+      ],
+      "placement": "checkbox",
+      "section": "No",
+      "section_norm": "no",
+      "index": 1
+    },
+    {
+      "page": 22,
+      "label": "No – item 6: Yes",
+      "label_short": "No – item 6",
+      "label_full": "Yes",
+      "label_norm": "no – item 6 yes",
+      "anchor_x": 135.29999542236328,
+      "anchor_y": 355.79998779296875,
+      "box_rect": [
+        132.1199951171875,
+        352.67999267578125,
+        138.47999572753906,
+        358.91998291015625
+      ],
+      "line_box": [
+        132.1199951171875,
+        352.67999267578125,
+        138.47999572753906,
+        358.91998291015625
+      ],
+      "placement": "checkbox",
+      "section": "No",
+      "section_norm": "no",
+      "index": 1
+    },
+    {
+      "page": 22,
+      "label": "No – item 7: No",
+      "label_short": "No – item 7",
+      "label_full": "No",
+      "label_norm": "no – item 7 no",
+      "anchor_x": 148.73999786376953,
+      "anchor_y": 491.760009765625,
+      "box_rect": [
+        145.55999755859375,
+        488.6400146484375,
+        151.9199981689453,
+        494.8800048828125
+      ],
+      "line_box": [
+        145.55999755859375,
+        488.6400146484375,
+        151.9199981689453,
+        494.8800048828125
+      ],
+      "placement": "checkbox",
+      "section": "No",
+      "section_norm": "no",
+      "index": 1
+    },
+    {
+      "page": 22,
+      "label": "No – item 8: Yes",
+      "label_short": "No – item 8",
+      "label_full": "Yes",
+      "label_norm": "no – item 8 yes",
+      "anchor_x": 148.73999786376953,
+      "anchor_y": 510.7200164794922,
+      "box_rect": [
+        145.55999755859375,
+        507.6000061035156,
+        151.9199981689453,
+        513.8400268554688
+      ],
+      "line_box": [
+        145.55999755859375,
+        507.6000061035156,
+        151.9199981689453,
+        513.8400268554688
+      ],
+      "placement": "checkbox",
+      "section": "No",
+      "section_norm": "no",
+      "index": 1
+    },
+    {
+      "page": 22,
+      "label": "No – item 9: If YES, please complete the following items (a) and (b) with respect to the Investor (and/or, if the Investor is a",
+      "label_short": "No – item 9",
+      "label_full": "If YES, please complete the following items (a) and (b) with respect to the Investor (and/or, if the Investor is a",
+      "label_norm": "no – item 9 if yes please complete the following items and with respect to the investor andor if the investor is a",
+      "anchor_x": 96.54000091552734,
+      "anchor_y": 169.13999938964844,
+      "box_rect": [
+        94.91999816894531,
+        167.52000427246094,
+        98.16000366210938,
+        170.75999450683594
+      ],
+      "line_box": [
+        94.91999816894531,
+        167.52000427246094,
+        98.16000366210938,
+        170.75999450683594
+      ],
+      "placement": "checkbox",
+      "section": "No",
+      "section_norm": "no",
+      "index": 1
+    },
+    {
+      "page": 22,
+      "label": "No – item 10: If YES, the Investor and/or any applicable Beneficial Owner(s) may be required to provide additional",
+      "label_short": "No – item 10",
+      "label_full": "If YES, the Investor and/or any applicable Beneficial Owner(s) may be required to provide additional",
+      "label_norm": "no – item 10 if yes the investor andor any applicable beneficial owner may be required to provide additional",
+      "anchor_x": 132.5399932861328,
+      "anchor_y": 287.09999084472656,
+      "box_rect": [
+        130.9199981689453,
+        285.47998046875,
+        134.1599884033203,
+        288.7200012207031
+      ],
+      "line_box": [
+        130.9199981689453,
+        285.47998046875,
+        134.1599884033203,
+        288.7200012207031
+      ],
+      "placement": "checkbox",
+      "section": "No",
+      "section_norm": "no",
+      "index": 1
+    },
+    {
+      "page": 22,
+      "label": "No – item 11: If YES, please indicate whether all of the following are true:  (1) the Investor is not (i) covered by any of the",
+      "label_short": "No – item 11",
+      "label_full": "If YES, please indicate whether all of the following are true:  (1) the Investor is not (i) covered by any of the",
+      "label_norm": "no – item 11 if yes please indicate whether all of the following are true the investor is not covered by any of the",
+      "anchor_x": 133.74000549316406,
+      "anchor_y": 377.09999084472656,
+      "box_rect": [
+        132.12001037597656,
+        375.47998046875,
+        135.36000061035156,
+        378.7200012207031
+      ],
+      "line_box": [
+        132.12001037597656,
+        375.47998046875,
+        135.36000061035156,
+        378.7200012207031
+      ],
+      "placement": "checkbox",
+      "section": "No",
+      "section_norm": "no",
+      "index": 1
+    },
+    {
+      "page": 22,
+      "label": "No – item 12: If YES, the Investor and/or any applicable Beneficial Owner(s) may be required to provide",
+      "label_short": "No – item 12",
+      "label_full": "If YES, the Investor and/or any applicable Beneficial Owner(s) may be required to provide",
+      "label_norm": "no – item 12 if yes the investor andor any applicable beneficial owner may be required to provide",
+      "anchor_x": 159.3000030517578,
+      "anchor_y": 532.1400146484375,
+      "box_rect": [
+        157.6800079345703,
+        530.52001953125,
+        160.9199981689453,
+        533.760009765625
+      ],
+      "line_box": [
+        157.6800079345703,
+        530.52001953125,
+        160.9199981689453,
+        533.760009765625
+      ],
+      "placement": "checkbox",
+      "section": "No",
+      "section_norm": "no",
+      "index": 1
+    },
+    {
+      "page": 23,
+      "label": "Field",
+      "label_short": "Field",
+      "label_full": "Field",
+      "label_norm": "field",
+      "anchor_x": 168.7199993133545,
+      "anchor_y": 44.94000244140625,
+      "box_rect": [
+        49.439998626708984,
+        35.8800048828125,
+        288.0,
+        54.0
+      ],
+      "line_box": [
+        49.439998626708984,
+        44.94000244140625,
+        288.0,
+        44.94000244140625
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 1
+    },
+    {
+      "page": 23,
+      "label": "a.\nA FINRA member firm or other broker or dealer.",
+      "label_short": "a.\nA FINRA member firm or other broker or dealer.",
+      "label_full": "a.\nA FINRA member firm or other broker or dealer.",
+      "label_norm": "a a finra member firm or other broker or dealer",
+      "anchor_x": 429.7200012207031,
+      "anchor_y": 44.94000244140625,
+      "box_rect": [
+        287.8800048828125,
+        35.8800048828125,
+        571.5599975585938,
+        54.0
+      ],
+      "line_box": [
+        287.8800048828125,
+        44.94000244140625,
+        571.5599975585938,
+        44.94000244140625
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 1
+    },
+    {
+      "page": 23,
+      "label": "Field",
+      "label_short": "Field",
+      "label_full": "Field",
+      "label_norm": "field",
+      "anchor_x": 168.66000366210938,
+      "anchor_y": 62.910003662109375,
+      "box_rect": [
+        54.720001220703125,
+        53.82000732421875,
+        282.6000061035156,
+        72.0
+      ],
+      "line_box": [
+        54.720001220703125,
+        62.910003662109375,
+        282.6000061035156,
+        62.910003662109375
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 2
+    },
+    {
+      "page": 23,
+      "label": "a.\nA FINRA member firm or other broker or dealer.",
+      "label_short": "a.\nA FINRA member firm or other broker or dealer.",
+      "label_full": "a.\nA FINRA member firm or other broker or dealer.",
+      "label_norm": "a a finra member firm or other broker or dealer",
+      "anchor_x": 436.38002014160156,
+      "anchor_y": 60.3900146484375,
+      "box_rect": [
+        306.7200012207031,
+        53.82000732421875,
+        566.0400390625,
+        66.96002197265625
+      ],
+      "line_box": [
+        306.7200012207031,
+        60.3900146484375,
+        566.0400390625,
+        60.3900146484375
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 2
+    },
+    {
+      "page": 23,
+      "label": "employee of a FINRA member firm or other broker or dealer",
+      "label_short": "employee of a FINRA member firm or other broker or dealer",
+      "label_full": "employee of a FINRA member firm or other broker or dealer",
+      "label_norm": "employee of a finra member firm or other broker or dealer",
+      "anchor_x": 436.38002014160156,
+      "anchor_y": 75.9000244140625,
+      "box_rect": [
+        306.7200012207031,
+        66.84002685546875,
+        566.0400390625,
+        84.96002197265625
+      ],
+      "line_box": [
+        306.7200012207031,
+        75.9000244140625,
+        566.0400390625,
+        75.9000244140625
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 1
+    },
+    {
+      "page": 23,
+      "label": "a.\nA FINRA member firm or other broker or dealer.",
+      "label_short": "a.\nA FINRA member firm or other broker or dealer.",
+      "label_full": "a.\nA FINRA member firm or other broker or dealer.",
+      "label_norm": "a a finra member firm or other broker or dealer",
+      "anchor_x": 168.66000366210938,
+      "anchor_y": 78.42001342773438,
+      "box_rect": [
+        54.720001220703125,
+        71.8800048828125,
+        282.6000061035156,
+        84.96002197265625
+      ],
+      "line_box": [
+        54.720001220703125,
+        78.42001342773438,
+        282.6000061035156,
+        78.42001342773438
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 3
+    },
+    {
+      "page": 23,
+      "label": "b.\nAn officer, director, general partner, associated person1, or",
+      "label_short": "b.\nAn officer, director, general partner, associated person1, or",
+      "label_full": "b.\nAn officer, director, general partner, associated person1, or",
+      "label_norm": "b an officer director general partner associated person1 or",
+      "anchor_x": 168.66000366210938,
+      "anchor_y": 91.43997192382812,
+      "box_rect": [
+        54.720001220703125,
+        84.8399658203125,
+        282.6000061035156,
+        98.03997802734375
+      ],
+      "line_box": [
+        54.720001220703125,
+        91.43997192382812,
+        282.6000061035156,
+        91.43997192382812
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 1
+    },
+    {
+      "page": 23,
+      "label": "(other than a limited business broker dealer2) (each such person,",
+      "label_short": "(other than a limited business broker dealer2) (each such person,",
+      "label_full": "(other than a limited business broker dealer2) (each such person,",
+      "label_norm": "each such person",
+      "anchor_x": 436.38002014160156,
+      "anchor_y": 91.43997192382812,
+      "box_rect": [
+        306.7200012207031,
+        84.8399658203125,
+        566.0400390625,
+        98.03997802734375
+      ],
+      "line_box": [
+        306.7200012207031,
+        91.43997192382812,
+        566.0400390625,
+        91.43997192382812
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 1
+    },
+    {
+      "page": 23,
+      "label": "b.\nAn officer, director, general partner, associated person1, or",
+      "label_short": "b.\nAn officer, director, general partner, associated person1, or",
+      "label_full": "b.\nAn officer, director, general partner, associated person1, or",
+      "label_norm": "b an officer director general partner associated person1 or",
+      "anchor_x": 168.66000366210938,
+      "anchor_y": 104.45999145507812,
+      "box_rect": [
+        54.720001220703125,
+        97.91998291015625,
+        282.6000061035156,
+        111.0
+      ],
+      "line_box": [
+        54.720001220703125,
+        104.45999145507812,
+        282.6000061035156,
+        104.45999145507812
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 2
+    },
+    {
+      "page": 23,
+      "label": "(other than a limited business broker dealer2) (each such person,",
+      "label_short": "(other than a limited business broker dealer2) (each such person,",
+      "label_full": "(other than a limited business broker dealer2) (each such person,",
+      "label_norm": "each such person",
+      "anchor_x": 436.38002014160156,
+      "anchor_y": 104.45999145507812,
+      "box_rect": [
+        306.7200012207031,
+        97.91998291015625,
+        566.0400390625,
+        111.0
+      ],
+      "line_box": [
+        306.7200012207031,
+        104.45999145507812,
+        566.0400390625,
+        104.45999145507812
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 2
+    },
+    {
+      "page": 23,
+      "label": "b.\nAn officer, director, general partner, associated person1, or",
+      "label_short": "b.\nAn officer, director, general partner, associated person1, or",
+      "label_full": "b.\nAn officer, director, general partner, associated person1, or",
+      "label_norm": "b an officer director general partner associated person1 or",
+      "anchor_x": 168.66000366210938,
+      "anchor_y": 119.94000244140625,
+      "box_rect": [
+        54.720001220703125,
+        110.8800048828125,
+        282.6000061035156,
+        129.0
+      ],
+      "line_box": [
+        54.720001220703125,
+        119.94000244140625,
+        282.6000061035156,
+        119.94000244140625
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 3
+    },
+    {
+      "page": 23,
+      "label": "(other than a limited business broker dealer2) (each such person,",
+      "label_short": "(other than a limited business broker dealer2) (each such person,",
+      "label_full": "(other than a limited business broker dealer2) (each such person,",
+      "label_norm": "each such person",
+      "anchor_x": 436.38002014160156,
+      "anchor_y": 117.42001342773438,
+      "box_rect": [
+        306.7200012207031,
+        110.8800048828125,
+        566.0400390625,
+        123.96002197265625
+      ],
+      "line_box": [
+        306.7200012207031,
+        117.42001342773438,
+        566.0400390625,
+        117.42001342773438
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 3
+    },
+    {
+      "page": 23,
+      "label": "c.\nAn agent of a Covered Broker Dealer, if the agent is engaged in",
+      "label_short": "c.\nAn agent of a Covered Broker Dealer, if the agent is engaged in",
+      "label_full": "c.\nAn agent of a Covered Broker Dealer, if the agent is engaged in",
+      "label_norm": "c an agent of a covered broker dealer if the agent is engaged in",
+      "anchor_x": 436.38002014160156,
+      "anchor_y": 132.9000244140625,
+      "box_rect": [
+        306.7200012207031,
+        123.84002685546875,
+        566.0400390625,
+        141.96002197265625
+      ],
+      "line_box": [
+        306.7200012207031,
+        132.9000244140625,
+        566.0400390625,
+        132.9000244140625
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 1
+    },
+    {
+      "page": 23,
+      "label": "Field",
+      "label_short": "Field",
+      "label_full": "Field",
+      "label_norm": "field",
+      "anchor_x": 168.66000366210938,
+      "anchor_y": 135.42001342773438,
+      "box_rect": [
+        54.720001220703125,
+        128.8800048828125,
+        282.6000061035156,
+        141.96002197265625
+      ],
+      "line_box": [
+        54.720001220703125,
+        135.42001342773438,
+        282.6000061035156,
+        135.42001342773438
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 3
+    },
+    {
+      "page": 23,
+      "label": "c.\nAn agent of a Covered Broker Dealer, if the agent is engaged in",
+      "label_short": "c.\nAn agent of a Covered Broker Dealer, if the agent is engaged in",
+      "label_full": "c.\nAn agent of a Covered Broker Dealer, if the agent is engaged in",
+      "label_norm": "c an agent of a covered broker dealer if the agent is engaged in",
+      "anchor_x": 168.66000366210938,
+      "anchor_y": 150.9000244140625,
+      "box_rect": [
+        54.720001220703125,
+        141.84002685546875,
+        282.6000061035156,
+        159.96002197265625
+      ],
+      "line_box": [
+        54.720001220703125,
+        150.9000244140625,
+        282.6000061035156,
+        150.9000244140625
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 2
+    },
+    {
+      "page": 23,
+      "label": "c.\nAn agent of a Covered Broker Dealer, if the agent is engaged in",
+      "label_short": "c.\nAn agent of a Covered Broker Dealer, if the agent is engaged in",
+      "label_full": "c.\nAn agent of a Covered Broker Dealer, if the agent is engaged in",
+      "label_norm": "c an agent of a covered broker dealer if the agent is engaged in",
+      "anchor_x": 436.38002014160156,
+      "anchor_y": 148.43997192382812,
+      "box_rect": [
+        306.7200012207031,
+        141.8399658203125,
+        566.0400390625,
+        155.03997802734375
+      ],
+      "line_box": [
+        306.7200012207031,
+        148.43997192382812,
+        566.0400390625,
+        148.43997192382812
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 3
+    },
+    {
+      "page": 23,
+      "label": "d.\nAn immediate family member3 of a person covered by items (b)",
+      "label_short": "d.\nAn immediate family member3 of a person covered by items (b)",
+      "label_full": "d.\nAn immediate family member3 of a person covered by items (b)",
+      "label_norm": "d an immediate family member3 of a person covered by items",
+      "anchor_x": 436.38002014160156,
+      "anchor_y": 161.45999145507812,
+      "box_rect": [
+        306.7200012207031,
+        154.91998291015625,
+        566.0400390625,
+        168.0
+      ],
+      "line_box": [
+        306.7200012207031,
+        161.45999145507812,
+        566.0400390625,
+        161.45999145507812
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 1
+    },
+    {
+      "page": 23,
+      "label": "c.\nAn agent of a Covered Broker Dealer, if the agent is engaged in",
+      "label_short": "c.\nAn agent of a Covered Broker Dealer, if the agent is engaged in",
+      "label_full": "c.\nAn agent of a Covered Broker Dealer, if the agent is engaged in",
+      "label_norm": "c an agent of a covered broker dealer if the agent is engaged in",
+      "anchor_x": 168.66000366210938,
+      "anchor_y": 166.43997192382812,
+      "box_rect": [
+        54.720001220703125,
+        159.8399658203125,
+        282.6000061035156,
+        173.03997802734375
+      ],
+      "line_box": [
+        54.720001220703125,
+        166.43997192382812,
+        282.6000061035156,
+        166.43997192382812
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 4
+    },
+    {
+      "page": 23,
+      "label": "d.\nAn immediate family member3 of a person covered by items (b)",
+      "label_short": "d.\nAn immediate family member3 of a person covered by items (b)",
+      "label_full": "d.\nAn immediate family member3 of a person covered by items (b)",
+      "label_norm": "d an immediate family member3 of a person covered by items",
+      "anchor_x": 436.38002014160156,
+      "anchor_y": 174.42001342773438,
+      "box_rect": [
+        306.7200012207031,
+        167.8800048828125,
+        566.0400390625,
+        180.96002197265625
+      ],
+      "line_box": [
+        306.7200012207031,
+        174.42001342773438,
+        566.0400390625,
+        174.42001342773438
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 2
+    },
+    {
+      "page": 23,
+      "label": "d.\nAn immediate family member3 of a person covered by items (b)",
+      "label_short": "d.\nAn immediate family member3 of a person covered by items (b)",
+      "label_full": "d.\nAn immediate family member3 of a person covered by items (b)",
+      "label_norm": "d an immediate family member3 of a person covered by items",
+      "anchor_x": 168.66000366210938,
+      "anchor_y": 181.97998046875,
+      "box_rect": [
+        54.720001220703125,
+        172.91998291015625,
+        282.6000061035156,
+        191.03997802734375
+      ],
+      "line_box": [
+        54.720001220703125,
+        181.97998046875,
+        282.6000061035156,
+        181.97998046875
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 3
+    },
+    {
+      "page": 23,
+      "label": "e.\nA finder or other person acting in a fiduciary capacity to a broker",
+      "label_short": "e.\nA finder or other person acting in a fiduciary capacity to a broker",
+      "label_full": "e.\nA finder or other person acting in a fiduciary capacity to a broker",
+      "label_norm": "e a finder or other person acting in a fiduciary capacity to a broker",
+      "anchor_x": 436.38002014160156,
+      "anchor_y": 187.43997192382812,
+      "box_rect": [
+        306.7200012207031,
+        180.8399658203125,
+        566.0400390625,
+        194.03997802734375
+      ],
+      "line_box": [
+        306.7200012207031,
+        187.43997192382812,
+        566.0400390625,
+        187.43997192382812
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 1
+    },
+    {
+      "page": 23,
+      "label": "d.\nAn immediate family member3 of a person covered by items (b)",
+      "label_short": "d.\nAn immediate family member3 of a person covered by items (b)",
+      "label_full": "d.\nAn immediate family member3 of a person covered by items (b)",
+      "label_norm": "d an immediate family member3 of a person covered by items",
+      "anchor_x": 168.66000366210938,
+      "anchor_y": 197.45999145507812,
+      "box_rect": [
+        54.720001220703125,
+        190.91998291015625,
+        282.6000061035156,
+        204.0
+      ],
+      "line_box": [
+        54.720001220703125,
+        197.45999145507812,
+        282.6000061035156,
+        197.45999145507812
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 4
+    },
+    {
+      "page": 23,
+      "label": "e.\nA finder or other person acting in a fiduciary capacity to a broker",
+      "label_short": "e.\nA finder or other person acting in a fiduciary capacity to a broker",
+      "label_full": "e.\nA finder or other person acting in a fiduciary capacity to a broker",
+      "label_norm": "e a finder or other person acting in a fiduciary capacity to a broker",
+      "anchor_x": 436.38002014160156,
+      "anchor_y": 200.45999145507812,
+      "box_rect": [
+        306.7200012207031,
+        193.91998291015625,
+        566.0400390625,
+        207.0
+      ],
+      "line_box": [
+        306.7200012207031,
+        200.45999145507812,
+        566.0400390625,
+        200.45999145507812
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 2
+    },
+    {
+      "page": 23,
+      "label": "e.\nA finder or other person acting in a fiduciary capacity to a broker",
+      "label_short": "e.\nA finder or other person acting in a fiduciary capacity to a broker",
+      "label_full": "e.\nA finder or other person acting in a fiduciary capacity to a broker",
+      "label_norm": "e a finder or other person acting in a fiduciary capacity to a broker",
+      "anchor_x": 168.66000366210938,
+      "anchor_y": 210.42001342773438,
+      "box_rect": [
+        54.720001220703125,
+        203.8800048828125,
+        282.6000061035156,
+        216.96002197265625
+      ],
+      "line_box": [
+        54.720001220703125,
+        210.42001342773438,
+        282.6000061035156,
+        210.42001342773438
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 3
+    },
+    {
+      "page": 23,
+      "label": "e.\nA finder or other person acting in a fiduciary capacity to a broker",
+      "label_short": "e.\nA finder or other person acting in a fiduciary capacity to a broker",
+      "label_full": "e.\nA finder or other person acting in a fiduciary capacity to a broker",
+      "label_norm": "e a finder or other person acting in a fiduciary capacity to a broker",
+      "anchor_x": 436.38002014160156,
+      "anchor_y": 213.42001342773438,
+      "box_rect": [
+        306.7200012207031,
+        206.8800048828125,
+        566.0400390625,
+        219.96002197265625
+      ],
+      "line_box": [
+        306.7200012207031,
+        213.42001342773438,
+        566.0400390625,
+        213.42001342773438
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 4
+    },
+    {
+      "page": 23,
+      "label": "e.\nA finder or other person acting in a fiduciary capacity to a broker",
+      "label_short": "e.\nA finder or other person acting in a fiduciary capacity to a broker",
+      "label_full": "e.\nA finder or other person acting in a fiduciary capacity to a broker",
+      "label_norm": "e a finder or other person acting in a fiduciary capacity to a broker",
+      "anchor_x": 168.66000366210938,
+      "anchor_y": 223.43997192382812,
+      "box_rect": [
+        54.720001220703125,
+        216.8399658203125,
+        282.6000061035156,
+        230.03997802734375
+      ],
+      "line_box": [
+        54.720001220703125,
+        223.43997192382812,
+        282.6000061035156,
+        223.43997192382812
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 5
+    },
+    {
+      "page": 23,
+      "label": "or dealer that is authorized or is required to be authorized to act",
+      "label_short": "or dealer that is authorized or is required to be authorized to act",
+      "label_full": "or dealer that is authorized or is required to be authorized to act",
+      "label_norm": "or dealer that is authorized or is required to be authorized to act",
+      "anchor_x": 436.38002014160156,
+      "anchor_y": 226.43997192382812,
+      "box_rect": [
+        306.7200012207031,
+        219.8399658203125,
+        566.0400390625,
+        233.03997802734375
+      ],
+      "line_box": [
+        306.7200012207031,
+        226.43997192382812,
+        566.0400390625,
+        226.43997192382812
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 1
+    },
+    {
+      "page": 23,
+      "label": "e.\nA finder or other person acting in a fiduciary capacity to a broker",
+      "label_short": "e.\nA finder or other person acting in a fiduciary capacity to a broker",
+      "label_full": "e.\nA finder or other person acting in a fiduciary capacity to a broker",
+      "label_norm": "e a finder or other person acting in a fiduciary capacity to a broker",
+      "anchor_x": 168.66000366210938,
+      "anchor_y": 238.97998046875,
+      "box_rect": [
+        54.720001220703125,
+        229.91998291015625,
+        282.6000061035156,
+        248.03997802734375
+      ],
+      "line_box": [
+        54.720001220703125,
+        238.97998046875,
+        282.6000061035156,
+        238.97998046875
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 6
+    },
+    {
+      "page": 23,
+      "label": "as a managing underwriter of new issues, including without",
+      "label_short": "as a managing underwriter of new issues, including without",
+      "label_full": "as a managing underwriter of new issues, including without",
+      "label_norm": "as a managing underwriter of new issues including without",
+      "anchor_x": 436.38002014160156,
+      "anchor_y": 241.97998046875,
+      "box_rect": [
+        306.7200012207031,
+        232.91998291015625,
+        566.0400390625,
+        251.03997802734375
+      ],
+      "line_box": [
+        306.7200012207031,
+        241.97998046875,
+        566.0400390625,
+        241.97998046875
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 1
+    },
+    {
+      "page": 23,
+      "label": "Field",
+      "label_short": "Field",
+      "label_full": "Field",
+      "label_norm": "field",
+      "anchor_x": 168.66000366210938,
+      "anchor_y": 254.45999145507812,
+      "box_rect": [
+        54.720001220703125,
+        247.91998291015625,
+        282.6000061035156,
+        261.0
+      ],
+      "line_box": [
+        54.720001220703125,
+        254.45999145507812,
+        282.6000061035156,
+        254.45999145507812
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 4
+    },
+    {
+      "page": 23,
+      "label": "f.\nA person that has the authority to buy or sell securities for a",
+      "label_short": "f.\nA person that has the authority to buy or sell securities for a",
+      "label_full": "f.\nA person that has the authority to buy or sell securities for a",
+      "label_norm": "f a person that has the authority to buy or sell securities for a",
+      "anchor_x": 436.38002014160156,
+      "anchor_y": 257.4599914550781,
+      "box_rect": [
+        306.7200012207031,
+        250.91998291015625,
+        566.0400390625,
+        264.0
+      ],
+      "line_box": [
+        306.7200012207031,
+        257.4599914550781,
+        566.0400390625,
+        257.4599914550781
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 1
+    },
+    {
+      "page": 23,
+      "label": "f.\nA person that has the authority to buy or sell securities for a",
+      "label_short": "f.\nA person that has the authority to buy or sell securities for a",
+      "label_full": "f.\nA person that has the authority to buy or sell securities for a",
+      "label_norm": "f a person that has the authority to buy or sell securities for a",
+      "anchor_x": 168.66000366210938,
+      "anchor_y": 267.4200134277344,
+      "box_rect": [
+        54.720001220703125,
+        260.8800048828125,
+        282.6000061035156,
+        273.96002197265625
+      ],
+      "line_box": [
+        54.720001220703125,
+        267.4200134277344,
+        282.6000061035156,
+        267.4200134277344
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 2
+    },
+    {
+      "page": 23,
+      "label": "f.\nA person that has the authority to buy or sell securities for a",
+      "label_short": "f.\nA person that has the authority to buy or sell securities for a",
+      "label_full": "f.\nA person that has the authority to buy or sell securities for a",
+      "label_norm": "f a person that has the authority to buy or sell securities for a",
+      "anchor_x": 436.38002014160156,
+      "anchor_y": 270.4200134277344,
+      "box_rect": [
+        306.7200012207031,
+        263.8800048828125,
+        566.0400390625,
+        276.96002197265625
+      ],
+      "line_box": [
+        306.7200012207031,
+        270.4200134277344,
+        566.0400390625,
+        270.4200134277344
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 3
+    },
+    {
+      "page": 23,
+      "label": "f.\nA person that has the authority to buy or sell securities for a",
+      "label_short": "f.\nA person that has the authority to buy or sell securities for a",
+      "label_full": "f.\nA person that has the authority to buy or sell securities for a",
+      "label_norm": "f a person that has the authority to buy or sell securities for a",
+      "anchor_x": 168.66000366210938,
+      "anchor_y": 280.4400177001953,
+      "box_rect": [
+        54.720001220703125,
+        273.84002685546875,
+        282.6000061035156,
+        287.0400085449219
+      ],
+      "line_box": [
+        54.720001220703125,
+        280.4400177001953,
+        282.6000061035156,
+        280.4400177001953
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 4
+    },
+    {
+      "page": 23,
+      "label": "bank, savings and loan institution, insurance company,",
+      "label_short": "bank, savings and loan institution, insurance company,",
+      "label_full": "bank, savings and loan institution, insurance company,",
+      "label_norm": "bank savings and loan institution insurance company",
+      "anchor_x": 436.38002014160156,
+      "anchor_y": 285.8999786376953,
+      "box_rect": [
+        306.7200012207031,
+        276.8399658203125,
+        566.0400390625,
+        294.9599914550781
+      ],
+      "line_box": [
+        306.7200012207031,
+        285.8999786376953,
+        566.0400390625,
+        285.8999786376953
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 1
+    },
+    {
+      "page": 23,
+      "label": "f.\nA person that has the authority to buy or sell securities for a",
+      "label_short": "f.\nA person that has the authority to buy or sell securities for a",
+      "label_full": "f.\nA person that has the authority to buy or sell securities for a",
+      "label_norm": "f a person that has the authority to buy or sell securities for a",
+      "anchor_x": 168.66000366210938,
+      "anchor_y": 295.9800109863281,
+      "box_rect": [
+        54.720001220703125,
+        286.9200134277344,
+        282.6000061035156,
+        305.0400085449219
+      ],
+      "line_box": [
+        54.720001220703125,
+        295.9800109863281,
+        282.6000061035156,
+        295.9800109863281
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 5
+    },
+    {
+      "page": 23,
+      "label": "g.\nAn immediate family member of a person covered by items (e)",
+      "label_short": "g.\nAn immediate family member of a person covered by items (e)",
+      "label_full": "g.\nAn immediate family member of a person covered by items (e)",
+      "label_norm": "g an immediate family member of a person covered by items",
+      "anchor_x": 436.38002014160156,
+      "anchor_y": 301.44000244140625,
+      "box_rect": [
+        306.7200012207031,
+        294.8399963378906,
+        566.0400390625,
+        308.0400085449219
+      ],
+      "line_box": [
+        306.7200012207031,
+        301.44000244140625,
+        566.0400390625,
+        301.44000244140625
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 1
+    },
+    {
+      "page": 23,
+      "label": "Field",
+      "label_short": "Field",
+      "label_full": "Field",
+      "label_norm": "field",
+      "anchor_x": 168.66000366210938,
+      "anchor_y": 311.4600067138672,
+      "box_rect": [
+        54.720001220703125,
+        304.9200134277344,
+        282.6000061035156,
+        318.0
+      ],
+      "line_box": [
+        54.720001220703125,
+        311.4600067138672,
+        282.6000061035156,
+        311.4600067138672
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 5
+    },
+    {
+      "page": 23,
+      "label": "g.\nAn immediate family member of a person covered by items (e)",
+      "label_short": "g.\nAn immediate family member of a person covered by items (e)",
+      "label_full": "g.\nAn immediate family member of a person covered by items (e)",
+      "label_norm": "g an immediate family member of a person covered by items",
+      "anchor_x": 436.38002014160156,
+      "anchor_y": 314.4600067138672,
+      "box_rect": [
+        306.7200012207031,
+        307.9200134277344,
+        566.0400390625,
+        321.0
+      ],
+      "line_box": [
+        306.7200012207031,
+        314.4600067138672,
+        566.0400390625,
+        314.4600067138672
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 2
+    },
+    {
+      "page": 23,
+      "label": "g.\nAn immediate family member of a person covered by items (e)",
+      "label_short": "g.\nAn immediate family member of a person covered by items (e)",
+      "label_full": "g.\nAn immediate family member of a person covered by items (e)",
+      "label_norm": "g an immediate family member of a person covered by items",
+      "anchor_x": 168.66000366210938,
+      "anchor_y": 324.4199981689453,
+      "box_rect": [
+        54.720001220703125,
+        317.8800048828125,
+        282.6000061035156,
+        330.9599914550781
+      ],
+      "line_box": [
+        54.720001220703125,
+        324.4199981689453,
+        282.6000061035156,
+        324.4199981689453
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 3
+    },
+    {
+      "page": 23,
+      "label": "g.\nAn immediate family member of a person covered by items (e)",
+      "label_short": "g.\nAn immediate family member of a person covered by items (e)",
+      "label_full": "g.\nAn immediate family member of a person covered by items (e)",
+      "label_norm": "g an immediate family member of a person covered by items",
+      "anchor_x": 436.38002014160156,
+      "anchor_y": 327.4199981689453,
+      "box_rect": [
+        306.7200012207031,
+        320.8800048828125,
+        566.0400390625,
+        333.9599914550781
+      ],
+      "line_box": [
+        306.7200012207031,
+        327.4199981689453,
+        566.0400390625,
+        327.4199981689453
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 4
+    },
+    {
+      "page": 23,
+      "label": "g.\nAn immediate family member of a person covered by items (e)",
+      "label_short": "g.\nAn immediate family member of a person covered by items (e)",
+      "label_full": "g.\nAn immediate family member of a person covered by items (e)",
+      "label_norm": "g an immediate family member of a person covered by items",
+      "anchor_x": 168.66000366210938,
+      "anchor_y": 339.8999938964844,
+      "box_rect": [
+        54.720001220703125,
+        330.8399963378906,
+        282.6000061035156,
+        348.9599914550781
+      ],
+      "line_box": [
+        54.720001220703125,
+        339.8999938964844,
+        282.6000061035156,
+        339.8999938964844
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 5
+    },
+    {
+      "page": 23,
+      "label": "or (f) of this list who receives from or provides to such person",
+      "label_short": "or (f) of this list who receives from or provides to such person",
+      "label_full": "or (f) of this list who receives from or provides to such person",
+      "label_norm": "or of this list who receives from or provides to such person",
+      "anchor_x": 436.38002014160156,
+      "anchor_y": 340.44000244140625,
+      "box_rect": [
+        306.7200012207031,
+        333.8399963378906,
+        566.0400390625,
+        347.0400085449219
+      ],
+      "line_box": [
+        306.7200012207031,
+        340.44000244140625,
+        566.0400390625,
+        340.44000244140625
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 1
+    },
+    {
+      "page": 23,
+      "label": "Schedule C to the U.S. Securities and Exchange Commission’s",
+      "label_short": "Schedule C to the U.S. Securities and Exchange Commission’s",
+      "label_full": "Schedule C to the U.S. Securities and Exchange Commission’s",
+      "label_norm": "schedule c to the us securities and exchange commission’s",
+      "anchor_x": 436.38002014160156,
+      "anchor_y": 353.4600067138672,
+      "box_rect": [
+        306.7200012207031,
+        346.9200134277344,
+        566.0400390625,
+        360.0
+      ],
+      "line_box": [
+        306.7200012207031,
+        353.4600067138672,
+        566.0400390625,
+        353.4600067138672
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 1
+    },
+    {
+      "page": 23,
+      "label": "Field",
+      "label_short": "Field",
+      "label_full": "Field",
+      "label_norm": "field",
+      "anchor_x": 168.66000366210938,
+      "anchor_y": 355.44000244140625,
+      "box_rect": [
+        54.720001220703125,
+        348.8399963378906,
+        282.6000061035156,
+        362.0400085449219
+      ],
+      "line_box": [
+        54.720001220703125,
+        355.44000244140625,
+        282.6000061035156,
+        355.44000244140625
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 6
+    },
+    {
+      "page": 23,
+      "label": "Form BD (“Form BD”) as owning ten percent (10.0%) or more of",
+      "label_short": "Form BD (“Form BD”) as owning ten percent (10.0%) or more of",
+      "label_full": "Form BD (“Form BD”) as owning ten percent (10.0%) or more of",
+      "label_norm": "form bd as owning ten percent or more of",
+      "anchor_x": 436.38002014160156,
+      "anchor_y": 368.94000244140625,
+      "box_rect": [
+        306.7200012207031,
+        359.8800048828125,
+        566.0400390625,
+        378.0
+      ],
+      "line_box": [
+        306.7200012207031,
+        368.94000244140625,
+        566.0400390625,
+        368.94000244140625
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 1
+    },
+    {
+      "page": 23,
+      "label": "h.\nA person listed (or required to be listed) in Schedule A or",
+      "label_short": "h.\nA person listed (or required to be listed) in Schedule A or",
+      "label_full": "h.\nA person listed (or required to be listed) in Schedule A or",
+      "label_norm": "h a person listed in schedule a or",
+      "anchor_x": 168.66000366210938,
+      "anchor_y": 368.4600067138672,
+      "box_rect": [
+        54.720001220703125,
+        361.9200134277344,
+        282.6000061035156,
+        375.0
+      ],
+      "line_box": [
+        54.720001220703125,
+        368.4600067138672,
+        282.6000061035156,
+        368.4600067138672
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 1
+    },
+    {
+      "page": 23,
+      "label": "h.\nA person listed (or required to be listed) in Schedule A or",
+      "label_short": "h.\nA person listed (or required to be listed) in Schedule A or",
+      "label_full": "h.\nA person listed (or required to be listed) in Schedule A or",
+      "label_norm": "h a person listed in schedule a or",
+      "anchor_x": 168.66000366210938,
+      "anchor_y": 381.4199981689453,
+      "box_rect": [
+        54.720001220703125,
+        374.8800048828125,
+        282.6000061035156,
+        387.9599914550781
+      ],
+      "line_box": [
+        54.720001220703125,
+        381.4199981689453,
+        282.6000061035156,
+        381.4199981689453
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 2
+    },
+    {
+      "page": 23,
+      "label": "Form BD (“Form BD”) as owning ten percent (10.0%) or more of",
+      "label_short": "Form BD (“Form BD”) as owning ten percent (10.0%) or more of",
+      "label_full": "Form BD (“Form BD”) as owning ten percent (10.0%) or more of",
+      "label_norm": "form bd as owning ten percent or more of",
+      "anchor_x": 436.38002014160156,
+      "anchor_y": 384.4199981689453,
+      "box_rect": [
+        306.7200012207031,
+        377.8800048828125,
+        566.0400390625,
+        390.9599914550781
+      ],
+      "line_box": [
+        306.7200012207031,
+        384.4199981689453,
+        566.0400390625,
+        384.4199981689453
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 2
+    },
+    {
+      "page": 23,
+      "label": "h.\nA person listed (or required to be listed) in Schedule A or",
+      "label_short": "h.\nA person listed (or required to be listed) in Schedule A or",
+      "label_full": "h.\nA person listed (or required to be listed) in Schedule A or",
+      "label_norm": "h a person listed in schedule a or",
+      "anchor_x": 168.66000366210938,
+      "anchor_y": 396.8999938964844,
+      "box_rect": [
+        54.720001220703125,
+        387.8399963378906,
+        282.6000061035156,
+        405.9599914550781
+      ],
+      "line_box": [
+        54.720001220703125,
+        396.8999938964844,
+        282.6000061035156,
+        396.8999938964844
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 3
+    },
+    {
+      "page": 23,
+      "label": "Form BD (“Form BD”) as owning ten percent (10.0%) or more of",
+      "label_short": "Form BD (“Form BD”) as owning ten percent (10.0%) or more of",
+      "label_full": "Form BD (“Form BD”) as owning ten percent (10.0%) or more of",
+      "label_norm": "form bd as owning ten percent or more of",
+      "anchor_x": 436.38002014160156,
+      "anchor_y": 397.4100036621094,
+      "box_rect": [
+        306.7200012207031,
+        390.8399963378906,
+        566.0400390625,
+        403.9800109863281
+      ],
+      "line_box": [
+        306.7200012207031,
+        397.4100036621094,
+        566.0400390625,
+        397.4100036621094
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 3
+    },
+    {
+      "page": 23,
+      "label": "Schedule C of Form BD having an ownership interest in a",
+      "label_short": "Schedule C of Form BD having an ownership interest in a",
+      "label_full": "Schedule C of Form BD having an ownership interest in a",
+      "label_norm": "schedule c of form bd having an ownership interest in a",
+      "anchor_x": 436.38002014160156,
+      "anchor_y": 410.4600067138672,
+      "box_rect": [
+        306.7200012207031,
+        403.9200134277344,
+        566.0400390625,
+        417.0
+      ],
+      "line_box": [
+        306.7200012207031,
+        410.4600067138672,
+        566.0400390625,
+        410.4600067138672
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 1
+    },
+    {
+      "page": 23,
+      "label": "Field",
+      "label_short": "Field",
+      "label_full": "Field",
+      "label_norm": "field",
+      "anchor_x": 168.66000366210938,
+      "anchor_y": 412.4100036621094,
+      "box_rect": [
+        54.720001220703125,
+        405.8399963378906,
+        282.6000061035156,
+        418.9800109863281
+      ],
+      "line_box": [
+        54.720001220703125,
+        412.4100036621094,
+        282.6000061035156,
+        412.4100036621094
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 7
+    },
+    {
+      "page": 23,
+      "label": "Schedule C of Form BD having an ownership interest in a",
+      "label_short": "Schedule C of Form BD having an ownership interest in a",
+      "label_full": "Schedule C of Form BD having an ownership interest in a",
+      "label_norm": "schedule c of form bd having an ownership interest in a",
+      "anchor_x": 436.38002014160156,
+      "anchor_y": 423.4199981689453,
+      "box_rect": [
+        306.7200012207031,
+        416.8800048828125,
+        566.0400390625,
+        429.9599914550781
+      ],
+      "line_box": [
+        306.7200012207031,
+        423.4199981689453,
+        566.0400390625,
+        423.4199981689453
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 2
+    },
+    {
+      "page": 23,
+      "label": "i.\nA person listed (or required to be listed) in Schedule B or",
+      "label_short": "i.\nA person listed (or required to be listed) in Schedule B or",
+      "label_full": "i.\nA person listed (or required to be listed) in Schedule B or",
+      "label_norm": "i a person listed in schedule b or",
+      "anchor_x": 168.66000366210938,
+      "anchor_y": 425.4600067138672,
+      "box_rect": [
+        54.720001220703125,
+        418.9200134277344,
+        282.6000061035156,
+        432.0
+      ],
+      "line_box": [
+        54.720001220703125,
+        425.4600067138672,
+        282.6000061035156,
+        425.4600067138672
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 1
+    },
+    {
+      "page": 23,
+      "label": "Schedule C of Form BD having an ownership interest in a",
+      "label_short": "Schedule C of Form BD having an ownership interest in a",
+      "label_full": "Schedule C of Form BD having an ownership interest in a",
+      "label_norm": "schedule c of form bd having an ownership interest in a",
+      "anchor_x": 436.38002014160156,
+      "anchor_y": 436.4100036621094,
+      "box_rect": [
+        306.7200012207031,
+        429.8399963378906,
+        566.0400390625,
+        442.9800109863281
+      ],
+      "line_box": [
+        306.7200012207031,
+        436.4100036621094,
+        566.0400390625,
+        436.4100036621094
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 3
+    },
+    {
+      "page": 23,
+      "label": "i.\nA person listed (or required to be listed) in Schedule B or",
+      "label_short": "i.\nA person listed (or required to be listed) in Schedule B or",
+      "label_full": "i.\nA person listed (or required to be listed) in Schedule B or",
+      "label_norm": "i a person listed in schedule b or",
+      "anchor_x": 168.66000366210938,
+      "anchor_y": 440.94000244140625,
+      "box_rect": [
+        54.720001220703125,
+        431.8800048828125,
+        282.6000061035156,
+        450.0
+      ],
+      "line_box": [
+        54.720001220703125,
+        440.94000244140625,
+        282.6000061035156,
+        440.94000244140625
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 2
+    },
+    {
+      "page": 23,
+      "label": "j.\nA person that owns directly or indirectly ten percent (10.0%) or",
+      "label_short": "j.\nA person that owns directly or indirectly ten percent (10.0%) or",
+      "label_full": "j.\nA person that owns directly or indirectly ten percent (10.0%) or",
+      "label_norm": "j a person that owns directly or indirectly ten percent or",
+      "anchor_x": 436.38002014160156,
+      "anchor_y": 451.95001220703125,
+      "box_rect": [
+        306.7200012207031,
+        442.9200134277344,
+        566.0400390625,
+        460.9800109863281
+      ],
+      "line_box": [
+        306.7200012207031,
+        451.95001220703125,
+        566.0400390625,
+        451.95001220703125
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 1
+    },
+    {
+      "page": 23,
+      "label": "Field",
+      "label_short": "Field",
+      "label_full": "Field",
+      "label_norm": "field",
+      "anchor_x": 168.66000366210938,
+      "anchor_y": 456.4199981689453,
+      "box_rect": [
+        54.720001220703125,
+        449.8800048828125,
+        282.6000061035156,
+        462.9599914550781
+      ],
+      "line_box": [
+        54.720001220703125,
+        456.4199981689453,
+        282.6000061035156,
+        456.4199981689453
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 8
+    },
+    {
+      "page": 23,
+      "label": "other than a public company that is listed on a national securities",
+      "label_short": "other than a public company that is listed on a national securities",
+      "label_full": "other than a public company that is listed on a national securities",
+      "label_norm": "other than a public company that is listed on a national securities",
+      "anchor_x": 436.38002014160156,
+      "anchor_y": 467.4600067138672,
+      "box_rect": [
+        306.7200012207031,
+        460.9200134277344,
+        566.0400390625,
+        474.0
+      ],
+      "line_box": [
+        306.7200012207031,
+        467.4600067138672,
+        566.0400390625,
+        467.4600067138672
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 1
+    },
+    {
+      "page": 23,
+      "label": "j.\nA person that owns directly or indirectly ten percent (10.0%) or",
+      "label_short": "j.\nA person that owns directly or indirectly ten percent (10.0%) or",
+      "label_full": "j.\nA person that owns directly or indirectly ten percent (10.0%) or",
+      "label_norm": "j a person that owns directly or indirectly ten percent or",
+      "anchor_x": 168.66000366210938,
+      "anchor_y": 469.4100036621094,
+      "box_rect": [
+        54.720001220703125,
+        462.8399963378906,
+        282.6000061035156,
+        475.9800109863281
+      ],
+      "line_box": [
+        54.720001220703125,
+        469.4100036621094,
+        282.6000061035156,
+        469.4100036621094
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 2
+    },
+    {
+      "page": 23,
+      "label": "other than a public company that is listed on a national securities",
+      "label_short": "other than a public company that is listed on a national securities",
+      "label_full": "other than a public company that is listed on a national securities",
+      "label_norm": "other than a public company that is listed on a national securities",
+      "anchor_x": 436.38002014160156,
+      "anchor_y": 480.4199981689453,
+      "box_rect": [
+        306.7200012207031,
+        473.8800048828125,
+        566.0400390625,
+        486.9599914550781
+      ],
+      "line_box": [
+        306.7200012207031,
+        480.4199981689453,
+        566.0400390625,
+        480.4199981689453
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 2
+    },
+    {
+      "page": 23,
+      "label": "j.\nA person that owns directly or indirectly ten percent (10.0%) or",
+      "label_short": "j.\nA person that owns directly or indirectly ten percent (10.0%) or",
+      "label_full": "j.\nA person that owns directly or indirectly ten percent (10.0%) or",
+      "label_norm": "j a person that owns directly or indirectly ten percent or",
+      "anchor_x": 168.66000366210938,
+      "anchor_y": 482.4600067138672,
+      "box_rect": [
+        54.720001220703125,
+        475.9200134277344,
+        282.6000061035156,
+        489.0
+      ],
+      "line_box": [
+        54.720001220703125,
+        482.4600067138672,
+        282.6000061035156,
+        482.4600067138672
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 3
+    },
+    {
+      "page": 23,
+      "label": "other than a public company that is listed on a national securities",
+      "label_short": "other than a public company that is listed on a national securities",
+      "label_full": "other than a public company that is listed on a national securities",
+      "label_norm": "other than a public company that is listed on a national securities",
+      "anchor_x": 436.38002014160156,
+      "anchor_y": 493.44000244140625,
+      "box_rect": [
+        306.7200012207031,
+        486.8399963378906,
+        566.0400390625,
+        500.0400085449219
+      ],
+      "line_box": [
+        306.7200012207031,
+        493.44000244140625,
+        566.0400390625,
+        493.44000244140625
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 3
+    },
+    {
+      "page": 23,
+      "label": "j.\nA person that owns directly or indirectly ten percent (10.0%) or",
+      "label_short": "j.\nA person that owns directly or indirectly ten percent (10.0%) or",
+      "label_full": "j.\nA person that owns directly or indirectly ten percent (10.0%) or",
+      "label_norm": "j a person that owns directly or indirectly ten percent or",
+      "anchor_x": 168.66000366210938,
+      "anchor_y": 497.94000244140625,
+      "box_rect": [
+        54.720001220703125,
+        488.8800048828125,
+        282.6000061035156,
+        507.0
+      ],
+      "line_box": [
+        54.720001220703125,
+        497.94000244140625,
+        282.6000061035156,
+        497.94000244140625
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 4
+    },
+    {
+      "page": 23,
+      "label": "k.\nA person that owns directly or indirectly twenty-five percent",
+      "label_short": "k.\nA person that owns directly or indirectly twenty-five percent",
+      "label_full": "k.\nA person that owns directly or indirectly twenty-five percent",
+      "label_norm": "k a person that owns directly or indirectly twentyfive percent",
+      "anchor_x": 436.38002014160156,
+      "anchor_y": 508.9800262451172,
+      "box_rect": [
+        306.7200012207031,
+        499.9200134277344,
+        566.0400390625,
+        518.0400390625
+      ],
+      "line_box": [
+        306.7200012207031,
+        508.9800262451172,
+        566.0400390625,
+        508.9800262451172
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 1
+    },
+    {
+      "page": 23,
+      "label": "Field",
+      "label_short": "Field",
+      "label_full": "Field",
+      "label_norm": "field",
+      "anchor_x": 168.66000366210938,
+      "anchor_y": 513.4199829101562,
+      "box_rect": [
+        54.720001220703125,
+        506.8800048828125,
+        282.6000061035156,
+        519.9599609375
+      ],
+      "line_box": [
+        54.720001220703125,
+        513.4199829101562,
+        282.6000061035156,
+        513.4199829101562
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 9
+    },
+    {
+      "page": 23,
+      "label": "(25.0%) or more of a public reporting company that is a Covered",
+      "label_short": "(25.0%) or more of a public reporting company that is a Covered",
+      "label_full": "(25.0%) or more of a public reporting company that is a Covered",
+      "label_norm": "or more of a public reporting company that is a covered",
+      "anchor_x": 436.38002014160156,
+      "anchor_y": 524.4600219726562,
+      "box_rect": [
+        306.7200012207031,
+        517.9200439453125,
+        566.0400390625,
+        531.0
+      ],
+      "line_box": [
+        306.7200012207031,
+        524.4600219726562,
+        566.0400390625,
+        524.4600219726562
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 1
+    },
+    {
+      "page": 23,
+      "label": "k.\nA person that owns directly or indirectly twenty-five percent",
+      "label_short": "k.\nA person that owns directly or indirectly twenty-five percent",
+      "label_full": "k.\nA person that owns directly or indirectly twenty-five percent",
+      "label_norm": "k a person that owns directly or indirectly twentyfive percent",
+      "anchor_x": 168.66000366210938,
+      "anchor_y": 526.4400024414062,
+      "box_rect": [
+        54.720001220703125,
+        519.8399658203125,
+        282.6000061035156,
+        533.0400390625
+      ],
+      "line_box": [
+        54.720001220703125,
+        526.4400024414062,
+        282.6000061035156,
+        526.4400024414062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 2
+    },
+    {
+      "page": 23,
+      "label": "(25.0%) or more of a public reporting company that is a Covered",
+      "label_short": "(25.0%) or more of a public reporting company that is a Covered",
+      "label_full": "(25.0%) or more of a public reporting company that is a Covered",
+      "label_norm": "or more of a public reporting company that is a covered",
+      "anchor_x": 436.38002014160156,
+      "anchor_y": 539.9400024414062,
+      "box_rect": [
+        306.7200012207031,
+        530.8800048828125,
+        566.0400390625,
+        549.0
+      ],
+      "line_box": [
+        306.7200012207031,
+        539.9400024414062,
+        566.0400390625,
+        539.9400024414062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 2
+    },
+    {
+      "page": 23,
+      "label": "k.\nA person that owns directly or indirectly twenty-five percent",
+      "label_short": "k.\nA person that owns directly or indirectly twenty-five percent",
+      "label_full": "k.\nA person that owns directly or indirectly twenty-five percent",
+      "label_norm": "k a person that owns directly or indirectly twentyfive percent",
+      "anchor_x": 168.66000366210938,
+      "anchor_y": 539.4600219726562,
+      "box_rect": [
+        54.720001220703125,
+        532.9200439453125,
+        282.6000061035156,
+        546.0
+      ],
+      "line_box": [
+        54.720001220703125,
+        539.4600219726562,
+        282.6000061035156,
+        539.4600219726562
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 3
+    },
+    {
+      "page": 23,
+      "label": "k.\nA person that owns directly or indirectly twenty-five percent",
+      "label_short": "k.\nA person that owns directly or indirectly twenty-five percent",
+      "label_full": "k.\nA person that owns directly or indirectly twenty-five percent",
+      "label_norm": "k a person that owns directly or indirectly twentyfive percent",
+      "anchor_x": 168.66000366210938,
+      "anchor_y": 554.9400024414062,
+      "box_rect": [
+        54.720001220703125,
+        545.8800048828125,
+        282.6000061035156,
+        564.0
+      ],
+      "line_box": [
+        54.720001220703125,
+        554.9400024414062,
+        282.6000061035156,
+        554.9400024414062
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 4
+    },
+    {
+      "page": 23,
+      "label": "Indirect Owner, other than a public company that is listed on a",
+      "label_short": "Indirect Owner, other than a public company that is listed on a",
+      "label_full": "Indirect Owner, other than a public company that is listed on a",
+      "label_norm": "indirect owner other than a public company that is listed on a",
+      "anchor_x": 436.38002014160156,
+      "anchor_y": 555.4200134277344,
+      "box_rect": [
+        306.7200012207031,
+        548.8800048828125,
+        566.0400390625,
+        561.9600219726562
+      ],
+      "line_box": [
+        306.7200012207031,
+        555.4200134277344,
+        566.0400390625,
+        555.4200134277344
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 1
+    },
+    {
+      "page": 23,
+      "label": "through (k) of this list who receives from or provides to such",
+      "label_short": "through (k) of this list who receives from or provides to such",
+      "label_full": "through (k) of this list who receives from or provides to such",
+      "label_norm": "through of this list who receives from or provides to such",
+      "anchor_x": 436.38002014160156,
+      "anchor_y": 570.9000244140625,
+      "box_rect": [
+        306.7200012207031,
+        561.8400268554688,
+        566.0400390625,
+        579.9600219726562
+      ],
+      "line_box": [
+        306.7200012207031,
+        570.9000244140625,
+        566.0400390625,
+        570.9000244140625
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 1
+    },
+    {
+      "page": 23,
+      "label": "Field",
+      "label_short": "Field",
+      "label_full": "Field",
+      "label_norm": "field",
+      "anchor_x": 168.66000366210938,
+      "anchor_y": 570.4200134277344,
+      "box_rect": [
+        54.720001220703125,
+        563.8800048828125,
+        282.6000061035156,
+        576.9600219726562
+      ],
+      "line_box": [
+        54.720001220703125,
+        570.4200134277344,
+        282.6000061035156,
+        570.4200134277344
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 10
+    },
+    {
+      "page": 23,
+      "label": "l.\nAn immediate family member of a person listed in items (h)",
+      "label_short": "l.\nAn immediate family member of a person listed in items (h)",
+      "label_full": "l.\nAn immediate family member of a person listed in items (h)",
+      "label_norm": "l an immediate family member of a person listed in items",
+      "anchor_x": 168.66000366210938,
+      "anchor_y": 583.4399719238281,
+      "box_rect": [
+        54.720001220703125,
+        576.8399658203125,
+        282.6000061035156,
+        590.0399780273438
+      ],
+      "line_box": [
+        54.720001220703125,
+        583.4399719238281,
+        282.6000061035156,
+        583.4399719238281
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 1
+    },
+    {
+      "page": 23,
+      "label": "through (k) of this list who receives from or provides to such",
+      "label_short": "through (k) of this list who receives from or provides to such",
+      "label_full": "through (k) of this list who receives from or provides to such",
+      "label_norm": "through of this list who receives from or provides to such",
+      "anchor_x": 436.38002014160156,
+      "anchor_y": 588.9000244140625,
+      "box_rect": [
+        306.7200012207031,
+        579.8400268554688,
+        566.0400390625,
+        597.9600219726562
+      ],
+      "line_box": [
+        306.7200012207031,
+        588.9000244140625,
+        566.0400390625,
+        588.9000244140625
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 2
+    },
+    {
+      "page": 23,
+      "label": "l.\nAn immediate family member of a person listed in items (h)",
+      "label_short": "l.\nAn immediate family member of a person listed in items (h)",
+      "label_full": "l.\nAn immediate family member of a person listed in items (h)",
+      "label_norm": "l an immediate family member of a person listed in items",
+      "anchor_x": 168.66000366210938,
+      "anchor_y": 598.97998046875,
+      "box_rect": [
+        54.720001220703125,
+        589.9199829101562,
+        282.6000061035156,
+        608.0399780273438
+      ],
+      "line_box": [
+        54.720001220703125,
+        598.97998046875,
+        282.6000061035156,
+        598.97998046875
+      ],
+      "placement": "acro_choice",
+      "choices": [],
+      "section": "FINRA RULE 5130 GENERAL EXEMPTIONS",
+      "section_norm": "finra rule 5130 general exemptions",
+      "index": 2
+    },
+    {
+      "page": 24,
+      "label": "For purposes of this Agreement, a “Benefit Plan Investor” means any person that is – item 1: Participants in the plan do not make individual investment decisions.",
+      "label_short": "For purposes of this Agreement, a “Benefit Plan Investor” means any person that is – item 1",
+      "label_full": "Participants in the plan do not make individual investment decisions.",
+      "label_norm": "for purposes of this agreement a “benefit plan investor” means any person that is – item 1 participants in the plan do not make individual investment decisions",
+      "anchor_x": 75.95999526977539,
+      "anchor_y": 381.47999572753906,
+      "box_rect": [
+        72.7199935913086,
+        378.239990234375,
+        79.19999694824219,
+        384.7200012207031
+      ],
+      "line_box": [
+        72.7199935913086,
+        378.239990234375,
+        79.19999694824219,
+        384.7200012207031
+      ],
+      "placement": "checkbox",
+      "section": "For purposes of this Agreement, a “Benefit Plan Investor” means any person that is",
+      "section_norm": "for purposes of this agreement a “benefit plan investor” means any person that is",
+      "index": 1
+    },
+    {
+      "page": 24,
+      "label": "For purposes of this Agreement, a “Benefit Plan Investor” means any person that is – item 2: Participants in the plan make individual investment decisions.",
+      "label_short": "For purposes of this Agreement, a “Benefit Plan Investor” means any person that is – item 2",
+      "label_full": "Participants in the plan make individual investment decisions.",
+      "label_norm": "for purposes of this agreement a “benefit plan investor” means any person that is – item 2 participants in the plan make individual investment decisions",
+      "anchor_x": 75.95999526977539,
+      "anchor_y": 400.4399871826172,
+      "box_rect": [
+        72.7199935913086,
+        397.1999816894531,
+        79.19999694824219,
+        403.67999267578125
+      ],
+      "line_box": [
+        72.7199935913086,
+        397.1999816894531,
+        79.19999694824219,
+        403.67999267578125
+      ],
+      "placement": "checkbox",
+      "section": "For purposes of this Agreement, a “Benefit Plan Investor” means any person that is",
+      "section_norm": "for purposes of this agreement a “benefit plan investor” means any person that is",
+      "index": 1
+    },
+    {
+      "page": 24,
+      "label": "would be counted in assessing whether the Investor is itself a Benefit Plan Investor – item 3: 0% (for employee benefit plans that are not Benefit Plan Investors)",
+      "label_short": "would be counted in assessing whether the Investor is itself a Benefit Plan Investor – item 3",
+      "label_full": "0% (for employee benefit plans that are not Benefit Plan Investors)",
+      "label_norm": "would be counted in assessing whether the investor is itself a benefit plan investor – item 3 0",
+      "anchor_x": 93.95999526977539,
+      "anchor_y": 649.4400024414062,
+      "box_rect": [
+        90.7199935913086,
+        646.2000122070312,
+        97.19999694824219,
+        652.6799926757812
+      ],
+      "line_box": [
+        90.7199935913086,
+        646.2000122070312,
+        97.19999694824219,
+        652.6799926757812
+      ],
+      "placement": "checkbox",
+      "section": "would be counted in assessing whether the Investor is itself a Benefit Plan Investor",
+      "section_norm": "would be counted in assessing whether the investor is itself a benefit plan investor",
+      "index": 1
+    },
+    {
+      "page": 24,
+      "label": "would be counted in assessing whether the Investor is itself a Benefit Plan Investor – item 4: 1-10%\n11-20%\n21-30%\n31-40%\n41-50%",
+      "label_short": "would be counted in assessing whether the Investor is itself a Benefit Plan Investor – item 4",
+      "label_full": "1-10%\n11-20%\n21-30%\n31-40%\n41-50%",
+      "label_norm": "would be counted in assessing whether the investor is itself a benefit plan investor – item 4 110 1120 2130 3140 4150",
+      "anchor_x": 93.95999526977539,
+      "anchor_y": 668.4000244140625,
+      "box_rect": [
+        90.7199935913086,
+        665.1600341796875,
+        97.19999694824219,
+        671.6400146484375
+      ],
+      "line_box": [
+        90.7199935913086,
+        665.1600341796875,
+        97.19999694824219,
+        671.6400146484375
+      ],
+      "placement": "checkbox",
+      "section": "would be counted in assessing whether the Investor is itself a Benefit Plan Investor",
+      "section_norm": "would be counted in assessing whether the investor is itself a benefit plan investor",
+      "index": 1
+    },
+    {
+      "page": 24,
+      "label": "would be counted in assessing whether the Investor is itself a Benefit Plan Investor – item 5",
+      "label_short": "would be counted in assessing whether the Investor is itself a Benefit Plan Investor – item 5",
+      "label_full": "",
+      "label_norm": "would be counted in assessing whether the investor is itself a benefit plan investor – item 5",
+      "anchor_x": 183.95999908447266,
+      "anchor_y": 668.4000244140625,
+      "box_rect": [
+        180.72000122070312,
+        665.1600341796875,
+        187.1999969482422,
+        671.6400146484375
+      ],
+      "line_box": [
+        180.72000122070312,
+        665.1600341796875,
+        187.1999969482422,
+        671.6400146484375
+      ],
+      "placement": "checkbox",
+      "section": "would be counted in assessing whether the Investor is itself a Benefit Plan Investor",
+      "section_norm": "would be counted in assessing whether the investor is itself a benefit plan investor",
+      "index": 1
+    },
+    {
+      "page": 24,
+      "label": "would be counted in assessing whether the Investor is itself a Benefit Plan Investor – item 6",
+      "label_short": "would be counted in assessing whether the Investor is itself a Benefit Plan Investor – item 6",
+      "label_full": "",
+      "label_norm": "would be counted in assessing whether the investor is itself a benefit plan investor – item 6",
+      "anchor_x": 273.9600067138672,
+      "anchor_y": 668.4000244140625,
+      "box_rect": [
+        270.7200012207031,
+        665.1600341796875,
+        277.20001220703125,
+        671.6400146484375
+      ],
+      "line_box": [
+        270.7200012207031,
+        665.1600341796875,
+        277.20001220703125,
+        671.6400146484375
+      ],
+      "placement": "checkbox",
+      "section": "would be counted in assessing whether the Investor is itself a Benefit Plan Investor",
+      "section_norm": "would be counted in assessing whether the investor is itself a benefit plan investor",
+      "index": 1
+    },
+    {
+      "page": 24,
+      "label": "would be counted in assessing whether the Investor is itself a Benefit Plan Investor – item 7",
+      "label_short": "would be counted in assessing whether the Investor is itself a Benefit Plan Investor – item 7",
+      "label_full": "",
+      "label_norm": "would be counted in assessing whether the investor is itself a benefit plan investor – item 7",
+      "anchor_x": 363.9600067138672,
+      "anchor_y": 668.4000244140625,
+      "box_rect": [
+        360.7200012207031,
+        665.1600341796875,
+        367.20001220703125,
+        671.6400146484375
+      ],
+      "line_box": [
+        360.7200012207031,
+        665.1600341796875,
+        367.20001220703125,
+        671.6400146484375
+      ],
+      "placement": "checkbox",
+      "section": "would be counted in assessing whether the Investor is itself a Benefit Plan Investor",
+      "section_norm": "would be counted in assessing whether the investor is itself a benefit plan investor",
+      "index": 1
+    },
+    {
+      "page": 24,
+      "label": "would be counted in assessing whether the Investor is itself a Benefit Plan Investor – item 8",
+      "label_short": "would be counted in assessing whether the Investor is itself a Benefit Plan Investor – item 8",
+      "label_full": "",
+      "label_norm": "would be counted in assessing whether the investor is itself a benefit plan investor – item 8",
+      "anchor_x": 453.90000915527344,
+      "anchor_y": 668.4000244140625,
+      "box_rect": [
+        450.6600036621094,
+        665.1600341796875,
+        457.1400146484375,
+        671.6400146484375
+      ],
+      "line_box": [
+        450.6600036621094,
+        665.1600341796875,
+        457.1400146484375,
+        671.6400146484375
+      ],
+      "placement": "checkbox",
+      "section": "would be counted in assessing whether the Investor is itself a Benefit Plan Investor",
+      "section_norm": "would be counted in assessing whether the investor is itself a benefit plan investor",
+      "index": 1
+    },
+    {
+      "page": 24,
+      "label": "would be counted in assessing whether the Investor is itself a Benefit Plan Investor – item 9: 51-60%\n61-70%\n71-80%\n81-90%\n91-100%",
+      "label_short": "would be counted in assessing whether the Investor is itself a Benefit Plan Investor – item 9",
+      "label_full": "51-60%\n61-70%\n71-80%\n81-90%\n91-100%",
+      "label_norm": "would be counted in assessing whether the investor is itself a benefit plan investor – item 9 5160 6170 7180 8190 91100",
+      "anchor_x": 93.95999526977539,
+      "anchor_y": 687.47998046875,
+      "box_rect": [
+        90.7199935913086,
+        684.239990234375,
+        97.19999694824219,
+        690.719970703125
+      ],
+      "line_box": [
+        90.7199935913086,
+        684.239990234375,
+        97.19999694824219,
+        690.719970703125
+      ],
+      "placement": "checkbox",
+      "section": "would be counted in assessing whether the Investor is itself a Benefit Plan Investor",
+      "section_norm": "would be counted in assessing whether the investor is itself a benefit plan investor",
+      "index": 1
+    },
+    {
+      "page": 24,
+      "label": "would be counted in assessing whether the Investor is itself a Benefit Plan Investor – item 10",
+      "label_short": "would be counted in assessing whether the Investor is itself a Benefit Plan Investor – item 10",
+      "label_full": "",
+      "label_norm": "would be counted in assessing whether the investor is itself a benefit plan investor – item 10",
+      "anchor_x": 183.95999908447266,
+      "anchor_y": 687.47998046875,
+      "box_rect": [
+        180.72000122070312,
+        684.239990234375,
+        187.1999969482422,
+        690.719970703125
+      ],
+      "line_box": [
+        180.72000122070312,
+        684.239990234375,
+        187.1999969482422,
+        690.719970703125
+      ],
+      "placement": "checkbox",
+      "section": "would be counted in assessing whether the Investor is itself a Benefit Plan Investor",
+      "section_norm": "would be counted in assessing whether the investor is itself a benefit plan investor",
+      "index": 1
+    },
+    {
+      "page": 24,
+      "label": "would be counted in assessing whether the Investor is itself a Benefit Plan Investor – item 11",
+      "label_short": "would be counted in assessing whether the Investor is itself a Benefit Plan Investor – item 11",
+      "label_full": "",
+      "label_norm": "would be counted in assessing whether the investor is itself a benefit plan investor – item 11",
+      "anchor_x": 273.9600067138672,
+      "anchor_y": 687.47998046875,
+      "box_rect": [
+        270.7200012207031,
+        684.239990234375,
+        277.20001220703125,
+        690.719970703125
+      ],
+      "line_box": [
+        270.7200012207031,
+        684.239990234375,
+        277.20001220703125,
+        690.719970703125
+      ],
+      "placement": "checkbox",
+      "section": "would be counted in assessing whether the Investor is itself a Benefit Plan Investor",
+      "section_norm": "would be counted in assessing whether the investor is itself a benefit plan investor",
+      "index": 1
+    },
+    {
+      "page": 24,
+      "label": "would be counted in assessing whether the Investor is itself a Benefit Plan Investor – item 12",
+      "label_short": "would be counted in assessing whether the Investor is itself a Benefit Plan Investor – item 12",
+      "label_full": "",
+      "label_norm": "would be counted in assessing whether the investor is itself a benefit plan investor – item 12",
+      "anchor_x": 363.9600067138672,
+      "anchor_y": 687.47998046875,
+      "box_rect": [
+        360.7200012207031,
+        684.239990234375,
+        367.20001220703125,
+        690.719970703125
+      ],
+      "line_box": [
+        360.7200012207031,
+        684.239990234375,
+        367.20001220703125,
+        690.719970703125
+      ],
+      "placement": "checkbox",
+      "section": "would be counted in assessing whether the Investor is itself a Benefit Plan Investor",
+      "section_norm": "would be counted in assessing whether the investor is itself a benefit plan investor",
+      "index": 1
+    },
+    {
+      "page": 24,
+      "label": "would be counted in assessing whether the Investor is itself a Benefit Plan Investor – item 13",
+      "label_short": "would be counted in assessing whether the Investor is itself a Benefit Plan Investor – item 13",
+      "label_full": "",
+      "label_norm": "would be counted in assessing whether the investor is itself a benefit plan investor – item 13",
+      "anchor_x": 453.90000915527344,
+      "anchor_y": 687.47998046875,
+      "box_rect": [
+        450.6600036621094,
+        684.239990234375,
+        457.1400146484375,
+        690.719970703125
+      ],
+      "line_box": [
+        450.6600036621094,
+        684.239990234375,
+        457.1400146484375,
+        690.719970703125
+      ],
+      "placement": "checkbox",
+      "section": "would be counted in assessing whether the Investor is itself a Benefit Plan Investor",
+      "section_norm": "would be counted in assessing whether the investor is itself a benefit plan investor",
+      "index": 1
+    },
+    {
+      "page": 31,
+      "label": "2.",
+      "label_short": "2.",
+      "label_full": "2.",
+      "label_norm": "2",
+      "anchor_x": 77.95133972167969,
+      "anchor_y": 449.38575744628906,
+      "line_box": [
+        71.95133972167969,
+        449.38575744628906,
+        428.3558044433594,
+        449.38575744628906
+      ],
+      "placement": "start",
+      "section": "The month and day of the Investor’s requested Acquisition (the “Closing Date”) is ( please circle only one of the following )",
+      "section_norm": "the month and day of the investor’s requested acquisition is",
+      "index": 1
+    },
+    {
+      "page": 31,
+      "label": "If this Acquisition is by means of an Assignment, the portion of the Assignor’s Regular Member Interest that is being assigned",
+      "label_short": "If this Acquisition is by means of an Assignment, the portion of the Assignor’s Regular Member Interest that is being assigned",
+      "label_full": "If this Acquisition is by means of an Assignment, the portion of the Assignor’s Regular Member Interest that is being assigned",
+      "label_norm": "if this acquisition is by means of an assignment the portion of the assignor’s regular member interest that is being assigned",
+      "anchor_x": 78.00082397460938,
+      "anchor_y": 516.3457489013672,
+      "line_box": [
+        72.00082397460938,
+        516.3457489013672,
+        203.47645568847656,
+        516.3457489013672
+      ],
+      "placement": "start",
+      "section": "US $ ___________________.",
+      "section_norm": "us  ",
+      "index": 1
+    },
+    {
+      "page": 32,
+      "label": "Address of Bank:",
+      "label_short": "Address of Bank:",
+      "label_full": "Address of Bank:",
+      "label_norm": "address of bank",
+      "anchor_x": 186.43743896484375,
+      "anchor_y": 158.02371215820312,
+      "line_box": [
+        180.43743896484375,
+        158.02371215820312,
+        485.29559326171875,
+        158.02371215820312
+      ],
+      "placement": "start",
+      "section": "Name of Bank",
+      "section_norm": "name of bank",
+      "index": 1
+    },
+    {
+      "page": 32,
+      "label": "Address of Bank:",
+      "label_short": "Address of Bank:",
+      "label_full": "Address of Bank:",
+      "label_norm": "address of bank",
+      "anchor_x": 186.38165283203125,
+      "anchor_y": 184.06338500976562,
+      "line_box": [
+        180.38165283203125,
+        184.06338500976562,
+        485.3030090332031,
+        184.06338500976562
+      ],
+      "placement": "start",
+      "section": "Address of Bank",
+      "section_norm": "address of bank",
+      "index": 1
+    },
+    {
+      "page": 32,
+      "label": "Address of Bank:",
+      "label_short": "Address of Bank:",
+      "label_full": "Address of Bank:",
+      "label_norm": "address of bank",
+      "anchor_x": 186.47970581054688,
+      "anchor_y": 209.98336791992188,
+      "line_box": [
+        180.47970581054688,
+        209.98336791992188,
+        485.2748107910156,
+        209.98336791992188
+      ],
+      "placement": "start",
+      "section": "Address of Bank",
+      "section_norm": "address of bank",
+      "index": 2
+    },
+    {
+      "page": 32,
+      "label": "Account Number:",
+      "label_short": "Account Number:",
+      "label_full": "Account Number:",
+      "label_norm": "account number",
+      "anchor_x": 186.40953063964844,
+      "anchor_y": 250.06301879882812,
+      "line_box": [
+        180.40953063964844,
+        250.06301879882812,
+        485.4047546386719,
+        250.06301879882812
+      ],
+      "placement": "start",
+      "section": "ABA Number",
+      "section_norm": "aba number",
+      "index": 1
+    },
+    {
+      "page": 32,
+      "label": "Account Number:",
+      "label_short": "Account Number:",
+      "label_full": "Account Number:",
+      "label_norm": "account number",
+      "anchor_x": 186.34652709960938,
+      "anchor_y": 275.98301696777344,
+      "line_box": [
+        180.34652709960938,
+        275.98301696777344,
+        485.3236999511719,
+        275.98301696777344
+      ],
+      "placement": "start",
+      "section": "Account Number",
+      "section_norm": "account number",
+      "index": 1
+    },
+    {
+      "page": 32,
+      "label": "Account Is Held:",
+      "label_short": "Account Is Held:",
+      "label_full": "Account Is Held:",
+      "label_norm": "account is held",
+      "anchor_x": 186.32760620117188,
+      "anchor_y": 316.06272888183594,
+      "line_box": [
+        180.32760620117188,
+        316.06272888183594,
+        485.32525634765625,
+        316.06272888183594
+      ],
+      "placement": "start",
+      "section": "Account Is Held",
+      "section_norm": "account is held",
+      "index": 1
+    },
+    {
+      "page": 32,
+      "label": "Reference Number:",
+      "label_short": "Reference Number:",
+      "label_full": "Reference Number:",
+      "label_norm": "reference number",
+      "anchor_x": 186.35641479492188,
+      "anchor_y": 341.9827423095703,
+      "line_box": [
+        180.35641479492188,
+        341.9827423095703,
+        485.3774719238281,
+        341.9827423095703
+      ],
+      "placement": "start",
+      "section": "Reference Number",
+      "section_norm": "reference number",
+      "index": 1
+    },
+    {
+      "page": 32,
+      "label": "Address of Bank:",
+      "label_short": "Address of Bank:",
+      "label_full": "Address of Bank:",
+      "label_norm": "address of bank",
+      "anchor_x": 186.43833923339844,
+      "anchor_y": 406.00245666503906,
+      "line_box": [
+        180.43833923339844,
+        406.00245666503906,
+        485.2964782714844,
+        406.00245666503906
+      ],
+      "placement": "start",
+      "section": "Name of Bank",
+      "section_norm": "name of bank",
+      "index": 2
+    },
+    {
+      "page": 32,
+      "label": "Address of Bank:",
+      "label_short": "Address of Bank:",
+      "label_full": "Address of Bank:",
+      "label_norm": "address of bank",
+      "anchor_x": 186.38253784179688,
+      "anchor_y": 431.92247009277344,
+      "line_box": [
+        180.38253784179688,
+        431.92247009277344,
+        485.30389404296875,
+        431.92247009277344
+      ],
+      "placement": "start",
+      "section": "Address of Bank",
+      "section_norm": "address of bank",
+      "index": 3
+    },
+    {
+      "page": 32,
+      "label": "Address of Bank:",
+      "label_short": "Address of Bank:",
+      "label_full": "Address of Bank:",
+      "label_norm": "address of bank",
+      "anchor_x": 186.48062133789062,
+      "anchor_y": 458.02247619628906,
+      "line_box": [
+        180.48062133789062,
+        458.02247619628906,
+        485.2757263183594,
+        458.02247619628906
+      ],
+      "placement": "start",
+      "section": "Address of Bank",
+      "section_norm": "address of bank",
+      "index": 4
+    },
+    {
+      "page": 32,
+      "label": "Account Number:",
+      "label_short": "Account Number:",
+      "label_full": "Account Number:",
+      "label_norm": "account number",
+      "anchor_x": 186.4104461669922,
+      "anchor_y": 497.9824676513672,
+      "line_box": [
+        180.4104461669922,
+        497.9824676513672,
+        485.4056701660156,
+        497.9824676513672
+      ],
+      "placement": "start",
+      "section": "ABA Number",
+      "section_norm": "aba number",
+      "index": 2
+    },
+    {
+      "page": 32,
+      "label": "Account Number:",
+      "label_short": "Account Number:",
+      "label_full": "Account Number:",
+      "label_norm": "account number",
+      "anchor_x": 186.34744262695312,
+      "anchor_y": 524.0221862792969,
+      "line_box": [
+        180.34744262695312,
+        524.0221862792969,
+        485.3246154785156,
+        524.0221862792969
+      ],
+      "placement": "start",
+      "section": "Account Number",
+      "section_norm": "account number",
+      "index": 2
+    },
+    {
+      "page": 32,
+      "label": "Account Is Held:",
+      "label_short": "Account Is Held:",
+      "label_full": "Account Is Held:",
+      "label_norm": "account is held",
+      "anchor_x": 186.32852172851562,
+      "anchor_y": 563.9821472167969,
+      "line_box": [
+        180.32852172851562,
+        563.9821472167969,
+        485.326171875,
+        563.9821472167969
+      ],
+      "placement": "start",
+      "section": "Account Is Held",
+      "section_norm": "account is held",
+      "index": 2
+    },
+    {
+      "page": 32,
+      "label": "Reference Number:",
+      "label_short": "Reference Number:",
+      "label_full": "Reference Number:",
+      "label_norm": "reference number",
+      "anchor_x": 186.35733032226562,
+      "anchor_y": 590.0218811035156,
+      "line_box": [
+        180.35733032226562,
+        590.0218811035156,
+        485.3783874511719,
+        590.0218811035156
+      ],
+      "placement": "start",
+      "section": "Reference Number",
+      "section_norm": "reference number",
+      "index": 2
+    },
+    {
+      "page": 32,
+      "label": "Reference Number – item 1",
+      "label_short": "Reference Number – item 1",
+      "label_full": "",
+      "label_norm": "reference number – item 1",
+      "anchor_x": 210.95999908447266,
+      "anchor_y": 645.9600219726562,
+      "box_rect": [
+        207.72000122070312,
+        642.7200317382812,
+        214.1999969482422,
+        649.2000122070312
+      ],
+      "line_box": [
+        207.72000122070312,
+        642.7200317382812,
+        214.1999969482422,
+        649.2000122070312
+      ],
+      "placement": "checkbox",
+      "section": "Reference Number",
+      "section_norm": "reference number",
+      "index": 1
+    },
+    {
+      "page": 32,
+      "label": "Reference Number – item 2",
+      "label_short": "Reference Number – item 2",
+      "label_full": "",
+      "label_norm": "reference number – item 2",
+      "anchor_x": 255.9600067138672,
+      "anchor_y": 645.9600219726562,
+      "box_rect": [
+        252.72000122070312,
+        642.7200317382812,
+        259.20001220703125,
+        649.2000122070312
+      ],
+      "line_box": [
+        252.72000122070312,
+        642.7200317382812,
+        259.20001220703125,
+        649.2000122070312
+      ],
+      "placement": "checkbox",
+      "section": "Reference Number",
+      "section_norm": "reference number",
+      "index": 1
+    },
+    {
+      "page": 33,
+      "label": "Name of Investor (Printed or Typed)",
+      "label_short": "Name of Investor (Printed or Typed)",
+      "label_full": "Name of Investor (Printed or Typed)",
+      "label_norm": "name of investor",
+      "anchor_x": 62.34000015258789,
+      "anchor_y": 122.98312377929688,
+      "line_box": [
+        56.34000015258789,
+        122.98312377929688,
+        287.8228454589844,
+        122.98312377929688
+      ],
+      "placement": "start",
+      "section": "INVESTOR",
+      "section_norm": "investor",
+      "index": 1
+    },
+    {
+      "page": 33,
+      "label": "Date",
+      "label_short": "Date",
+      "label_full": "Date",
+      "label_norm": "date",
+      "anchor_x": 310.4755554199219,
+      "anchor_y": 122.98312377929688,
+      "line_box": [
+        304.4755554199219,
+        122.98312377929688,
+        541.599609375,
+        122.98312377929688
+      ],
+      "placement": "start",
+      "section": "INVESTOR",
+      "section_norm": "investor",
+      "index": 1
+    },
+    {
+      "page": 33,
+      "label": "Signature of Authorized Signatory",
+      "label_short": "Signature of Authorized Signatory",
+      "label_full": "Signature of Authorized Signatory",
+      "label_norm": "signature of authorized signatory",
+      "anchor_x": 62.34000015258789,
+      "anchor_y": 155.14352416992188,
+      "line_box": [
+        56.34000015258789,
+        155.14352416992188,
+        287.8228454589844,
+        155.14352416992188
+      ],
+      "placement": "start",
+      "section": "INVESTOR",
+      "section_norm": "investor",
+      "index": 1
+    },
+    {
+      "page": 33,
+      "label": "Signature of Witness",
+      "label_short": "Signature of Witness",
+      "label_full": "Signature of Witness",
+      "label_norm": "signature of witness",
+      "anchor_x": 310.4755554199219,
+      "anchor_y": 155.14352416992188,
+      "line_box": [
+        304.4755554199219,
+        155.14352416992188,
+        541.599609375,
+        155.14352416992188
+      ],
+      "placement": "start",
+      "section": "INVESTOR",
+      "section_norm": "investor",
+      "index": 1
+    },
+    {
+      "page": 33,
+      "label": "Name of Authorized Signatory (Printed or Typed)",
+      "label_short": "Name of Authorized Signatory (Printed or Typed)",
+      "label_full": "Name of Authorized Signatory (Printed or Typed)",
+      "label_norm": "name of authorized signatory",
+      "anchor_x": 62.34000015258789,
+      "anchor_y": 187.30337524414062,
+      "line_box": [
+        56.34000015258789,
+        187.30337524414062,
+        287.8228454589844,
+        187.30337524414062
+      ],
+      "placement": "start",
+      "section": "Signature of Witness",
+      "section_norm": "signature of witness",
+      "index": 1
+    },
+    {
+      "page": 33,
+      "label": "Name of Witness (Printed or Typed)",
+      "label_short": "Name of Witness (Printed or Typed)",
+      "label_full": "Name of Witness (Printed or Typed)",
+      "label_norm": "name of witness",
+      "anchor_x": 310.4755554199219,
+      "anchor_y": 187.30337524414062,
+      "line_box": [
+        304.4755554199219,
+        187.30337524414062,
+        541.599609375,
+        187.30337524414062
+      ],
+      "placement": "start",
+      "section": "Signature of Witness",
+      "section_norm": "signature of witness",
+      "index": 1
+    },
+    {
+      "page": 33,
+      "label": "Title of Authorized Signatory",
+      "label_short": "Title of Authorized Signatory",
+      "label_full": "Title of Authorized Signatory",
+      "label_norm": "title of authorized signatory",
+      "anchor_x": 62.34000015258789,
+      "anchor_y": 219.40347290039062,
+      "line_box": [
+        56.34000015258789,
+        219.40347290039062,
+        287.8228454589844,
+        219.40347290039062
+      ],
+      "placement": "start",
+      "section": "Signature of Witness",
+      "section_norm": "signature of witness",
+      "index": 1
+    },
+    {
+      "page": 33,
+      "label": "Registered Address",
+      "label_short": "Registered Address",
+      "label_full": "Registered Address",
+      "label_norm": "registered address",
+      "anchor_x": 62.34000015258789,
+      "anchor_y": 251.6233901977539,
+      "line_box": [
+        56.34000015258789,
+        251.6233901977539,
+        287.8228454589844,
+        251.6233901977539
+      ],
+      "placement": "start",
+      "section": "Signature of Witness",
+      "section_norm": "signature of witness",
+      "index": 1
+    },
+    {
+      "page": 33,
+      "label": "Facsimile",
+      "label_short": "Facsimile",
+      "label_full": "Facsimile",
+      "label_norm": "facsimile",
+      "anchor_x": 62.34000015258789,
+      "anchor_y": 283.7835235595703,
+      "line_box": [
+        56.34000015258789,
+        283.7835235595703,
+        287.8228454589844,
+        283.7835235595703
+      ],
+      "placement": "start",
+      "section": "Signature of Witness",
+      "section_norm": "signature of witness",
+      "index": 1
+    },
+    {
+      "page": 33,
+      "label": "By:",
+      "label_short": "By:",
+      "label_full": "By:",
+      "label_norm": "by",
+      "anchor_x": 84.96330261230469,
+      "anchor_y": 395.92323303222656,
+      "line_box": [
+        78.96330261230469,
+        395.92323303222656,
+        287.8282470703125,
+        395.92323303222656
+      ],
+      "placement": "start",
+      "section": "By",
+      "section_norm": "by",
+      "index": 1
+    },
+    {
+      "page": 33,
+      "label": "Name of Authorized Signatory",
+      "label_short": "Name of Authorized Signatory",
+      "label_full": "Name of Authorized Signatory",
+      "label_norm": "name of authorized signatory",
+      "anchor_x": 84.95999908447266,
+      "anchor_y": 428.08351135253906,
+      "line_box": [
+        78.95999908447266,
+        428.08351135253906,
+        287.8249206542969,
+        428.08351135253906
+      ],
+      "placement": "start",
+      "section": "Signature of Authorized Signatory",
+      "section_norm": "signature of authorized signatory",
+      "index": 1
+    },
+    {
+      "page": 33,
+      "label": "Title of Authorized Signatory",
+      "label_short": "Title of Authorized Signatory",
+      "label_full": "Title of Authorized Signatory",
+      "label_norm": "title of authorized signatory",
+      "anchor_x": 84.95999908447266,
+      "anchor_y": 460.4235076904297,
+      "line_box": [
+        78.95999908447266,
+        460.4235076904297,
+        287.8249206542969,
+        460.4235076904297
+      ],
+      "placement": "start",
+      "section": "Signature of Authorized Signatory",
+      "section_norm": "signature of authorized signatory",
+      "index": 1
+    },
+    {
+      "page": 34,
+      "label": "(the “Manager”) and the undersigned Investor.",
+      "label_short": "(the “Manager”) and the undersigned Investor.",
+      "label_full": "(the “Manager”) and the undersigned Investor.",
+      "label_norm": "and the undersigned investor",
+      "anchor_x": 60.0,
+      "anchor_y": 111.58377456665039,
+      "line_box": [
+        54.0,
+        111.58377456665039,
+        546.3908081054688,
+        111.58377456665039
+      ],
+      "placement": "start",
+      "section": "",
+      "section_norm": "",
+      "index": 1
+    },
+    {
+      "page": 35,
+      "label": "Name of Investor (Printed or Typed)",
+      "label_short": "Name of Investor (Printed or Typed)",
+      "label_full": "Name of Investor (Printed or Typed)",
+      "label_norm": "name of investor",
+      "anchor_x": 62.34000015258789,
+      "anchor_y": 155.98342895507812,
+      "line_box": [
+        56.34000015258789,
+        155.98342895507812,
+        287.8228454589844,
+        155.98342895507812
+      ],
+      "placement": "start",
+      "section": "INVESTOR",
+      "section_norm": "investor",
+      "index": 1
+    },
+    {
+      "page": 35,
+      "label": "Date",
+      "label_short": "Date",
+      "label_full": "Date",
+      "label_norm": "date",
+      "anchor_x": 310.4755554199219,
+      "anchor_y": 155.98342895507812,
+      "line_box": [
+        304.4755554199219,
+        155.98342895507812,
+        541.599609375,
+        155.98342895507812
+      ],
+      "placement": "start",
+      "section": "INVESTOR",
+      "section_norm": "investor",
+      "index": 1
+    },
+    {
+      "page": 35,
+      "label": "Signature of Authorized Signatory",
+      "label_short": "Signature of Authorized Signatory",
+      "label_full": "Signature of Authorized Signatory",
+      "label_norm": "signature of authorized signatory",
+      "anchor_x": 62.34000015258789,
+      "anchor_y": 188.14352416992188,
+      "line_box": [
+        56.34000015258789,
+        188.14352416992188,
+        287.8228454589844,
+        188.14352416992188
+      ],
+      "placement": "start",
+      "section": "INVESTOR",
+      "section_norm": "investor",
+      "index": 1
+    },
+    {
+      "page": 35,
+      "label": "Signature of Witness",
+      "label_short": "Signature of Witness",
+      "label_full": "Signature of Witness",
+      "label_norm": "signature of witness",
+      "anchor_x": 310.4755554199219,
+      "anchor_y": 188.14352416992188,
+      "line_box": [
+        304.4755554199219,
+        188.14352416992188,
+        541.599609375,
+        188.14352416992188
+      ],
+      "placement": "start",
+      "section": "INVESTOR",
+      "section_norm": "investor",
+      "index": 1
+    },
+    {
+      "page": 35,
+      "label": "Name of Authorized Signatory (Printed or Typed)",
+      "label_short": "Name of Authorized Signatory (Printed or Typed)",
+      "label_full": "Name of Authorized Signatory (Printed or Typed)",
+      "label_norm": "name of authorized signatory",
+      "anchor_x": 62.34000015258789,
+      "anchor_y": 220.30337524414062,
+      "line_box": [
+        56.34000015258789,
+        220.30337524414062,
+        287.8228454589844,
+        220.30337524414062
+      ],
+      "placement": "start",
+      "section": "Signature of Witness",
+      "section_norm": "signature of witness",
+      "index": 1
+    },
+    {
+      "page": 35,
+      "label": "Name of Witness (Printed or Typed)",
+      "label_short": "Name of Witness (Printed or Typed)",
+      "label_full": "Name of Witness (Printed or Typed)",
+      "label_norm": "name of witness",
+      "anchor_x": 310.4755554199219,
+      "anchor_y": 220.30337524414062,
+      "line_box": [
+        304.4755554199219,
+        220.30337524414062,
+        541.599609375,
+        220.30337524414062
+      ],
+      "placement": "start",
+      "section": "Signature of Witness",
+      "section_norm": "signature of witness",
+      "index": 1
+    },
+    {
+      "page": 35,
+      "label": "Title of Authorized Signatory",
+      "label_short": "Title of Authorized Signatory",
+      "label_full": "Title of Authorized Signatory",
+      "label_norm": "title of authorized signatory",
+      "anchor_x": 62.34000015258789,
+      "anchor_y": 252.4634780883789,
+      "line_box": [
+        56.34000015258789,
+        252.4634780883789,
+        287.8228454589844,
+        252.4634780883789
+      ],
+      "placement": "start",
+      "section": "Signature of Witness",
+      "section_norm": "signature of witness",
+      "index": 1
+    },
+    {
+      "page": 35,
+      "label": "Registered Address",
+      "label_short": "Registered Address",
+      "label_full": "Registered Address",
+      "label_norm": "registered address",
+      "anchor_x": 62.34000015258789,
+      "anchor_y": 284.62339782714844,
+      "line_box": [
+        56.34000015258789,
+        284.62339782714844,
+        287.8228454589844,
+        284.62339782714844
+      ],
+      "placement": "start",
+      "section": "Signature of Witness",
+      "section_norm": "signature of witness",
+      "index": 1
+    },
+    {
+      "page": 35,
+      "label": "Facsimile",
+      "label_short": "Facsimile",
+      "label_full": "Facsimile",
+      "label_norm": "facsimile",
+      "anchor_x": 62.34000015258789,
+      "anchor_y": 316.7835235595703,
+      "line_box": [
+        56.34000015258789,
+        316.7835235595703,
+        287.8228454589844,
+        316.7835235595703
+      ],
+      "placement": "start",
+      "section": "Signature of Witness",
+      "section_norm": "signature of witness",
+      "index": 1
+    },
+    {
+      "page": 35,
+      "label": "Signature of Authorized Signatory",
+      "label_short": "Signature of Authorized Signatory",
+      "label_full": "Signature of Authorized Signatory",
+      "label_norm": "signature of authorized signatory",
+      "anchor_x": 60.0,
+      "anchor_y": 417.1031951904297,
+      "line_box": [
+        54.0,
+        417.1031951904297,
+        287.8282470703125,
+        417.1031951904297
+      ],
+      "placement": "start",
+      "section": "By: ______________________________________",
+      "section_norm": "by ",
+      "index": 1
+    },
+    {
+      "page": 35,
+      "label": "Name of Authorized Signatory",
+      "label_short": "Name of Authorized Signatory",
+      "label_full": "Name of Authorized Signatory",
+      "label_norm": "name of authorized signatory",
+      "anchor_x": 84.95999908447266,
+      "anchor_y": 449.08351135253906,
+      "line_box": [
+        78.95999908447266,
+        449.08351135253906,
+        287.8249206542969,
+        449.08351135253906
+      ],
+      "placement": "start",
+      "section": "Signature of Authorized Signatory",
+      "section_norm": "signature of authorized signatory",
+      "index": 1
+    },
+    {
+      "page": 35,
+      "label": "Title of Authorized Signatory",
+      "label_short": "Title of Authorized Signatory",
+      "label_full": "Title of Authorized Signatory",
+      "label_norm": "title of authorized signatory",
+      "anchor_x": 84.95999908447266,
+      "anchor_y": 481.4235076904297,
+      "line_box": [
+        78.95999908447266,
+        481.4235076904297,
+        287.8249206542969,
+        481.4235076904297
+      ],
+      "placement": "start",
+      "section": "Signature of Authorized Signatory",
+      "section_norm": "signature of authorized signatory",
+      "index": 1
+    }
+  ]
+}
