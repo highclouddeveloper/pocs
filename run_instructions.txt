@@ -22,7 +22,7 @@ py -m pip install docx2pdf
 
 #Should provide an option to edit the content in the sub doc page
 
-# Follow below steps for doc / docx processing
+# The Old steps to collectively run all the word document.  Follow below steps for doc / docx processing
 
 python pdf_prefill.py --input input.docx --output filled.pdf --lookup lookup_template_doc.xlsx --template template_fields.json
 
@@ -43,7 +43,7 @@ py -3.13 -c "import docx; print(docx.__version__)"
 #Had to install rapidfuzz
 pip install python-docx rapidfuzz pandas
 
-#Most stable version could the agent_prefill.py file.  To run it use below command
-python field_map_generate.py --input input.docx --template template_docs.json --make-lookup lookup_template_docx.xlsx --rebuild-template
-python agent_docx_fill.py --input input.docx --lookup lookup_template_docx.xlsx --output out.docx --dry-run
+# The New steps to individually run each word document.  Most stable version could use the agent_docx_fill.py file.  To run it use below command
+python field_map_generate_docx.py --input input.docx --template template_docs.json --make-lookup lookup_template_docx.xlsx --rebuild-template (To generate json, excel template with section and fields)
+python agent_docx_fill.py --input input.docx --lookup lookup_template_docx.xlsx --output out.docx --dry-run (To see the fields that will get filled)
 python agent_docx_fill.py --input input.docx --lookup lookup_template_docx.xlsx --output out.docx

@@ -1,0 +1,490 @@
+{
+  "fields": [
+    {
+      "section": "Individual Applicants",
+      "label": "Applicant Name",
+      "label_short": "Applicant Name",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_grid_header",
+      "type": "text"
+    },
+    {
+      "section": "Individual Applicants",
+      "label": "Applicant Name",
+      "label_short": "Applicant Name",
+      "page": "",
+      "index": 2,
+      "placement": "docx_table_grid_header",
+      "type": "text"
+    },
+    {
+      "section": "Individual Applicants",
+      "label": "Applicant Name",
+      "label_short": "Applicant Name",
+      "page": "",
+      "index": 3,
+      "placement": "docx_table_grid_header",
+      "type": "text"
+    },
+    {
+      "section": "Individual Applicants",
+      "label": "Applicant Name",
+      "label_short": "Applicant Name",
+      "page": "",
+      "index": 4,
+      "placement": "docx_table_grid_header",
+      "type": "text"
+    },
+    {
+      "section": "Individual Applicants",
+      "label": "Last name",
+      "label_short": "Last name",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_grid_header",
+      "type": "text"
+    },
+    {
+      "section": "Individual Applicants",
+      "label": "Last name",
+      "label_short": "Last name",
+      "page": "",
+      "index": 2,
+      "placement": "docx_table_grid_header",
+      "type": "text"
+    },
+    {
+      "section": "Individual Applicants",
+      "label": "Last name",
+      "label_short": "Last name",
+      "page": "",
+      "index": 3,
+      "placement": "docx_table_grid_header",
+      "type": "text"
+    },
+    {
+      "section": "Individual Applicants",
+      "label": "Last name",
+      "label_short": "Last name",
+      "page": "",
+      "index": 4,
+      "placement": "docx_table_grid_header",
+      "type": "text"
+    },
+    {
+      "section": "Entity Applicants",
+      "label": "Applicant Name",
+      "label_short": "Applicant Name",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_pair",
+      "type": "text"
+    },
+    {
+      "section": "Entity Applicants",
+      "label": "Tax Identification Number",
+      "label_short": "Tax Identification Number",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_pair",
+      "type": "text"
+    },
+    {
+      "section": "Entity Applicants",
+      "label": "GIIN (if applicable)",
+      "label_short": "GIIN (if applicable)",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_pair",
+      "type": "text"
+    },
+    {
+      "section": "Entity Applicants",
+      "label": "Jurisdiction of Organisation",
+      "label_short": "Jurisdiction of Organisation",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_pair",
+      "type": "text"
+    },
+    {
+      "section": "All Applicants",
+      "label": "Residence (Individual Applicants) or Registered Address (Entity Applicants)",
+      "label_short": "Residence (Individual Applicants) or Registered Address (Entity Applicants)",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_pair",
+      "type": "text"
+    },
+    {
+      "section": "All Applicants",
+      "label": "Street 1",
+      "label_short": "Street 1",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_pair",
+      "type": "text"
+    },
+    {
+      "section": "All Applicants",
+      "label": "Street 2",
+      "label_short": "Street 2",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_pair",
+      "type": "text"
+    },
+    {
+      "section": "All Applicants",
+      "label": "Street 3",
+      "label_short": "Street 3",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_pair",
+      "type": "text"
+    },
+    {
+      "section": "All Applicants",
+      "label": "City, ST Zip",
+      "label_short": "City, ST Zip",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_pair",
+      "type": "text"
+    },
+    {
+      "section": "All Applicants",
+      "label": "Country",
+      "label_short": "Country",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_pair",
+      "type": "text"
+    },
+    {
+      "section": "All Applicants",
+      "label": "Work Phone",
+      "label_short": "Work Phone",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_pair",
+      "type": "text"
+    },
+    {
+      "section": "All Applicants",
+      "label": "Home Phone",
+      "label_short": "Home Phone",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_pair",
+      "type": "text"
+    },
+    {
+      "section": "All Applicants",
+      "label": "Cell Phone",
+      "label_short": "Cell Phone",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_pair",
+      "type": "text"
+    },
+    {
+      "section": "All Applicants",
+      "label": "Fax",
+      "label_short": "Fax",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_pair",
+      "type": "text"
+    },
+    {
+      "section": "All Applicants",
+      "label": "Email",
+      "label_short": "Email",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_pair",
+      "type": "text"
+    },
+    {
+      "section": "All Applicants",
+      "label": "Principal Place of Business (if differs from Registered Address)",
+      "label_short": "Principal Place of Business (if differs from Registered Address)",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_pair",
+      "type": "text"
+    },
+    {
+      "section": "All Applicants",
+      "label": "Street 1",
+      "label_short": "Street 1",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_pair",
+      "type": "text"
+    },
+    {
+      "section": "All Applicants",
+      "label": "Street 2",
+      "label_short": "Street 2",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_pair",
+      "type": "text"
+    },
+    {
+      "section": "All Applicants",
+      "label": "Street 3",
+      "label_short": "Street 3",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_pair",
+      "type": "text"
+    },
+    {
+      "section": "All Applicants",
+      "label": "City, ST Zip",
+      "label_short": "City, ST Zip",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_pair",
+      "type": "text"
+    },
+    {
+      "section": "All Applicants",
+      "label": "Country",
+      "label_short": "Country",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_pair",
+      "type": "text"
+    },
+    {
+      "section": "All Applicants",
+      "label": "Work Phone",
+      "label_short": "Work Phone",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_pair",
+      "type": "text"
+    },
+    {
+      "section": "All Applicants",
+      "label": "Home Phone",
+      "label_short": "Home Phone",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_pair",
+      "type": "text"
+    },
+    {
+      "section": "All Applicants",
+      "label": "Cell Phone",
+      "label_short": "Cell Phone",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_pair",
+      "type": "text"
+    },
+    {
+      "section": "All Applicants",
+      "label": "Fax",
+      "label_short": "Fax",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_pair",
+      "type": "text"
+    },
+    {
+      "section": "All Applicants",
+      "label": "Email",
+      "label_short": "Email",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_pair",
+      "type": "text"
+    },
+    {
+      "section": "Authorised Signatories",
+      "label": "Name",
+      "label_short": "Name",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_grid_header",
+      "type": "text"
+    },
+    {
+      "section": "Authorised Signatories",
+      "label": "Name",
+      "label_short": "Name",
+      "page": "",
+      "index": 2,
+      "placement": "docx_table_grid_header",
+      "type": "text"
+    },
+    {
+      "section": "Authorised Signatories",
+      "label": "Name",
+      "label_short": "Name",
+      "page": "",
+      "index": 3,
+      "placement": "docx_table_grid_header",
+      "type": "text"
+    },
+    {
+      "section": "Authorised Signatories",
+      "label": "Name",
+      "label_short": "Name",
+      "page": "",
+      "index": 4,
+      "placement": "docx_table_grid_header",
+      "type": "text"
+    },
+    {
+      "section": "Authorised Signatories",
+      "label": "Name",
+      "label_short": "Name",
+      "page": "",
+      "index": 5,
+      "placement": "docx_table_grid_header",
+      "type": "text"
+    },
+    {
+      "section": "Authorised Signatories",
+      "label": "Name",
+      "label_short": "Name",
+      "page": "",
+      "index": 6,
+      "placement": "docx_table_grid_header",
+      "type": "text"
+    },
+    {
+      "section": "Authorised Signatories",
+      "label": "Name",
+      "label_short": "Name",
+      "page": "",
+      "index": 7,
+      "placement": "docx_table_grid_header",
+      "type": "text"
+    },
+    {
+      "section": "Authorised Signatories",
+      "label": "Name",
+      "label_short": "Name",
+      "page": "",
+      "index": 8,
+      "placement": "docx_table_grid_header",
+      "type": "text"
+    },
+    {
+      "section": "Authorised Signatories",
+      "label": "Name",
+      "label_short": "Name",
+      "page": "",
+      "index": 9,
+      "placement": "docx_table_grid_header",
+      "type": "text"
+    },
+    {
+      "section": "Authorised Signatories",
+      "label": "Name",
+      "label_short": "Name",
+      "page": "",
+      "index": 10,
+      "placement": "docx_table_grid_header",
+      "type": "text"
+    },
+    {
+      "section": "Authorised Signatories",
+      "label": "Signature",
+      "label_short": "Signature",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_grid_header",
+      "type": "text"
+    },
+    {
+      "section": "Authorised Signatories",
+      "label": "Signature",
+      "label_short": "Signature",
+      "page": "",
+      "index": 2,
+      "placement": "docx_table_grid_header",
+      "type": "text"
+    },
+    {
+      "section": "Authorised Signatories",
+      "label": "Signature",
+      "label_short": "Signature",
+      "page": "",
+      "index": 3,
+      "placement": "docx_table_grid_header",
+      "type": "text"
+    },
+    {
+      "section": "Authorised Signatories",
+      "label": "Signature",
+      "label_short": "Signature",
+      "page": "",
+      "index": 4,
+      "placement": "docx_table_grid_header",
+      "type": "text"
+    },
+    {
+      "section": "Authorised Signatories",
+      "label": "Signature",
+      "label_short": "Signature",
+      "page": "",
+      "index": 5,
+      "placement": "docx_table_grid_header",
+      "type": "text"
+    },
+    {
+      "section": "Authorised Signatories",
+      "label": "Signature",
+      "label_short": "Signature",
+      "page": "",
+      "index": 6,
+      "placement": "docx_table_grid_header",
+      "type": "text"
+    },
+    {
+      "section": "Authorised Signatories",
+      "label": "Signature",
+      "label_short": "Signature",
+      "page": "",
+      "index": 7,
+      "placement": "docx_table_grid_header",
+      "type": "text"
+    },
+    {
+      "section": "Authorised Signatories",
+      "label": "Signature",
+      "label_short": "Signature",
+      "page": "",
+      "index": 8,
+      "placement": "docx_table_grid_header",
+      "type": "text"
+    },
+    {
+      "section": "Authorised Signatories",
+      "label": "Signature",
+      "label_short": "Signature",
+      "page": "",
+      "index": 9,
+      "placement": "docx_table_grid_header",
+      "type": "text"
+    },
+    {
+      "section": "Authorised Signatories",
+      "label": "Signature",
+      "label_short": "Signature",
+      "page": "",
+      "index": 10,
+      "placement": "docx_table_grid_header",
+      "type": "text"
+    }
+  ]
+}
