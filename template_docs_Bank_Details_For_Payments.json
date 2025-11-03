@@ -1,0 +1,139 @@
+{
+  "fields": [
+    {
+      "section": "Applicant Name (Entity)",
+      "label": "Last name",
+      "label_short": "Last name",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_grid_row",
+      "type": "text"
+    },
+    {
+      "section": "Applicant Name (Entity)",
+      "label": "First name",
+      "label_short": "First name",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_grid_row",
+      "type": "text"
+    },
+    {
+      "section": "Applicant Name (Entity)",
+      "label": "Middle Initial",
+      "label_short": "Middle Initial",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_grid_row",
+      "type": "text"
+    },
+    {
+      "section": "HID Number (Existing Shareholders Only)",
+      "label": "Last name",
+      "label_short": "Last name",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_grid_row",
+      "type": "text"
+    },
+    {
+      "section": "HID Number (Existing Shareholders Only)",
+      "label": "First name",
+      "label_short": "First name",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_grid_row",
+      "type": "text"
+    },
+    {
+      "section": "HID Number (Existing Shareholders Only)",
+      "label": "Middle Initial",
+      "label_short": "Middle Initial",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_grid_row",
+      "type": "text"
+    },
+    {
+      "section": "Until further notice, funds may be wired to the above Shareholder as follows",
+      "label": "Corresponding Bank Name",
+      "label_short": "Corresponding Bank Name",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_pair",
+      "type": "text"
+    },
+    {
+      "section": "Until further notice, funds may be wired to the above Shareholder as follows",
+      "label": "Bank Address",
+      "label_short": "Bank Address",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_pair",
+      "type": "text"
+    },
+    {
+      "section": "Until further notice, funds may be wired to the above Shareholder as follows",
+      "label": "ABA or SWIFT",
+      "label_short": "ABA or SWIFT",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_pair",
+      "type": "text"
+    },
+    {
+      "section": "Until further notice, funds may be wired to the above Shareholder as follows",
+      "label": "Beneficiary Bank Name (if applicable)",
+      "label_short": "Beneficiary Bank Name (if applicable)",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_pair",
+      "type": "text"
+    },
+    {
+      "section": "Until further notice, funds may be wired to the above Shareholder as follows",
+      "label": "Bank Address",
+      "label_short": "Bank Address",
+      "page": "",
+      "index": 2,
+      "placement": "docx_table_pair",
+      "type": "text"
+    },
+    {
+      "section": "Until further notice, funds may be wired to the above Shareholder as follows",
+      "label": "SWIFT ID or Account No.",
+      "label_short": "SWIFT ID or Account No.",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_pair",
+      "type": "text"
+    },
+    {
+      "section": "Until further notice, funds may be wired to the above Shareholder as follows",
+      "label": "Final Beneficiary Account Name",
+      "label_short": "Final Beneficiary Account Name",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_pair",
+      "type": "text"
+    },
+    {
+      "section": "Until further notice, funds may be wired to the above Shareholder as follows",
+      "label": "Final Beneficiary Address",
+      "label_short": "Final Beneficiary Address",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_pair",
+      "type": "text"
+    },
+    {
+      "section": "Until further notice, funds may be wired to the above Shareholder as follows",
+      "label": "Beneficiary Account No",
+      "label_short": "Beneficiary Account No",
+      "page": "",
+      "index": 1,
+      "placement": "docx_table_pair",
+      "type": "text"
+    }
+  ]
+}
